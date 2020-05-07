@@ -46,8 +46,8 @@ BOOL CDlgFindALink::OnInitDialog()
 	CBaseDialog::OnInitDialog();
 
 	m_FindObjectList.AddString("Node ID");
-	m_FindObjectList.AddString("Link: FromNodeID ToNodeID");
-	m_FindObjectList.AddString("Path: FromNodeID ToNodeID");
+	m_FindObjectList.AddString("Link: FromNodeNo ToNodeNo");
+	m_FindObjectList.AddString("Path: FromNodeNo ToNodeNo");
 	m_FindObjectList.AddString("Agent: AgentID");
 	m_FindObjectList.AddString("Path: Path node sequence");
 
@@ -120,10 +120,10 @@ void CDlgFindALink::OnBnClickedButtonFind()
 		m_NodeID = value1; break;
 	case efind_link: 
 		read_2_integers_from_a_string(m_StrFind, value1, value2);
-		m_FromNodeNumber = value1; m_ToNodeNumber = value2; break;
+		m_FromNodeID = value1; m_ToNodeID = value2; break;
 	case efind_path: 
 		read_2_integers_from_a_string(m_StrFind, value1, value2);
-		m_FromNodeNumber = value1; m_ToNodeNumber = value2; break;
+		m_FromNodeID = value1; m_ToNodeID = value2; break;
 	case efind_Agent: 
 		read_2_integers_from_a_string(m_StrFind, value1, value2);
 		m_AgentNumber = value1; break;

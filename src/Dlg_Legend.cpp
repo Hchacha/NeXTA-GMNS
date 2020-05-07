@@ -36,7 +36,6 @@ void CDlg_Legend::DoDataExchange(CDataExchange* pDX)
 
 BEGIN_MESSAGE_MAP(CDlg_Legend, CBaseDialog)
 	ON_WM_PAINT()
-	ON_CBN_SELCHANGE(IDC_COMBO_EMISSIONTYPE, &CDlg_Legend::OnCbnSelchangeComboEmissiontype)
 	ON_CBN_SELCHANGE(IDC_COMBO_AGGREGATION, &CDlg_Legend::OnCbnSelchangeComboAggregation)
 	ON_STN_CLICKED(IDC_STATIC_QUEUE_CUT_OFF, &CDlg_Legend::OnStnClickedStaticQueueCutOff)
 	ON_CBN_SELCHANGE(IDC_COMBO_STUDY_PERIOD, &CDlg_Legend::OnCbnSelchangeComboStudyPeriod)
@@ -145,28 +144,17 @@ void CDlg_Legend::DrawObjects(CDC* pDC)
 
 	SetBackgroundColor(RGB(255, 255, 255));
 
-	if(m_pDoc->m_LinkMOEMode == MOE_emissions)
-		m_ComboBox_EmissionType.ShowWindow (1);
-	else
-		m_ComboBox_EmissionType.ShowWindow (0); // not showing
 
-	if(m_pDoc->m_LinkMOEMode == MOE_impact || m_pDoc->m_LinkMOEMode == MOE_bottleneck  )
+	if( m_pDoc->m_LinkMOEMode == MOE_bottleneck  )
 	{
 
 		m_ComboxStudyPeriod.ShowWindow (1);
 		m_StudyPeriodText.ShowWindow (1);
 
-	if(m_pDoc->m_LinkMOEMode == MOE_impact  )
-	{
-		m_QueueCutOffComboBox.ShowWindow (1);
-		m_TextCutOff.ShowWindow (1);
-	}else
-	{
+
 		m_TextCutOff.ShowWindow (0);
 		m_QueueCutOffComboBox.ShowWindow (0);
 
-	
-	}
 
 	}else
 	{
@@ -191,10 +179,7 @@ void CDlg_Legend::DrawObjects(CDC* pDC)
 	case MOE_volume: SetWindowText("Link Volume"); break;
 	case MOE_speed: SetWindowText("% of Free Speed"); break;
 	case MOE_density: SetWindowText("Density (vhc/distance/ln)"); break;
-	case MOE_reliability: SetWindowText("Variability Ratio"); break;
-	case MOE_impact: SetWindowText("Queue Duration and Congestion Age"); break;
 	case MOE_bottleneck: SetWindowText("Bottleneck Charts and Congestion Age"); break;
-	case MOE_emissions: 
 
 	
 		break;
@@ -202,18 +187,6 @@ void CDlg_Legend::DrawObjects(CDC* pDC)
 
 	}
 
-	int TimeBound[10]={0};
-	CString TimeStringVector[10];
-
-	for(int los= 2; los<=7; los++)
-	{
-		TimeBound[los] = g_Simulation_Time_Stamp + (m_pDoc->m_LOSBound[MOE_impact][los])/100.0*g_ImpactStudyPeriodInMin;
-	}
-
-	TimeStringVector[1] = "New Congestion";
-
-	int hour = g_ImpactStudyPeriodInMin/60;
-	TimeStringVector[6].Format("%d-hour old", hour) ;
 
 
 	pDC->SetBkMode(TRANSPARENT);
@@ -224,7 +197,7 @@ void CDlg_Legend::DrawObjects(CDC* pDC)
 
 	CRect lr;
 
-	if(m_pDoc->m_LinkMOEMode != MOE_impact && m_pDoc->m_LinkMOEMode != MOE_bottleneck)
+	if(m_pDoc->m_LinkMOEMode != MOE_bottleneck)
 		lr.top = 10;
 	else
 		lr.top = 40;
@@ -244,7 +217,7 @@ void CDlg_Legend::DrawObjects(CDC* pDC)
 
 	if(m_pDoc->m_LinkMOEMode != MOE_volume )
 	{
-	if(m_pDoc->m_LinkMOEMode != MOE_impact && m_pDoc->m_LinkMOEMode != MOE_bottleneck)
+	if(m_pDoc->m_LinkMOEMode != MOE_bottleneck)
 	{
 
 		for(i = 1; i< MAX_LOS_SIZE-1; i++)
@@ -277,13 +250,6 @@ void CDlg_Legend::DrawObjects(CDC* pDC)
 			pDC->SelectObject(penLOS[i]);
 			pDC->SelectObject(brushLOS[i]);
 			CString lengend_interval_str;
-
-
-			if(TimeStringVector[i].GetLength () > 0)
-			{
-				lengend_interval_str.Format("%s",TimeStringVector[i]);
-			}
-
 			pDC->TextOut(lr.left,lr.bottom+10,lengend_interval_str);
 			pDC->Rectangle(lr);
 			lr.left = lr.right;
@@ -324,28 +290,18 @@ void CDlg_Legend::DrawObjects(CDC* pDC)
 	lr.right = lr.left + width;
 
 
-	if(m_pDoc->m_LinkMOEMode != MOE_impact && m_pDoc->m_LinkMOEMode != MOE_bottleneck)
+	if(m_pDoc->m_LinkMOEMode != MOE_bottleneck)
 		lr.top = lr.bottom + 80;
 	else
 		lr.top = lr.bottom + 130;
 
-	double lane_offset = m_pDoc->m_UnitDistance*m_pDoc->m_LaneWidthInMeter;  // 20 feet per lane
+	double lane_offset = m_pDoc->m_UnitDistance*m_pDoc->m_LaneWidthInKM;  // 20 feet per lane
 
 	double BandWidthValue = 0;
 	CString band_width_str;
 
 	CString first_str, second_str;
 
-	if(m_pDoc->m_LinkBandWidthMode == LBW_number_of_lanes)
-	{
-
-		BandWidthValue =  m_pDoc->GetLinkBandWidth(4);
-		band_width_str = "Band Width: Number of Lanes";
-		first_str = "4 lanes";
-		second_str = "2 lanes";
-
-
-	}else if (m_pDoc->m_LinkBandWidthMode == LBW_link_volume)
 	{
 
 		double base_bandwidth_value = 3000;
@@ -382,26 +338,7 @@ void CDlg_Legend::DrawObjects(CDC* pDC)
 		//}
 
 
-	}else if (m_pDoc->m_LinkBandWidthMode == LBW_congestion_duration)
-	{
-		band_width_str = "Band Width: Queue Duration";
-
-		double base_bandwidth_value = g_ImpactStudyPeriodInMin;
-
-		BandWidthValue =  m_pDoc->GetLinkBandWidth(base_bandwidth_value);
-		height = max(1,lane_offset * BandWidthValue *1 *m_pDoc->m_Doc_Resolution);
-
-		while(height>50)
-		{
-		base_bandwidth_value = base_bandwidth_value/2;
-		BandWidthValue =  m_pDoc->GetLinkBandWidth(base_bandwidth_value);
-		height = max(1,lane_offset * BandWidthValue *1 *m_pDoc->m_Doc_Resolution);
-		}
-
-		first_str.Format ("%.0f min",BandWidthValue);
-		second_str.Format ("%.0f min",BandWidthValue/2);
-		
-	} 
+	}
 
 
 	//6000 veh/h/link
@@ -468,19 +405,11 @@ void CDlg_Legend::OnSize(UINT nType, int cx, int cy)
 	RedrawWindow();
 }
 
-void CDlg_Legend::OnCbnSelchangeComboEmissiontype()
-{
-	if(m_pDoc->m_LinkMOEMode == MOE_emissions)
-	{
 
-		Invalidate(1);
-		m_pDoc->UpdateAllViews (0);
-	}
-}
 
 void CDlg_Legend::OnCbnSelchangeComboAggregation()
 {
-	if(m_pDoc->m_LinkMOEMode == MOE_impact || m_pDoc->m_LinkMOEMode == MOE_bottleneck)
+	if( m_pDoc->m_LinkMOEMode == MOE_bottleneck)
 	{
 		g_ImpactThreshold_QueueLengthPercentage= ( m_QueueCutOffComboBox.GetCurSel () +1)*10;
 
@@ -498,7 +427,7 @@ void CDlg_Legend::OnStnClickedStaticQueueCutOff()
 
 void CDlg_Legend::OnCbnSelchangeComboStudyPeriod()
 {
-	if(m_pDoc->m_LinkMOEMode == MOE_impact ||  m_pDoc->m_LinkMOEMode == MOE_bottleneck)
+	if(  m_pDoc->m_LinkMOEMode == MOE_bottleneck)
 	{
 		g_ImpactStudyPeriodInMin= ( m_ComboxStudyPeriod.GetCurSel () +1)*60;
 

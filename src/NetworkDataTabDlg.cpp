@@ -438,7 +438,7 @@ void CNetworkDataTabDlg::ZoomToSelectedObject()
 			}
 		}
 
-		DTALink* pLink = m_pDoc->FindLinkWithNodeNumbers(from_node_id,to_node_id);
+		DTALink* pLink = m_pDoc->FindLinkWithNodeIDs(from_node_id,to_node_id);
 		if(pLink!=NULL)
 		{
 			m_pDoc->m_SelectedLinkNo = pLink->m_LinkNo;
@@ -519,7 +519,7 @@ void CNetworkDataTabDlg::OnLvnItemchangedList(NMHDR *pNMHDR, LRESULT *pResult)
 
 			}
 		}
-		DTALink* pLink = m_pDoc->FindLinkWithNodeNumbers(from_node_id,to_node_id);
+		DTALink* pLink = m_pDoc->FindLinkWithNodeIDs(from_node_id,to_node_id);
 		if(pLink!=NULL)
 		{
 			m_pDoc->m_SelectedLinkNo = pLink->m_LinkNo;

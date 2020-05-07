@@ -62,7 +62,7 @@ public:
 	CComboBox m_OriginBox;
 	CComboBox m_DestinationBox;
 	CComboBox m_DepartureTimeBox;
-	CComboBox m_DemandTypeBox;
+	CComboBox m_AgentTypeBox;
 	virtual BOOL OnInitDialog();
 	afx_msg void OnLbnSelchangeListAgent();
 	afx_msg void OnLbnSelchangeListLink2();
@@ -98,7 +98,6 @@ public:
 	afx_msg void OnBnClickedOk();
 	afx_msg void OnLvnItemchangedList(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void OnPathLvnItemchangedList(NMHDR *pNMHDR, LRESULT *pResult);
-	CComboBox m_DayNo_Combobox;
 	afx_msg void OnCbnSelchangeComboDayno();
 	afx_msg void OnLvnItemchangedList5(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void OnBnClickedBarchart();

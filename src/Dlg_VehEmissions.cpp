@@ -56,13 +56,10 @@ void CDlg_VehPathAnalysis::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_COMBO_Destination, m_DestinationBox);
 	DDX_Control(pDX, IDC_COMBO_DepartureTime, m_DepartureTimeBox);
 	DDX_Control(pDX, IDC_COMBO_Min_Number_of_Agents, m_MinAgentSizeBox);
-	DDX_Control(pDX, IDC_COMBO_Min_Travel_Time, m_MinDistanceBox);
-	DDX_Control(pDX, IDC_COMBO_Min_TravelTimeIndex, m_MaxSpeedBox);
 	DDX_Control(pDX, IDC_COMBO_TimeInterval, m_TimeIntervalBox);
 	DDX_Control(pDX, IDC_COMBO_ImpactLink, m_ImpactLinkBox);
 	DDX_Control(pDX, IDC_SUMMARY_INFO, m_Summary_Info_Edit);
-	DDX_Control(pDX, IDC_COMBO_DemandType, m_DemandTypeBox);
-	DDX_Control(pDX, IDC_COMBO_DayNo, m_DayNo_Combobox);
+	DDX_Control(pDX, IDC_COMBO_AgentType, m_AgentTypeBox);
 }
 
 
@@ -83,7 +80,7 @@ BEGIN_MESSAGE_MAP(CDlg_VehPathAnalysis, CDialog)
 	ON_CBN_SELCHANGE(IDC_COMBO_ImpactLink, &CDlg_VehPathAnalysis::OnCbnSelchangeComboImpactlink)
 	ON_LBN_DBLCLK(IDC_LIST_OD, &CDlg_VehPathAnalysis::OnLbnDblclkListOd)
 	ON_BN_CLICKED(ID_EXPORT, &CDlg_VehPathAnalysis::OnBnClickedExport)
-	ON_CBN_SELCHANGE(IDC_COMBO_DemandType, &CDlg_VehPathAnalysis::OnCbnSelchangeComboDemandtype)
+	ON_CBN_SELCHANGE(IDC_COMBO_AgentType, &CDlg_VehPathAnalysis::OnCbnSelchangeComboDemandtype)
 	ON_BN_CLICKED(ID_EXPORT_PATH_DATA, &CDlg_VehPathAnalysis::OnBnClickedExportPathData)
 	ON_BN_CLICKED(ID_EXPORT_Agent_DATA, &CDlg_VehPathAnalysis::OnBnClickedExportAgentData)
 	ON_BN_CLICKED(ID_FindCriticalOD, &CDlg_VehPathAnalysis::OnBnClickedFindcriticalod)
@@ -110,7 +107,7 @@ BOOL CDlg_VehPathAnalysis::OnInitDialog()
 	{
 		DTALink* pLink= m_pDoc->m_LinkNoMap [m_pDoc->m_SelectedLinkNo];
 
-			str.Format ("%d->%d, Selected Link", pLink ->m_FromNodeNumber,pLink ->m_ToNodeNumber );
+			str.Format ("%d->%d, Selected Link", pLink ->m_FromNodeID,pLink ->m_ToNodeID );
 			m_ImpactLinkBox.AddString (str);
 
 	}
@@ -151,15 +148,26 @@ BOOL CDlg_VehPathAnalysis::OnInitDialog()
 	m_ProjectSize = max(1,project_index);
 
 
+	m_AgentTypeBox.AddString("All");
 
+	int total_agent_type_size = m_pDoc->m_AgentTypeMap.size();
 
+	for(int a = 1; a<= total_agent_type_size; a++)
+	{ 
+	std::map<string, DTAAgentType>::const_iterator itr;
 
-	m_DemandTypeBox.AddString("All");
-	for(i = 0; i< m_pDoc->m_DemandTypeVector .size(); i++)
+	char text[100];
+	for (itr = m_pDoc->m_AgentTypeMap.begin(); itr != m_pDoc->m_AgentTypeMap.end(); itr++)
 	{
-	m_DemandTypeBox.AddString (m_pDoc->m_DemandTypeVector[i].demand_type_name);
+		if(itr->second.agent_type_no == a)
+		{
+		sprintf_s(text, "%s", itr->second .agent_type.c_str());
+		m_AgentTypeBox.AddString (text);
+		}
 	}
-	m_DemandTypeBox.SetCurSel(0);
+	}
+
+	m_AgentTypeBox.SetCurSel(0);
 
 
 	for(i=0; i <= 1440 ; i+=15)
@@ -169,14 +177,6 @@ BOOL CDlg_VehPathAnalysis::OnInitDialog()
 	}
 	m_DepartureTimeBox.SetCurSel (0);
 
-	for(i=0; i<100; i++)
-	{
-		str.Format ("%d", i);
-		m_DayNo_Combobox.AddString(str);
-
-	}
-
-	m_DayNo_Combobox.SetCurSel (0);
 
 	m_TimeIntervalBox.AddString("1440");
 	m_TimeIntervalBox.AddString("15");
@@ -199,41 +199,11 @@ BOOL CDlg_VehPathAnalysis::OnInitDialog()
 	m_MinAgentSizeBox.AddString ("500");
 
 	if(m_pDoc->m_ZoneNoSize <100)
-		m_MinAgentSizeBox.SetCurSel (1);  //2
+		m_MinAgentSizeBox.SetCurSel (0);  //2
 	else if (m_pDoc->m_ZoneNoSize <200)
 		m_MinAgentSizeBox.SetCurSel (2);  // 5
 	else
 		m_MinAgentSizeBox.SetCurSel (4); // 20
-
-
-	m_MinDistanceBox.AddString ("0");
-	m_MinDistanceBox.AddString ("1");
-	m_MinDistanceBox.AddString ("2");
-	m_MinDistanceBox.AddString ("3");
-	m_MinDistanceBox.AddString ("4");
-	m_MinDistanceBox.AddString ("5");
-	m_MinDistanceBox.AddString ("10");
-	m_MinDistanceBox.AddString ("15");
-	m_MinDistanceBox.AddString ("20");
-	m_MinDistanceBox.AddString ("30");
-	m_MinDistanceBox.AddString ("50");
-	m_MinDistanceBox.AddString ("100");
-	m_MinDistanceBox.SetCurSel (0);
-
-    m_MaxSpeedBox.AddString("300"); 
-	m_MaxSpeedBox.AddString("200"); 
-	m_MaxSpeedBox.AddString("150"); 
-    m_MaxSpeedBox.AddString("100"); 
-	m_MaxSpeedBox.AddString("80"); 
-	m_MaxSpeedBox.AddString("60"); 
-	m_MaxSpeedBox.AddString("50"); 
-	m_MaxSpeedBox.AddString("40"); 
-	m_MaxSpeedBox.AddString("30"); 
-	m_MaxSpeedBox.AddString("20"); 
-	m_MaxSpeedBox.AddString("10"); 
-	m_MaxSpeedBox.AddString("5"); 
-	m_MaxSpeedBox.SetCurSel (0);
-
 
 	// initialize List Control
 	m_ListCtrl.SetCellMargin(1.2);
@@ -249,8 +219,8 @@ BOOL CDlg_VehPathAnalysis::OnInitDialog()
 
 	std::vector<CString> ColumnLabelVector;
 
-	ColumnLabelVector.push_back ("Origin Zone");
-	ColumnLabelVector.push_back ("Destination Zone");
+	ColumnLabelVector.push_back ("O Zone");
+	ColumnLabelVector.push_back ("D Zone");
 
 	m_GPS_start_day = 3;
 	m_GPS_end_day = 17;
@@ -265,7 +235,7 @@ BOOL CDlg_VehPathAnalysis::OnInitDialog()
 		{
 
 			CString str;
-			str.Format ("%s Count:", (*iDoc)->m_ProjectTitle);
+			str.Format ("Volume");
 			ColumnLabelVector.push_back (str);
 			ColumnLabelVector.push_back ("Avg Travel Time");
 			ColumnLabelVector.push_back ("Avg Distance");
@@ -318,7 +288,7 @@ BOOL CDlg_VehPathAnalysis::OnInitDialog()
 	std::vector<CString> ColumnPathLabelVector;
 
 	ColumnPathLabelVector.push_back ("Path No");
-	ColumnPathLabelVector.push_back ("Count");
+	ColumnPathLabelVector.push_back ("Volume");
 	ColumnPathLabelVector.push_back ("Percentage");
 	ColumnPathLabelVector.push_back ("Travel Time");
 	ColumnPathLabelVector.push_back ("Distance");
@@ -375,10 +345,10 @@ void CDlg_VehPathAnalysis::FilterOriginDestinationPairs()
 	if(m_ImpactLinkBox.GetCurSel()>0)
 	{
 		char m_Text[MAX_STRING_LENGTH];
-		int FromNodeNumber, ToNodeNumber;
+		int FromNodeID, ToNodeID;
 		m_ImpactLinkBox.GetLBText (m_ImpactLinkBox.GetCurSel(), m_Text);
-		sscanf(m_Text, "%d->%d", &FromNodeNumber, &ToNodeNumber);
-		DTALink* pLink = m_pDoc->FindLinkWithNodeNumbers(FromNodeNumber, ToNodeNumber);
+		sscanf(m_Text, "%d->%d", &FromNodeID, &ToNodeID);
+		DTALink* pLink = m_pDoc->FindLinkWithNodeIDs(FromNodeID, ToNodeID);
 		if(pLink!=NULL)
 			ImpactLinkNo = pLink->m_LinkNo;
 	}
@@ -403,8 +373,6 @@ void CDlg_VehPathAnalysis::FilterOriginDestinationPairs()
 		//Origin = 1737;
 		//Destination = 1767;
 
-		int DemandType = m_DemandTypeBox.GetCurSel();
-
 		char str[MAX_STRING_LENGTH];
 		m_DepartureTimeBox.GetLBText(m_DepartureTimeBox.GetCurSel(), str);
 		int DepartureTime = atoi(str);
@@ -415,13 +383,8 @@ void CDlg_VehPathAnalysis::FilterOriginDestinationPairs()
 		m_MinAgentSizeBox.GetLBText(m_MinAgentSizeBox.GetCurSel(), str);
 		int MinAgentSize = atoi(str);
 
-		m_MinDistanceBox.GetLBText(m_MinDistanceBox.GetCurSel(), str);
-		int MinDistance = atoi(str);
-
-		m_MaxSpeedBox.GetLBText(m_MaxSpeedBox.GetCurSel(), str);
-		float MaxSpeed = atof(str);
-
-		int DayNo = m_DayNo_Combobox.GetCurSel();
+		m_AgentTypeBox.GetLBText(m_AgentTypeBox.GetCurSel(), str);
+		int AgentTypeNo = m_AgentTypeBox.GetCurSel();
 
 		int count = 0;
 		std::list<DTAAgent*>::iterator iAgent;
@@ -442,29 +405,24 @@ void CDlg_VehPathAnalysis::FilterOriginDestinationPairs()
 			DTAAgent* pAgent = (*iAgent);
 
 
-			int OrgNo = (*iDoc)->m_ZoneIDtoZoneNoMap[pAgent->m_FromZoneID];
-			int DesNo = (*iDoc)->m_ZoneIDtoZoneNoMap[pAgent->m_ToZoneID];
+			int OrgNo = (*iDoc)->m_ZoneIDtoZoneNoMap[pAgent->m_o_ZoneID];
+			int DesNo = (*iDoc)->m_ZoneIDtoZoneNoMap[pAgent->m_d_ZoneID];
 
 
 			if(OrgNo>=0 && DesNo >=0  && pAgent->m_bComplete )  // with physical path in the network
 			{
 				if( 
-					(pAgent->m_DayNo == DayNo || DayNo == 0 ) &&
-					(pAgent->m_FromZoneID == Origin ||Origin ==0)&&
-					(pAgent->m_ToZoneID  == Destination ||Destination ==0)&&
-					(pAgent->m_DemandType  == DemandType ||DemandType ==0)&&
+					
+					(pAgent->m_o_ZoneID == Origin ||Origin ==0)&&
+					(pAgent->m_d_ZoneID  == Destination ||Destination ==0)&&
+					(pAgent->m_AgentTypeNo  == AgentTypeNo ||AgentTypeNo ==0)&&
 					(pAgent->m_DepartureTime >= DepartureTime && pAgent->m_DepartureTime <= DepartureTime+TimeInterval))
 				{
 
-					m_ODMOEMatrix[p][OrgNo][DesNo].TotalAgentSize+=1;
+					m_ODMOEMatrix[p][OrgNo][DesNo].TotalAgentSize+= pAgent->m_Volume ;
 
-					if( (*iDoc)->m_bGPSDataSet )
-					{
-					m_ODMOEMatrix[p][OrgNo][DesNo].day_count[pAgent->m_DayNo ]+=1;
-					}
-
-					m_ODMOEMatrix[p][OrgNo][DesNo].TotalTravelTime += (pAgent->m_ArrivalTime-pAgent->m_DepartureTime);
-					m_ODMOEMatrix[p][OrgNo][DesNo].TotalDistance += pAgent->m_Distance;
+					m_ODMOEMatrix[p][OrgNo][DesNo].TotalTravelTime += (pAgent->m_TripTime * pAgent->m_Volume);
+					m_ODMOEMatrix[p][OrgNo][DesNo].TotalDistance += (pAgent->m_Distance* pAgent->m_Volume);
 					
 
 					if(ImpactLinkNo>=0)
@@ -490,17 +448,17 @@ void CDlg_VehPathAnalysis::FilterOriginDestinationPairs()
 		for (iAgent = (*iDoc)->m_AgentSet.begin(); iAgent != (*iDoc)->m_AgentSet.end(); iAgent++, count++)
 		{
 			DTAAgent* pAgent = (*iAgent);
-			int OrgNo = (*iDoc)->m_ZoneIDtoZoneNoMap[pAgent->m_FromZoneID];
-			int DesNo = (*iDoc)->m_ZoneIDtoZoneNoMap[pAgent->m_ToZoneID];
+			int OrgNo = (*iDoc)->m_ZoneIDtoZoneNoMap[pAgent->m_o_ZoneID];
+			int DesNo = (*iDoc)->m_ZoneIDtoZoneNoMap[pAgent->m_d_ZoneID];
 
 
 			if(OrgNo>=0 && DesNo >=0 /*pAgent->m_NodeSize >= 2 && */ && pAgent->m_bComplete )  // with physical path in the network
 			{
 				if( 
-					(pAgent->m_DayNo == DayNo || DayNo == 0 ) &&
-					(pAgent->m_FromZoneID == Origin ||Origin ==0)&&
-					(pAgent->m_ToZoneID  == Destination ||Destination ==0)&&
-					(pAgent->m_DemandType  == DemandType ||DemandType ==0)&&
+					
+					(pAgent->m_o_ZoneID == Origin ||Origin ==0)&&
+					(pAgent->m_d_ZoneID  == Destination ||Destination ==0)&&
+					(pAgent->m_AgentTypeNo  == AgentTypeNo ||AgentTypeNo ==0)&&
 					(pAgent->m_DepartureTime >= DepartureTime && pAgent->m_DepartureTime <= DepartureTime+TimeInterval))
 				{
 					float AvgTravelTime = m_ODMOEMatrix[p][OrgNo][DesNo].TotalTravelTime/max(1,m_ODMOEMatrix[p][OrgNo][DesNo].TotalAgentSize );
@@ -552,8 +510,7 @@ void CDlg_VehPathAnalysis::FilterOriginDestinationPairs()
 
 
 					float AvgSpeed = AvgDistance * 60 / max(0.1,AvgTravelTime);  // mph
-					if(m_ODMOEMatrix[p][i][j].TotalAgentSize >= MinAgentSize && 
-						AvgDistance >= MinDistance && AvgSpeed <=MaxSpeed)
+					if(m_ODMOEMatrix[p][i][j].TotalAgentSize >= MinAgentSize)
 					{
 
 						CString ODInfoString;
@@ -579,7 +536,7 @@ void CDlg_VehPathAnalysis::FilterOriginDestinationPairs()
 		else
 			column_index = 8 + (p-1)*8 ;  // -1 no diff for base line
 
-		sprintf_s(text, "%d",m_ODMOEMatrix[p][i][j].TotalAgentSize);
+		sprintf_s(text, "%3.2f",m_ODMOEMatrix[p][i][j].TotalAgentSize);
 		m_ListCtrl.SetItemText(Index,column_index++,text );
 
 		sprintf_s(text, "%3.1f",AvgTravelTime);
@@ -593,33 +550,6 @@ void CDlg_VehPathAnalysis::FilterOriginDestinationPairs()
 		m_ListCtrl.SetItemText(Index,column_index++,text );
 
 		
-		if((*iDoc)-> m_bGPSDataSet)
-			{
-
-				int min = 10000;
-				int max = 0;
-				int total = 0;
-				for(int day = m_GPS_start_day; day<=m_GPS_end_day; day++)
-				{
-
-					if(m_ODMOEMatrix[p][i][j].day_count [day] > max)
-						max = m_ODMOEMatrix[p][i][j].day_count [day];
-
-					if(m_ODMOEMatrix[p][i][j].day_count [day] < min)
-						min = m_ODMOEMatrix[p][i][j].day_count [day];
-
-					total +=  m_ODMOEMatrix[p][i][j].day_count [day];
-				
-				sprintf_s(text, "%d",m_ODMOEMatrix[p][i][j].day_count [day]);
-				m_ListCtrl.SetItemText(Index,column_index++,text );
-
-				}
-
-				sprintf_s(text, "%.3f",(max-min)*1.0f/max(1,total)*(m_GPS_end_day+1-m_GPS_start_day));
-				m_ListCtrl.SetItemText(Index,column_index++,text );
-			
-			}
-
 		if(p>=1)
 		{
 		sprintf_s(text, "%3.1f",m_ODMOEMatrix[p][i][j].AvgDistance - m_ODMOEMatrix[0][i][j].AvgDistance);
@@ -697,7 +627,7 @@ void CDlg_VehPathAnalysis::FilterPaths()
 	int Origin = m_SelectedOrigin;
 	int Destination = m_SelectedDestination;
 
-	int DemandType = m_DemandTypeBox.GetCurSel();
+	int AgentTypeNo = m_AgentTypeBox.GetCurSel();
 	
 	char str[50];
 	m_DepartureTimeBox.GetLBText(m_DepartureTimeBox.GetCurSel(), str);
@@ -709,14 +639,9 @@ void CDlg_VehPathAnalysis::FilterPaths()
 	m_MinAgentSizeBox.GetLBText(m_MinAgentSizeBox.GetCurSel(), str);
 	int MinAgentSize = atoi(str);
 
-	m_MinDistanceBox.GetLBText(m_MinDistanceBox.GetCurSel(), str);
-	int MinDistance = atoi(str);
-
-
-		int DayNo = m_DayNo_Combobox.GetCurSel();
 
 	int count = 0;
-	int Agent_count = 0;
+	float Agent_count = 0;
 	std::list<DTAAgent*>::iterator iAgent;
 
 	for (iAgent = m_pDoc->m_AgentSet.begin(); iAgent != m_pDoc->m_AgentSet.end(); iAgent++, count++)
@@ -727,10 +652,10 @@ void CDlg_VehPathAnalysis::FilterPaths()
 		if(pAgent->m_NodeSize >= 2 && pAgent->m_bComplete )  // with physical path in the network
 		{
 			if( 
-				(pAgent->m_DayNo == DayNo || DayNo == 0 ) &&
-				(pAgent->m_FromZoneID == Origin)&&
-				(pAgent->m_ToZoneID  == Destination)&&
-				(pAgent->m_DemandType  == DemandType ||DemandType ==0)&&
+				
+				(pAgent->m_o_ZoneID == Origin)&&
+				(pAgent->m_d_ZoneID  == Destination)&&
+				(pAgent->m_AgentTypeNo  == AgentTypeNo ||AgentTypeNo ==0)&&
 				(pAgent->m_DepartureTime >= DepartureTime && pAgent->m_DepartureTime <= DepartureTime+TimeInterval))
 			{
 
@@ -745,18 +670,17 @@ void CDlg_VehPathAnalysis::FilterPaths()
 					
 
 					//existing path
-					if(pAgent->m_NodeNumberSum == m_PathVector[p].NodeNumberSum  && pAgent->m_NodeSize == m_PathVector[p].NodeSize )
+					if(pAgent->m_NodeIDSum == m_PathVector[p].NodeIDSum  && pAgent->m_NodeSize == m_PathVector[p].NodeSize )
 					{
 						
-						m_PathVector[p].date_id = pAgent->m_DayNo ;
 						m_PathVector[p].departure_time_in_min = pAgent->m_DepartureTime ;
-						m_PathVector[p].TotalAgentSize+=1;
-						m_PathVector[p].TotalTravelTime  += (pAgent->m_ArrivalTime-pAgent->m_DepartureTime);
-						m_PathVector[p].TotalDistance   += pAgent->m_Distance;
+						m_PathVector[p].TotalAgentSize+= pAgent->m_Volume ;
+						m_PathVector[p].TotalTravelTime  += (pAgent->m_TripTime* pAgent->m_Volume);
+						m_PathVector[p].TotalDistance   += (pAgent->m_Distance* pAgent->m_Volume);
 
-						m_PathVector[p].m_TravelTimeVector.push_back(pAgent->m_ArrivalTime-pAgent->m_DepartureTime);
+						m_PathVector[p].m_TravelTimeVector.push_back(pAgent->m_TripTime);
 
-						Agent_count ++;
+						Agent_count += pAgent->m_Volume;
 
 						m_PathVector[p].m_AgentVector.push_back(pAgent);
 						bFingFlag = true;
@@ -767,17 +691,16 @@ void CDlg_VehPathAnalysis::FilterPaths()
 				{
 					// new path
 					PathStatistics ps_element;
-					ps_element.NodeNumberSum = pAgent->m_NodeNumberSum;
+					ps_element.NodeIDSum = pAgent->m_NodeIDSum;
 					ps_element.NodeSize = pAgent->m_NodeSize;
-					ps_element.date_id = pAgent->m_DayNo ;
 					ps_element.departure_time_in_min = pAgent->m_DepartureTime ;
-					ps_element.TotalAgentSize = 1;
-					ps_element.TotalTravelTime  += (pAgent->m_ArrivalTime-pAgent->m_DepartureTime);
-					ps_element.TotalDistance   += pAgent->m_Distance;
-					ps_element.m_TravelTimeVector.push_back((pAgent->m_ArrivalTime-pAgent->m_DepartureTime));
-					ps_element.m_TravelTimeVector.push_back((pAgent->m_ArrivalTime-pAgent->m_DepartureTime)/max(0.01,pAgent->m_Distance));
+					ps_element.TotalAgentSize = pAgent->m_Volume;
+					ps_element.TotalTravelTime  += (pAgent->m_TripTime * pAgent->m_Volume);
+					ps_element.TotalDistance   += (pAgent->m_Distance * pAgent->m_Volume);
+					ps_element.m_TravelTimeVector.push_back((pAgent->m_TripTime));
+					ps_element.m_TravelTimeVector.push_back((pAgent->m_TripTime)/max(0.01,pAgent->m_Distance));
 
-						Agent_count ++;
+						Agent_count += pAgent->m_Volume ;
 
 
 					ps_element.m_AgentVector.push_back(pAgent);
@@ -819,7 +742,7 @@ void CDlg_VehPathAnalysis::FilterPaths()
 		Index = m_PathListCtrl.InsertItem(LVIF_TEXT,row_index++,text , 0, 0, 0, NULL);
 		column_index++;
 
-		sprintf_s(text, "%d", m_PathVector[p].TotalAgentSize);
+		sprintf_s(text, "%3.2f", m_PathVector[p].TotalAgentSize);
 		m_PathListCtrl.SetItemText(Index,column_index++,text );
 
 		sprintf_s(text, "%2.1f", m_PathVector[p].TotalAgentSize*100.0/Agent_count);
@@ -866,7 +789,7 @@ void CDlg_VehPathAnalysis::ShowAgents()
 
 			}
 
-			AgentInfoString.Format ("No. %d, %d, @%3.1f min, %3.1f min",pAgent->m_AgentID , pAgent->m_DemandType, pAgent->m_DepartureTime, pAgent->m_ArrivalTime-pAgent->m_DepartureTime);
+			AgentInfoString.Format ("No. %d, %d, @%3.1f min, %3.1f min",pAgent->m_AgentID , pAgent->m_AgentType, pAgent->m_DepartureTime, pAgent->m_ArrivalTime-pAgent->m_DepartureTime);
 	
 			if(m_AgentList.GetCount () <= 20000)
 			{

@@ -83,7 +83,7 @@ int CTLiteDoc::Routing(bool bCheckConnectivity, bool bRebuildNetwork)
 	
 	if(bCheckConnectivity == false)
 	{
-		if(m_FromNodeID < 0 || m_ToNodeID <0)
+		if(m_FromNodeNo < 0 || m_ToNodeNo <0)
 	{
 		m_SelectPathNo = -1;
 		return 0;
@@ -97,12 +97,12 @@ int CTLiteDoc::Routing(bool bCheckConnectivity, bool bRebuildNetwork)
 	if(m_pNetwork ==NULL)  
 		{
 		m_pNetwork = new DTANetworkForSP(m_NodeSet.size(), m_LinkSet.size(), 1, 1, m_AdjLinkSize);  //  network instance for single processor in multi-thread environment
-		m_pNetwork->BuildPhysicalNetwork(&m_NodeSet, &m_LinkSet, m_RandomRoutingCoefficient, false, m_FromNodeID, m_ToNodeID);
+		m_pNetwork->BuildPhysicalNetwork(&m_NodeSet, &m_LinkSet, m_RandomRoutingCoefficient, false, m_FromNodeNo, m_ToNodeNo);
 		}
 
 	if(bRebuildNetwork)  // link cost changed
 	{
-		m_pNetwork->BuildPhysicalNetwork(&m_NodeSet, &m_LinkSet, m_RandomRoutingCoefficient, false,m_FromNodeID, m_ToNodeID);
+		m_pNetwork->BuildPhysicalNetwork(&m_NodeSet, &m_LinkSet, m_RandomRoutingCoefficient, false,m_FromNodeNo, m_ToNodeNo);
 
 	}
 		int NodeNodeSum = 0;
@@ -117,11 +117,11 @@ int CTLiteDoc::Routing(bool bCheckConnectivity, bool bRebuildNetwork)
 			
 			if(bCheckConnectivity==true)
 			{
-				m_pNetwork->SimplifiedTDLabelCorrecting_DoubleQueue(m_FromNodeID, 0, m_ToNodeID, 1, 10.0f,PathLinkList,TotalCost, distance_flag, true, false,0);   // Pointer to previous node (node)
+				m_pNetwork->SimplifiedTDLabelCorrecting_DoubleQueue(m_FromNodeNo, 0, m_ToNodeNo, 1, 10.0f,PathLinkList,TotalCost, distance_flag, true, false,0);   // Pointer to previous node (node)
 
 					for (std::list<DTANode*>::iterator  iNode = m_NodeSet.begin(); iNode != m_NodeSet.end(); iNode++)
 					{
-						(*iNode)->m_DistanceToRoot  = m_pNetwork->LabelCostAry[(*iNode)->m_NodeNo ];
+						(*iNode)->m_DistanceToRoot  = m_pNetwork->LabelCostAry[(*iNode)->m_NodeID ];
 					}
 		
 				return 0;
@@ -131,7 +131,7 @@ int CTLiteDoc::Routing(bool bCheckConnectivity, bool bRebuildNetwork)
 
 			std::vector<int> ODNodeSequenceVector;
 
-			ODNodeSequenceVector.push_back(m_FromNodeID);
+			ODNodeSequenceVector.push_back(m_FromNodeNo);
 
 			// add intermediate destinations 
 			for(unsigned int idest = 0; idest < m_IntermediateDestinationVector.size(); idest++)
@@ -139,7 +139,7 @@ int CTLiteDoc::Routing(bool bCheckConnectivity, bool bRebuildNetwork)
 			ODNodeSequenceVector.push_back(m_IntermediateDestinationVector[idest]);
 			}
 
-			ODNodeSequenceVector.push_back(m_ToNodeID);
+			ODNodeSequenceVector.push_back(m_ToNodeNo);
 
 
 				DTAPath path_element;
@@ -166,20 +166,20 @@ int CTLiteDoc::Routing(bool bCheckConnectivity, bool bRebuildNetwork)
 						label.Format ("%d", 1);
 						path_element.m_PathLabelVector.push_back(label);
 
-						DTALink* pLink = m_LinkNotoLinkMap[PathLinkList[i]];
+						DTALink* pLink = m_LinkNoMap[PathLinkList[i]];
 
 					
 						if(pLink!=NULL)
 						{ 
-							path_element.m_Distance += m_LinkNotoLinkMap[PathLinkList[i]]->m_Length ;
+							path_element.m_Distance += m_LinkNoMap[PathLinkList[i]]->m_Length ;
 							path_element.m_NumberOfSensorsPassed += pLink->m_bSensorData;
 
 						if(path_element.m_LinkVector.size()==1) // first link
 						{
-							path_element.m_TravelTime = pLink->GetDynamicTravelTime(g_Simulation_Time_Stamp,m_PrimaryDataSource );
+							path_element.m_TravelTime = pLink->GetDynamicTravelTime(g_Simulation_Time_Stamp );
 						}else
 						{
-							path_element.m_TravelTime = path_element.m_TravelTime + pLink->GetDynamicTravelTime(path_element.m_TravelTime,m_PrimaryDataSource );
+							path_element.m_TravelTime = path_element.m_TravelTime + pLink->GetDynamicTravelTime(path_element.m_TravelTime );
 
 						}
 						}
@@ -222,7 +222,7 @@ int CTLiteDoc::Routing(bool bCheckConnectivity, bool bRebuildNetwork)
 					if(pLink == NULL)
 						break;
 
-					path_element.m_TimeDependentTravelTime[t] += pLink->GetDynamicTravelTime(path_element.m_TimeDependentTravelTime[t], m_PrimaryDataSource );
+					path_element.m_TimeDependentTravelTime[t] += pLink->GetDynamicTravelTime(path_element.m_TimeDependentTravelTime[t] );
 
 				}
 

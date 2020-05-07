@@ -72,7 +72,7 @@ public:
 //class DTA_NodeMovementSet
 //{
 //public:
-//	int CurrentNodeID; 
+//	int CurrentNodeNo; 
 //	CDataElement DataMatrix[50][50]; // generic data matrix (to store number and string)
 //	DTA_Movement MovementMatrix[50];   //32 possible movements
 ////	DTA_NodeMovementSet &operator=( DTA_NodeMovementSet & );
@@ -86,8 +86,8 @@ public:
 //	{
 //
 //		int i = 0;  // i is row index 
-//		DataMatrix[i][c].m_text = movement.UpNodeID; i++; 
-//		DataMatrix[i][c].m_text = movement.DestNodeID; i++; 
+//		DataMatrix[i][c].m_text = movement.UpNodeNo; i++; 
+//		DataMatrix[i][c].m_text = movement.DestNodeNo; i++; 
 //		DataMatrix[i][c].m_text = movement.TurnVolume; i++; 
 //		
 //		DataMatrix[i][c].m_text = movement.Lanes; i++; 
@@ -177,7 +177,7 @@ public:
 //	void copy_parameters(DTA_NodeMovementSet M)
 //	{
 //		int i,j;
-//		CurrentNodeID = M.CurrentNodeID;
+//		CurrentNodeNo = M.CurrentNodeNo;
 //		for(j=0; j<12;j++)
 //		{
 //			for(i=0; i<30; i++)

@@ -22,7 +22,7 @@ protected:
 public:
 
 		CTLiteDoc* m_pDoc;
-	long NodeID;
+	long NodeNo;
 	CString NodeName;
 	long ZoneID;
 

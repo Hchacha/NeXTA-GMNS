@@ -213,7 +213,6 @@ enum DTA_SIG_PHASE_ROW
 	DTA_PHASE_ATTRIBUTE_MAX_ROW};
 
 enum eLinkMOEMode {no_display,lane_volume,speed_kmh, cummulative_volume, oblique_cummulative_volume, link_inflow_volume,link_outflow_volume,link_in_and_outflow_volume,link_travel_time,speed_mph,link_density,link_queue_length_ratio,number_of_queued_Agents,link_traveltime, link_travel_time_plus_prediction, Agent_trajectory,cumulative_SOV_count,cumulative_HOV_count,cumulative_truck_count,cumulative_intermodal_count, energy_miles_per_gallon, emission_CO,emission_CO2,emission_NOX,emission_HC};
-enum eLinkDataType { eSimulationData, eFloatingCarData };
 
 class DTA_Movement_Data_Matrix
 {
@@ -492,16 +491,16 @@ public:
 	total_demand = 0;
 	}
 
-	void SetValue(int demand_type, float value)
+	void SetValue(int agent_type, float value)
 	{
-	TypeValue[demand_type]= value;
+	TypeValue[agent_type]= value;
 	total_demand += value;
 	}
 
-	float GetValue(int demand_type)
+	float GetValue(int agent_type)
 	{
-	if( TypeValue.find(demand_type) != TypeValue.end())
-		return TypeValue[demand_type];
+	if( TypeValue.find(agent_type) != TypeValue.end())
+		return TypeValue[agent_type];
 	else
 		return 0;
 	}
@@ -552,7 +551,7 @@ public:
 	
 
 
-	bool FindANode(int NodeID, int External_OD_flag =0)
+	bool FindANode(int NodeNo, int External_OD_flag =0)
 	{
 
 
@@ -637,7 +636,7 @@ public:
 	int to_zone_id;
 	int starting_time_in_min;
 	int ending_time_in_min;
-	std::vector<float> number_of_Agents_per_demand_type;
+	std::vector<float> number_of_Agents_per_agent_type;
 
 	DTADemand()
 	{
@@ -670,23 +669,17 @@ class DTATimingPlan
 };
 
 
-class DTADemandType
+class DTAAgentType
 {
 public:
-	int demand_type;
-	float average_VOT;
+	string agent_type;
+	int agent_type_no;
+	string agent_type_name;
 
-	DTADemandType()
+	DTAAgentType()
 	{
-		average_VOT = 10;
 	}
 
-	void SetDefaultAgentTypeDistribution()
-	{
-	
-	}
-
-	CString demand_type_name;
 };
 
 class DTALinkType
@@ -696,9 +689,6 @@ public:
 	{
 	capacity_adjustment_factor = 1;
 
-	travel_time_bias_factor = 1;
-	saturation_flow_rate_in_vhc_per_hour_per_lane = 1800;
-	approximate_cycle_length_in_second = 0;
 	link_type = 0;
 	default_lane_capacity = 1000;  // per hour per lane
 	default_speed = 50;
@@ -706,9 +696,6 @@ public:
 	}
 
 	float capacity_adjustment_factor;
-	float approximate_cycle_length_in_second;
-	float saturation_flow_rate_in_vhc_per_hour_per_lane;
-	float travel_time_bias_factor; 
 	float default_lane_capacity;
 	float default_speed;
 	int default_number_of_lanes;
@@ -998,7 +985,7 @@ public:
 		m_NodeAttraction =0;
 
 		m_NodeID = 0;
-		m_NodeOriginalNumber = -1;
+		m_NodeNo = 0;
 		m_ControlType = 0;
 		m_ZoneID = 0;
 
@@ -1236,7 +1223,7 @@ public:
 
 	
 	bool m_bConnectedToFreewayORRamp;
-	std::string stop_id, transit_demand_type_code;
+	std::string stop_id, transit_agent_type_code;
 
 	int m_NumberofPhases;
 	float m_DistanceToRoot;
@@ -1256,9 +1243,8 @@ public:
 
 	bool m_bSignalData;
 	int m_LayerNo;
+	int m_NodeNo;
 	int m_NodeID;  //  original node number
-	int m_NodeOriginalNumber;  //  original node number
-	int m_NodeNo;  ///id, starting from zero, continuous sequence
 	int m_ZoneID;  // If ZoneID > 0 --> centroid,  otherwise a physical node.
 	int m_ControlType; // Type: ....
 	int m_NodeType;
@@ -1291,8 +1277,7 @@ public:
 	string m_Name;
 	GDPoint pt;
 	int m_LayerNo;
-	int m_NodeID;  //  original node number
-	int m_NodeNo;  ///id, starting from zero, continuous sequence
+	int m_NodeID;  ///id, starting from zero, continuous sequence
 	int m_ZoneID;  // If ZoneID > 0 --> centroid,  otherwise a physical node.
 	int m_ControlType; // Type: ....
 	float m_TotalCapacity;
@@ -1599,7 +1584,6 @@ public:
 		m_LevelOfService = 'A';
 		m_avg_waiting_time_on_loading_buffer = 0;
 
-		m_avg_simulated_speed = 0;
 		m_total_link_volume = 0;
 		m_total_travel_time = 0;
 		m_volume_over_capacity_ratio  = 0;
@@ -1630,10 +1614,10 @@ public:
 
 
 	
-	long m_FromNodeNumber;
-	long m_ToNodeNumber;
-	long m_FromNodeID;  // index starting from 0
-	long m_ToNodeID;    // index starting from 0
+	long m_FromNodeID;
+	long m_ToNodeID;
+	long m_FromNodeNo;  // index starting from 0
+	long m_ToNodeNo;    // index starting from 0
 	bool m_bSensorData;
 
 	std::string m_CountSensorID;
@@ -1681,8 +1665,6 @@ public:
 	float m_volume_over_capacity_ratio;
 	std::string m_LevelOfService;
 	float m_avg_waiting_time_on_loading_buffer;
-	float m_avg_simulated_speed;
-	// end of overall information
 
 	int input_line_no;
 
@@ -1956,7 +1938,7 @@ void AdjustLinkEndpointsWithSetBack()
 	int m_EffectiveLeftTurnGreenTimeInSecond;
 	int m_GreenStartTimetInSecond;
 	string m_Mode_code;
-	string m_demand_type_code;
+	string m_agent_type_code;
 
 	int m_DisplayLinkID;
 
@@ -2073,14 +2055,14 @@ void AdjustLinkEndpointsWithSetBack()
 				return 0 ;
 	}
 
-	float GetDynamicNodeDelay(int current_time, eLinkDataType data_type = eSimulationData)
+	float GetDynamicNodeDelay(int current_time)
 	{
 		float value = 0;
 			value =  GetSimulatedNodeDelay(current_time);
 	
 		return value;
 	}
-	float GetSimulatedSpeed(int current_time)
+	float GetTDSpeed(int current_time)
 	{
 		float total_value = 0;
 		int total_count = 0;
@@ -2091,7 +2073,7 @@ void AdjustLinkEndpointsWithSetBack()
 		{
 			if(t < m_LinkMOEArySize)
 			{
-				if(t < m_LinkMOEArySize && m_LinkMOEAry[t].Density >=0.1) // with flow
+				if(t < m_LinkMOEArySize ) // with flow
 				{
 					total_count++;
 					total_value+= m_LinkMOEAry[t].Speed;
@@ -2105,18 +2087,16 @@ void AdjustLinkEndpointsWithSetBack()
 				return this->m_FreeSpeed ;
 	}
 
-	float GetSimulatedSpeed(int current_time, int end_time)
+	float GetTDSpeed(int current_time, int end_time)
 	{
 		float total_value = 0;
 		int total_count = 0;
-
-		current_time = current_time + g_SimulationDayNo * 1440;
 
 		for (int t = current_time; t< end_time; t++)
 		{
 			if (t < m_LinkMOEArySize)
 			{
-				if (t < m_LinkMOEArySize && m_LinkMOEAry[t].Density >= 0.1) // with flow
+				if (t < m_LinkMOEArySize) // with flow
 				{
 					total_count++;
 					total_value += m_LinkMOEAry[t].Speed;
@@ -2130,15 +2110,7 @@ void AdjustLinkEndpointsWithSetBack()
 			return this->m_FreeSpeed;
 	}
 
-	float GetSimulationSpeed(int t)
-	{
-		t = t + g_SimulationDayNo * 1440;
-		if(t < m_LinkMOEArySize  && m_LinkMOEAry[t].Density >=0.1)
-		{
-			return m_LinkMOEAry[t].Speed;
-		}
-			return this->m_FreeSpeed;
-	}
+	
 
 			
 	float GetSimulatedLaneVolume(int current_time)
@@ -2193,9 +2165,6 @@ void AdjustLinkEndpointsWithSetBack()
 		float GetAvgLinkSpeed(int start_time, int end_time)
 	{
 
-		if(m_LinkMOEArySize == 0) // no time-dependent data 
-				return m_avg_simulated_speed;
-
 		start_time = start_time + g_SimulationDayNo*1440;
 		end_time = end_time + g_SimulationDayNo*1440;
 
@@ -2245,27 +2214,26 @@ void AdjustLinkEndpointsWithSetBack()
 	}
 
 
-	float GetWithinDayLinkMOE(eLinkMOEMode  MOEType, eLinkDataType LinkDataType, int i)
+	float GetWithinDayLinkMOE(eLinkMOEMode  MOEType, int i)
 	{
 
 		float  value = 0;
 
-		if(LinkDataType == eSimulationData)
-		{
+		
 
 				float	HourlyBackgroundFlow = 0.8*GetSimulatedLinkInVolume(i);
 
 				switch (MOEType)
 				{
 				case lane_volume: value= GetSimulatedLaneVolume(i); break;
-				case speed_kmh: value= GetSimulatedSpeed (i)/0.621371192; break;
+				case speed_kmh: value= GetTDSpeed (i)/0.621371192; break;
 				case cummulative_volume: value= GetArrivalCumulativeFlow(i); break;
 				case oblique_cummulative_volume: value= GetArrivalCumulativeFlow(i)-HourlyBackgroundFlow/60.0f*(i%1440); break;
 				case link_inflow_volume: value= GetSimulatedLinkInVolume(i); break;
 				case link_outflow_volume: value= GetSimulatedLinkOutVolume (i); break;
 				case link_in_and_outflow_volume: value= max(GetSimulatedLinkInVolume (i), GetSimulatedLinkOutVolume (i)); break;
 				case link_travel_time: value= GetSimulatedTravelTime (i); break;
-				case speed_mph: value= GetSimulatedSpeed (i); break;
+				case speed_mph: value= GetTDSpeed (i); break;
 				case link_density: value= GetSimulatedDensity(i); break;
 				case link_queue_length_ratio: value= GetQueueLengthPercentage(i); break;
 				case number_of_queued_Agents: value = GetNumberOfQueuedVeicles(i); break;
@@ -2276,7 +2244,7 @@ void AdjustLinkEndpointsWithSetBack()
 				default: value = 0;
 					}
 		
-		}
+		
 
 
 						return value;
@@ -2356,7 +2324,7 @@ void AdjustLinkEndpointsWithSetBack()
 
 	}
 	
-	float GetDynamicLinkVolume(int current_time, eLinkDataType data_type = eSimulationData)
+	float GetDynamicLinkVolume(int current_time)
 	{
 		float value = 0;
 			value =  GetSimulatedLinkVolume(current_time);
@@ -2364,7 +2332,7 @@ void AdjustLinkEndpointsWithSetBack()
 
 		return value;
 	}
-	float GetDynamicTravelTime(int current_time, eLinkDataType data_type = eSimulationData)
+	float GetDynamicTravelTime(int current_time)
 	{
 		float value = 0;
 
@@ -2374,10 +2342,10 @@ void AdjustLinkEndpointsWithSetBack()
 		return value;
 	}
 
-	float GetDynamicSpeed(int current_time, eLinkDataType data_type = eSimulationData)
+	float GetDynamicSpeed(int current_time)
 	{
 		float value = 0;
-			value =  GetSimulatedSpeed(current_time);
+			value =  GetTDSpeed(current_time);
 		return value;
 	}
 
@@ -2418,7 +2386,7 @@ void AdjustLinkEndpointsWithSetBack()
 			m_LinkMOEAry[t].ArrivalCumulativeFlow = ArrivalCumulativeFlow;
 			m_LinkMOEAry[t].DepartureCumulativeFlow = DepartureCumulativeFlow;
 
-			if(this->m_FromNodeNumber == 48 && this->m_ToNodeNumber == 41)
+			if(this->m_FromNodeID == 48 && this->m_ToNodeID == 41)
 			{
 
 				TRACE("\ntime t= %d, inflow  = %.1f,cumulative arrival count =%.1f, dep = %f, cd = %f ",t, m_LinkMOEAry[t].AgentInflowCount,ArrivalCumulativeFlow,m_LinkMOEAry[t].AgentOutflowCount, DepartureCumulativeFlow);
@@ -2432,7 +2400,7 @@ void AdjustLinkEndpointsWithSetBack()
 		{
 			m_LinkMOEAry[t].LinkFlow =  m_LinkMOEAry[t].AgentInflowCount* 60;  //* 60 to convert from min to hourly counts
 
-					if(this->m_FromNodeNumber == 48 && this->m_ToNodeNumber == 41)
+					if(this->m_FromNodeID == 48 && this->m_ToNodeID == 41)
 			{
 
 				TRACE("\ntime t= %d, final inflow  = %.1f",t, m_LinkMOEAry[t].LinkFlow );
@@ -2492,7 +2460,7 @@ void AdjustLinkEndpointsWithSetBack()
 
 }		
 
-	float GetSimulatedDensityMOE(int start_time, int end_time, float &maximum)
+	float GetTDDensity(int start_time, int end_time, float &maximum)
 	{
 		maximum = 0;
 		float average = 0;
@@ -2524,7 +2492,7 @@ void AdjustLinkEndpointsWithSetBack()
 
 	}		
 
-	float GetSimulationVolumeMOE(int start_time, int end_time, float &maximum)
+	float GetTDVolume(int start_time, int end_time, float &maximum)
 	{
 		maximum = 0;
 		float average = 0;
@@ -2538,14 +2506,11 @@ void AdjustLinkEndpointsWithSetBack()
 		{
 		if(t < m_LinkMOEArySize)
 		{
-			if( m_LinkMOEAry[t].Density>0.01)
-			{
 				total+= m_LinkMOEAry[t].LinkFlow;
 				count++;
 
 			if( maximum < m_LinkMOEAry[t].LinkFlow)
 					maximum = m_LinkMOEAry[t].LinkFlow;
-			}
 
 			
 		}
@@ -2613,14 +2578,13 @@ void AdjustLinkEndpointsWithSetBack()
 
 
 	
-	int GetImpactFlag(int t,eLinkDataType data_type)
+	int GetImpactFlag(int t)
 	{
 
-	if( GetDynamicSpeed(t,data_type)< 0.33 * m_FreeSpeed) 
+	if( GetDynamicSpeed(t)< 0.33 * m_FreeSpeed) 
 			return 1;
 
-	if(data_type == eSimulationData && t>=0 && t < m_LinkMOEArySize)
-	{
+	
 
 	if( ( m_Length < 0.2  && ( m_LinkMOEAry[t].QueueLength *100 >= 99  )
 	|| (m_Length >= 0.2  && m_LinkMOEAry[t].QueueLength*100 >= g_ImpactThreshold_QueueLengthPercentage)))
@@ -2631,12 +2595,11 @@ void AdjustLinkEndpointsWithSetBack()
 		return 0;
 	}
 
-	}
 
 	return 0;
-	}
+}
 
-	int GetImpactDuration(int current_time, eLinkDataType data_type = eSimulationData)
+	int GetImpactDuration(int current_time)
 	{
 		int total_count = 0;
 
@@ -2646,7 +2609,7 @@ void AdjustLinkEndpointsWithSetBack()
 		for(int t = start_time; t<= current_time ; t++)
 		{
 
-			if(GetImpactFlag(t,data_type))
+			if(GetImpactFlag(t))
 			{
 				total_count++;
 			}
@@ -2655,7 +2618,7 @@ void AdjustLinkEndpointsWithSetBack()
 			return total_count;
 	}		
 
-	int GetImpactRelativeStartTime(int current_time,eLinkDataType data_type)
+	int GetImpactRelativeStartTime(int current_time)
 	{
 		int total_count = 0;
 
@@ -2664,7 +2627,7 @@ void AdjustLinkEndpointsWithSetBack()
 		int start_time = max(0,current_time - g_ImpactStudyPeriodInMin);
 		for(int t = start_time; t<= current_time ; t++)
 		{
-				if(GetImpactFlag(t,data_type))
+				if(GetImpactFlag(t))
 				{
 					return current_time -t;
 				}
@@ -2826,7 +2789,7 @@ public:
 	std::vector<CString> m_PathLabelVector;
 	std::string m_path_name;
 
-	int m_NodeNodeSum;
+	int m_NodeIDdeSum;
 
 	float m_TimeDependentTravelTime[1440];
 	float m_SensorTimeDependentTravelTime[1440];
@@ -2864,6 +2827,10 @@ class SAgentLink
 int LinkNo;  // range:
 float ArrivalTimeOnDSN;     // absolute arrvial time at downstream node of a link: 0 for the departure time, including delay/stop time
 string State;
+
+GDPoint from_pt;
+GDPoint to_pt;
+
 //   float LinkWaitingTime;   // unit: 0.1 seconds
 SAgentLink()
 {
@@ -2950,23 +2917,23 @@ class DTAAgent
 public:
 
 	int m_Age;
-	bool m_bGPSAgent;  // GPS Agent
 	int m_NodeSize;
-	int m_NodeNumberSum;  // used for comparing two paths
+	int m_NodeIDSum;  // used for comparing two paths
 	SAgentLink *m_NodeAry; // link list arrary of a Agent path
-	int m_AgentLocationSize;
-	AgentLocationRecord *m_LocationRecordAry; // link list arrary of a Agent path
+//	std::vector<AgentLocationRecord> m_NodeAry;
+	 // link list arrary of a Agent path
 
+	float m_Volume;
 	unsigned int m_RandomSeed;
 	int m_AgentID;  //range: +2,147,483,647
-	int m_DayNo;
 	std::vector<GDPoint> m_ShapePoints;
 	string m_AgentKey;
-	int m_FromZoneID;  //range 0, 65535
-	int m_ToZoneID;  // range 0, 65535
-	int m_FromNodeID;
-	int m_ToNodeID;
-	short m_DemandType;     // 
+	int m_o_ZoneID;  //range 0, 65535
+	int m_d_ZoneID;  // range 0, 65535
+//	int m_FromNodeNo;
+//	int m_ToNodeNo;
+	string m_AgentType;  
+	int m_AgentTypeNo;// 
 	short m_SimLinkSequenceNo; //  range 0, 65535
 
 	bool  m_bImpacted;
@@ -3010,7 +2977,7 @@ public:
 
 	DTAAgent()
 	{
-
+		m_Volume = 1;
 		m_subarea_start_node_departure_time = 0;
 		m_subarea_end_node_arrival_time = 0;
 		m_subarea_travel_time = 0;
@@ -3024,14 +2991,11 @@ public:
 		m_path_free_flow_travel_time = 0;
 
 
-		m_AgentLocationSize = 0;
 		m_bMarked = false;
 		m_Age = 0;
-		m_NodeNumberSum = 0;
-		m_DayNo = 0;  // without day no specified from the data
-		m_DemandType = 1;
+		m_NodeIDSum = 0;
+		m_AgentType = 1;
 
-		m_bGPSAgent = false;
 		m_bODMarked = false;
 		pVehData=NULL;
 		m_TimeToRetrieveInfo = -1;
@@ -3060,8 +3024,6 @@ public:
 		if(pVehData!=NULL)
 			delete pVehData;
 
-		if(m_LocationRecordAry!=NULL)
-			delete m_LocationRecordAry;
 	};
 
 public:
@@ -3091,8 +3053,8 @@ class DTA_vhc_simple // used in STL sorting only
 {
 public:
 
-	int m_FromZoneID;
-	int m_ToZoneID;
+	int m_o_ZoneID;
+	int m_d_ZoneID;
 	int m_AgentType;
 	float    m_DepartureTime;
 
@@ -3447,7 +3409,7 @@ public:
 	void BuildHistoricalInfoNetwork(int CurZoneID, int CurrentTime, float Perception_error_ratio);
 	void BuildTravelerInfoNetwork(int CurrentTime, float Perception_error_ratio);
 
-	void BuildPhysicalNetwork(std::list<DTANode*>* p_NodeSet, std::list<DTALink*>* p_LinkSet, float RandomCostCoef, bool bOverlappingCost, int OriginNodeID = -1, int DestinationNode = -1);
+	void BuildPhysicalNetwork(std::list<DTANode*>* p_NodeSet, std::list<DTALink*>* p_LinkSet, float RandomCostCoef, bool bOverlappingCost, int OriginNodeNo = -1, int DestinationNode = -1);
 	void BuildSpaceTimeNetworkForTimetabling(std::list<DTANode*>* p_NodeSet, std::list<DTALink*>* p_LinkSet, int TrainType);
 
 	void IdentifyBottlenecks(int StochasticCapacityFlag);
@@ -3613,12 +3575,6 @@ public:
 	CDataVector m_data_vector_travel_time;
 	CDataVector m_data_vector_travel_time_per_mile;
 
-
-
-
-
-
-	int day_count[21];
 	AgentStatistics()
 	{
 
@@ -3645,8 +3601,6 @@ public:
 	m_data_vector_travel_time.Reset();
 	m_data_vector_travel_time_per_mile.Reset();
 
-		for(int d= 0; d<= 20; d++)
-			day_count[d]= 0;
 
 		TotalAgentSize = 0;
 		TotalTravelTime = 0;
@@ -3669,7 +3623,7 @@ public:
 	CString Label;
 	float DisplayValue;
 	bool bImpactFlag;
-	int   TotalAgentSize;
+	float   TotalAgentSize;
 	float TotalTravelTime;
 	float TotalFreeflowTravelTime;
 	float TotalTravelTimePerMile;

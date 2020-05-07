@@ -12,7 +12,7 @@ IMPLEMENT_DYNAMIC(CDlg_NodeProperties, CDialog)
 
 CDlg_NodeProperties::CDlg_NodeProperties(CWnd* pParent /*=NULL*/)
 	: CDialog(CDlg_NodeProperties::IDD, pParent)
-	, NodeID(0)
+	, NodeNo(0)
 	, NodeName(_T(""))
 	, ZoneID(0)
 	, m_ControlType(_T(""))
@@ -28,7 +28,7 @@ CDlg_NodeProperties::~CDlg_NodeProperties()
 void CDlg_NodeProperties::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
-	DDX_Text(pDX, IDC_EDIT_NODE_ID, NodeID);
+	DDX_Text(pDX, IDC_EDIT_NODE_ID, NodeNo);
 	DDX_Text(pDX, IDC_EDIT_STREET_NAME, NodeName);
 	DDV_MaxChars(pDX, NodeName, 100);
 	DDX_Text(pDX, IDC_EDIT_ZoneID, ZoneID);

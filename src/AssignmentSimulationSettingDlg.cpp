@@ -10,8 +10,8 @@ using std::vector;
 using std::string;
 
 enum Assignment_Simulation_Settings { SIMULATION = 0, DEMAND_META, DEMAND_TYPE, LINK_TYPE, NODE_CONTROL_TYPE, MAX_NUM_OF_SETTINGS };
-static LPTSTR Setting_Element[MAX_NUM_OF_SETTINGS] = { "Simulation", "Demand File Database", "Demand Type", "Link Type"};
-static LPTSTR Setting_FileName[MAX_NUM_OF_SETTINGS] = {"scenario_settings","demand_file", "demand_type", "link_type"};
+static LPTSTR Setting_Element[MAX_NUM_OF_SETTINGS] = { "Simulation", "Demand File Database", "Agent Type", "Link Type"};
+static LPTSTR Setting_FileName[MAX_NUM_OF_SETTINGS] = {"scenario_settings","demand_file", "agent_type", "link_type"};
 
 // CAssignmentSimulationSettingDlg dialog
 

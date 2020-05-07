@@ -116,12 +116,11 @@ BOOL CDlg_DisplayConfiguration::OnInitDialog()
 	m_Link_Label.AddString("Link type In Text");
 	m_Link_Label.AddString("Link type In Number");
 
-//	m_Link_Label.AddString("Total Link Volume");
-//	m_Link_Label.AddString("Level Of Service");
-
-//	m_Link_Label.AddString("Avg Speed");
-//	m_Link_Label.AddString("Avg Travel Time");
-//	m_Link_Label.AddString("Avg Delay");
+	m_Link_Label.AddString("Total Link Volume");
+	m_Link_Label.AddString("TD Link Volume");
+	m_Link_Label.AddString("TD Lane Volume");
+	m_Link_Label.AddString("TD Density");
+	m_Link_Label.AddString("TD Speed");
 
 
 	m_Link_Label.SetCurSel ((int)(pView->m_ShowLinkTextMode));

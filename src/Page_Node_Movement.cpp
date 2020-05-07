@@ -74,7 +74,7 @@ void CPage_Node_Movement::DoDataExchange(CDataExchange* pDX)
 {
 	CPropertyPage::DoDataExchange(pDX);
 	DDX_Control(pDX,IDC_GRIDLISTCTRLEX,m_ListCtrl);
-	DDX_Text(pDX, IDC_EDIT_CURRENT_NODEID, m_CurrentNodeNumber);
+	DDX_Text(pDX, IDC_EDIT_CURRENT_NodeNo, m_CurrentNodeID);
 	DDX_Text(pDX, IDC_EDIT_CURRENT_NODENAME, m_CurrentNode_Name);
 	DDX_Check(pDX, IDC_HIDE_RIGHT_TURN, m_bHideRightTurnMovement);
 }
@@ -107,8 +107,8 @@ BOOL CPage_Node_Movement::OnInitDialog()
 		m_EffectiveGreenTime [p]= 0;
 	}
 
-	m_CurrentNodeID =  m_pDoc->m_SelectedNodeID ;
-	m_CurrentNodeNumber = m_pDoc->m_NodeNoMap [m_CurrentNodeID]->m_NodeID ;
+	m_CurrentNodeNo =  m_pDoc->m_SelectedNodeNo ;
+	m_CurrentNodeID = m_pDoc->m_NodeNoMap [m_CurrentNodeNo]->m_NodeID ;
 	
 	// Give better margin to editors
 	m_ListCtrl.SetCellMargin(1.2);
@@ -173,7 +173,7 @@ BOOL CPage_Node_Movement::OnInitDialog()
 
 	//Add Rows
 
-	DTANode* pNode  = m_pDoc->m_NodeNoMap [m_CurrentNodeID];
+	DTANode* pNode  = m_pDoc->m_NodeNoMap [m_CurrentNodeNo];
 
 	for (unsigned int i=0;i< pNode->m_MovementDataMap.m_MovementVector .size();i++)
 	{
@@ -182,12 +182,12 @@ BOOL CPage_Node_Movement::OnInitDialog()
 
 
 		CString str;
-		str.Format ("%d", m_pDoc->m_NodeNoMap[movement.in_link_from_node_id]->m_NodeID  );  // 0: from node
+		str.Format ("%d", m_pDoc->m_NodeIDMap[movement.in_link_from_node_id]->m_NodeID  );  // 0: from node
 		int Index = m_ListCtrl.InsertItem(LVIF_TEXT,i,str , 0, 0, 0, NULL);
 
 		int column_index = 1;
 
-		str.Format ("%d", m_pDoc->m_NodeNoMap[movement.out_link_to_node_id ]->m_NodeID ); // 1: to node
+		str.Format ("%d", m_pDoc->m_NodeIDMap[movement.out_link_to_node_id ]->m_NodeID ); // 1: to node
 		m_ListCtrl.SetItemText(Index, column_index++,str);
 
 		m_ListCtrl.SetItemText(Index, column_index++,m_pDoc->GetTurnString(movement.movement_turn)); //2: turn type
@@ -224,7 +224,7 @@ void CPage_Node_Movement::UpdateList()
 
 	//Add Rows
 
-	DTANode* pNode  = m_pDoc->m_NodeNoMap [m_CurrentNodeID];
+	DTANode* pNode  = m_pDoc->m_NodeNoMap [m_CurrentNodeNo];
 
 
 	for (unsigned int i=0;i< pNode->m_MovementDataMap.m_MovementVector .size();i++)
@@ -237,7 +237,7 @@ void CPage_Node_Movement::UpdateList()
 
 		CString str; 
 		int Index = i;
-		str.Format ("%d", m_pDoc->m_NodeNoMap[movement.out_link_to_node_id ]->m_NodeID ); // 1: to node
+		str.Format ("%d", m_pDoc->m_NodeIDMap[movement.out_link_to_node_id ]->m_NodeID ); // 1: to node
 		m_ListCtrl.SetItemText(Index, column_index++,str);
 
 		m_ListCtrl.SetItemText(Index, column_index++,m_pDoc->GetTurnString(movement.movement_turn)); //2: turn type
@@ -332,7 +332,7 @@ void CPage_Node_Movement::DrawMovements(CPaintDC* pDC,CRect PlotRect, bool bPhas
 	CBrush  BrushLinkBand(RGB(152,245,255)); 
 	pDC->SelectObject(&BrushLinkBand);
 
-	DTANode* pNode  = m_pDoc->m_NodeNoMap [m_CurrentNodeID];
+	DTANode* pNode  = m_pDoc->m_NodeNoMap [m_CurrentNodeNo];
 
 	int node_size = 10;
 	int node_set_back = 50;
@@ -341,7 +341,7 @@ void CPage_Node_Movement::DrawMovements(CPaintDC* pDC,CRect PlotRect, bool bPhas
 	int lane_width = 10;
 	int text_length = link_length+ 20;
 
-	str.Format("%d",m_CurrentNodeNumber);
+	str.Format("%d",m_CurrentNodeID);
 
   if(bPhaseWindow == false || m_SelectedPhaseNumber == 1)
    pDC->TextOutA( PlotRect.CenterPoint().x-5, PlotRect.CenterPoint().y-5,str);
@@ -360,9 +360,9 @@ void CPage_Node_Movement::DrawMovements(CPaintDC* pDC,CRect PlotRect, bool bPhas
 
 		GDPoint p1, p2, p3;
 		// 1: fetch all data
-		p1  = m_pDoc->m_NodeNoMap[movement.in_link_from_node_id ]->pt;
-		p2  = m_pDoc->m_NodeNoMap[movement.in_link_to_node_id ]->pt;
-		p3  = m_pDoc->m_NodeNoMap[movement.out_link_to_node_id]->pt;
+		p1  = m_pDoc->m_NodeIDMap[movement.in_link_from_node_id ]->pt;
+		p2  = m_pDoc->m_NodeIDMap[movement.in_link_to_node_id ]->pt;
+		p3  = m_pDoc->m_NodeIDMap[movement.out_link_to_node_id]->pt;
 
 		double DeltaX = p2.x - p1.x ;
 		double DeltaY = p2.y - p1.y ;
@@ -415,7 +415,7 @@ void CPage_Node_Movement::DrawMovements(CPaintDC* pDC,CRect PlotRect, bool bPhas
 
 		// 4: draw from node name
 		
-		str.Format("%d",m_pDoc->m_NodeNoMap [movement.in_link_from_node_id]->m_NodeID );
+		str.Format("%d",m_pDoc->m_NodeIDMap [movement.in_link_from_node_id]->m_NodeID );
 
 	
 		if(p1_text.y < -50)
@@ -458,12 +458,12 @@ void CPage_Node_Movement::DrawMovements(CPaintDC* pDC,CRect PlotRect, bool bPhas
 		DrawLink(pDC,p2_new,p3_new,pOutLink->m_NumberOfLanes,theta,lane_width);
 
 		DTALink * pRevLink = NULL; //reversed link
-		unsigned long ReversedLinkKey = m_pDoc->GetLinkKey(pOutLink->m_ToNodeID, pOutLink->m_FromNodeID);
+		unsigned long ReversedLinkKey = m_pDoc->GetLinkKey(pOutLink->m_ToNodeNo, pOutLink->m_FromNodeNo);
 
 		int reversed_link_id = 0;
-		if ( m_pDoc->m_NodeNotoLinkMap.find ( ReversedLinkKey) == m_pDoc->m_NodeNotoLinkMap.end())
+		if ( m_pDoc->m_NodeIDtoLinkMap.find ( ReversedLinkKey) == m_pDoc->m_NodeIDtoLinkMap.end())
 		{
-		str.Format("%d",m_pDoc->m_NodeNoMap [movement.out_link_to_node_id ]->m_NodeID );
+		str.Format("%d",m_pDoc->m_NodeIDMap [movement.out_link_to_node_id ]->m_NodeID );
 	
 		if(p3_text.y < -50)
 			p3_text.y +=10;
@@ -521,7 +521,7 @@ void CPage_Node_Movement::DrawMovements(CPaintDC* pDC,CRect PlotRect, bool bPhas
 	
 		if(m_SelectedPhaseNumber >=1)
 		{
-		bMovementIncluded = m_pDoc->IfMovementIncludedInPhase(m_CurrentNodeNumber , m_pDoc->m_TimingPlanVector[m_SelectedTimingPlanNo].timing_plan_name,m_SelectedPhaseNumber, movement.in_link_from_node_id,movement.out_link_to_node_id );
+		bMovementIncluded = m_pDoc->IfMovementIncludedInPhase(m_CurrentNodeID , m_pDoc->m_TimingPlanVector[m_SelectedTimingPlanNo].timing_plan_name,m_SelectedPhaseNumber, movement.in_link_from_node_id,movement.out_link_to_node_id );
 		}
 
 		if(m_SelectedPhaseNumber <=0 ||  /* all phases*/
@@ -632,7 +632,7 @@ void CPage_Node_Movement::OnLButtonDown(UINT nFlags, CPoint point)
 	// TODO: Add your message handler code here and/or call default
 	unsigned int i;
 
-	DTANode* pNode  = m_pDoc->m_NodeNoMap [m_CurrentNodeID];
+	DTANode* pNode  = m_pDoc->m_NodeNoMap [m_CurrentNodeNo];
 	for ( i=0;i< pNode->m_MovementDataMap.m_MovementVector.size();i++)
 	{
 		m_ListCtrl.SelectRow (i,false);
@@ -692,7 +692,7 @@ void CPage_Node_Movement::SaveData()
 
 	std::map<long, long> IncomingLinkMap;
 
-	DTANode* pNode  = m_pDoc->m_NodeNoMap [m_CurrentNodeID];
+	DTANode* pNode  = m_pDoc->m_NodeNoMap [m_CurrentNodeNo];
 
 
 

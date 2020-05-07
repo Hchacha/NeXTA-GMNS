@@ -55,7 +55,7 @@ void CPage_Node_LaneTurn::DoDataExchange(CDataExchange* pDX)
 {
 	CPropertyPage::DoDataExchange(pDX);
 	DDX_Control(pDX,IDC_GRIDLISTCTRLEX,m_ListCtrl);
-	DDX_Text(pDX, IDC_EDIT_CURRENT_NODEID, m_CurrentNodeName);
+	DDX_Text(pDX, IDC_EDIT_CURRENT_NodeNo, m_CurrentNodeName);
 }
 
 
@@ -70,9 +70,9 @@ END_MESSAGE_MAP()
 BOOL CPage_Node_LaneTurn::OnInitDialog()
 {
 	CPropertyPage::OnInitDialog();
-	m_CurrentNodeID =  m_pDoc->m_SelectedNodeID ;
+	m_CurrentNodeNo =  m_pDoc->m_SelectedNodeNo ;
 
-	m_CurrentNodeName = m_pDoc->m_NodeNotoNumberMap [m_CurrentNodeID];
+	m_CurrentNodeName = m_pDoc->m_NodeNoMap[m_CurrentNodeNo]->m_NodeID;
 	// Give better margin to editors
 	m_ListCtrl.SetCellMargin(1.2);
 	CGridRowTraitXP* pRowTrait = new CGridRowTraitXP;  // Hao: this ponter should be delete. 
@@ -102,7 +102,7 @@ BOOL CPage_Node_LaneTurn::OnInitDialog()
 
 	//Add Rows
 
-	DTANode* pNode  = m_pDoc->m_NodeNoMap [m_CurrentNodeID];
+	DTANode* pNode  = m_pDoc->m_NodeNoMap [m_CurrentNodeNo];
 
 	for (unsigned int i=0;i< pNode->m_MovementDataMap.m_MovementVector .size();i++)
 	{
@@ -112,10 +112,10 @@ BOOL CPage_Node_LaneTurn::OnInitDialog()
 
 		DTANodeMovement movement = pNode->m_MovementDataMap.m_MovementVector[i];
 
-		str.Format ("%d", m_pDoc->m_NodeNotoNumberMap[movement.in_link_from_node_id] );
+		str.Format ("%d", m_pDoc->m_NodeIDMap[movement.in_link_from_node_id]->m_NodeID );
 		m_ListCtrl.SetItemText(Index, 1,str);
 
-		str.Format ("%d", m_pDoc->m_NodeNotoNumberMap[movement.out_link_to_node_id ] );
+		str.Format ("%d", m_pDoc->m_NodeIDMap[movement.out_link_to_node_id ]->m_NodeID);
 		m_ListCtrl.SetItemText(Index, 2,str);
 		
 		m_ListCtrl.SetItemText(Index, 3,m_pDoc->GetTurnString(movement.movement_turn));
@@ -164,7 +164,7 @@ void CPage_Node_LaneTurn::DrawMovements(CPaintDC* pDC,CRect PlotRect)
 	CBrush  BrushLinkBand(RGB(152,245,255)); 
 	pDC->SelectObject(&BrushLinkBand);
 
-		DTANode* pNode  = m_pDoc->m_NodeNoMap [m_CurrentNodeID];
+		DTANode* pNode  = m_pDoc->m_NodeNoMap [m_CurrentNodeNo];
 
 		int node_size = 10;
 		int node_set_back = 50;
@@ -187,9 +187,9 @@ void CPage_Node_LaneTurn::DrawMovements(CPaintDC* pDC,CRect PlotRect)
 
 		GDPoint p1, p2, p3;
 		// 1: fetch all data
-		p1  = m_pDoc->m_NodeNoMap[movement.in_link_from_node_id ]->pt;
-		p2  = m_pDoc->m_NodeNoMap[movement.in_link_to_node_id ]->pt;
-		p3  = m_pDoc->m_NodeNoMap[movement.out_link_to_node_id]->pt;
+		p1  = m_pDoc->m_NodeIDMap[movement.in_link_from_node_id ]->pt;
+		p2  = m_pDoc->m_NodeIDMap[movement.in_link_to_node_id ]->pt;
+		p3  = m_pDoc->m_NodeIDMap[movement.out_link_to_node_id]->pt;
 		
 		double DeltaX = p2.x - p1.x ;
 		double DeltaY = p2.y - p1.y ;
@@ -232,7 +232,7 @@ void CPage_Node_LaneTurn::DrawMovements(CPaintDC* pDC,CRect PlotRect)
 		p1_text.y= (-1)*(text_length)*sin(theta);
 
 		// 4: draw from node name
-		str.Format("%d",m_pDoc->m_NodeNotoNumberMap [movement.in_link_from_node_id]);
+		str.Format("%d",m_pDoc->m_NodeIDMap [movement.in_link_from_node_id]->m_NodeID);
 		if(p1_text.y < -50)
 			p1_text.y +=10;
 
@@ -265,7 +265,7 @@ void CPage_Node_LaneTurn::DrawMovements(CPaintDC* pDC,CRect PlotRect)
 
 
 		//draw to node name
-		str.Format("%d",m_pDoc->m_NodeNotoNumberMap [movement.out_link_to_node_id]);
+		str.Format("%d",m_pDoc->m_NodeIDMap [movement.out_link_to_node_id]->m_NodeID);
 
 		if(p3_text.y < -100)
 			p3_text.y +=10;
@@ -351,7 +351,7 @@ void CPage_Node_LaneTurn::OnLButtonDown(UINT nFlags, CPoint point)
 	// TODO: Add your message handler code here and/or call default
 		unsigned int i;
 
-		DTANode* pNode  = m_pDoc->m_NodeNoMap [m_CurrentNodeID];
+		DTANode* pNode  = m_pDoc->m_NodeNoMap [m_CurrentNodeNo];
 		for ( i=0;i< pNode->m_MovementDataMap.m_MovementVector.size();i++)
 		{
 		m_ListCtrl.SelectRow (i,false);

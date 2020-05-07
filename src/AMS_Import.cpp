@@ -111,8 +111,8 @@ void CTLiteDoc::OGDF_WriteGraph(CString FileName)
 	for (iLink = m_LinkSet.begin(); iLink != m_LinkSet.end(); iLink++)
 	{
 		GMLFile << "edge [\n";
-		GMLFile << "source " << (*iLink)->m_FromNodeNumber << "\n";
-		GMLFile << "target " << (*iLink)->m_ToNodeNumber << "\n";
+		GMLFile << "source " << (*iLink)->m_FromNodeID << "\n";
+		GMLFile << "target " << (*iLink)->m_ToNodeID << "\n";
 		GMLFile << "weight " << (*iLink)->m_Length << "\n";
 		GMLFile << "]\n"; // edge
 
@@ -246,15 +246,15 @@ bool  CTLiteDoc::ReadSynchroLayoutFile_And_AddOutgoingLinks_For_ExternalNodes(LP
 					if(parser.GetValueByFieldName(direction_vector[direction],outgoing_node_number))// value exits
 					{
 						// add a new link
-						long from_node_id = m_NodeNumbertoNodeNoMap[node_id];
-						long to_node_id = m_NodeNumbertoNodeNoMap[outgoing_node_number];
+						long from_node_no = m_NodeIDtoNodeNoMap[node_id];
+						long to_node_no = m_NodeIDtoNodeNoMap[outgoing_node_number];
 
-						if(m_NodeNoMap.find(to_node_id) != m_NodeNoMap.end())
+						if(m_NodeNoMap.find(to_node_no) != m_NodeNoMap.end())
 						{
-							//if(m_NodeNoMap[to_node_id]->m_ControlType == m_ControlType_ExternalNode) XUESONG
+							//if(m_NodeIDMap[to_node_id]->m_ControlType == m_ControlType_ExternalNode) XUESONG
 							{  // add new link if the outbound node is an external node
-								AddNewLink(from_node_id, to_node_id,false, false);
-								AddNewLink(to_node_id,from_node_id,false, false);
+								AddNewLink(from_node_no, to_node_no,false, false);
+								AddNewLink(to_node_no, from_node_no,false, false);
 								TRACE("Add New Link = %d, %d\n", node_id, outgoing_node_number);
 							}
 
@@ -314,7 +314,7 @@ bool CTLiteDoc::ReadSynchroLayoutFile(LPCTSTR lpszFileName)
 			bool bFieldX_Exist = parser.GetValueByFieldName("X",X,false);
 			parser.GetValueByFieldName("Y",Y,false);
 
-			if(m_NodeNumbertoNodeNoMap.find(node_id) != m_NodeNumbertoNodeNoMap.end())
+			if(m_NodeIDtoNodeNoMap.find(node_id) != m_NodeIDtoNodeNoMap.end())
 			{
 				CString error_message;
 				error_message.Format ("Node %d in node.csv has been defined twice. Please check.", node_id);
@@ -337,12 +337,11 @@ bool CTLiteDoc::ReadSynchroLayoutFile(LPCTSTR lpszFileName)
 			pNode->pt.y = Y/5280.0f;  // feet to mile
 
 			pNode->m_NodeID = node_id;
-			pNode->m_NodeNo = i;
+			pNode->m_NodeID = i;
 			pNode->m_ZoneID = 0;
 			m_NodeSet.push_back(pNode);
 			m_NodeNoMap[i] = pNode;
-			m_NodeNotoNumberMap[i] = node_id;
-			m_NodeNumbertoNodeNoMap[node_id] = i;
+			m_NodeIDtoNodeNoMap[node_id] = i;
 			i++;
 
 			TRACE("node = %d, X: %f, Y: %f\n", node_id, X, Y);
@@ -439,7 +438,7 @@ bool CTLiteDoc::ReadSynchroLaneFile(LPCTSTR lpszFileName)
 
 			int m;
 			//			switch (name)
-			if (name == "Up Node" || name == "UpNodeID")
+			if (name == "Up Node" || name == "UpNodeNo")
 			{
 				for(m = 0; m< LaneColumnSize; m++)
 				{
@@ -453,7 +452,7 @@ bool CTLiteDoc::ReadSynchroLaneFile(LPCTSTR lpszFileName)
 				}
 			}
 
-			if (name == "Dest Node"  || name == "DestNodeID")
+			if (name == "Dest Node"  || name == "DestNodeNo")
 			{
 				for(m = 0; m< LaneColumnSize; m++)
 				{
@@ -690,7 +689,7 @@ bool CTLiteDoc::ReadSynchroLaneFile(LPCTSTR lpszFileName)
 							continue;
 
 						// add link
-						DTALink* pExistingLink =  FindLinkWithNodeIDs(m_NodeNumbertoNodeNoMap[from_node_id],m_NodeNumbertoNodeNoMap[to_node_id]);
+						DTALink* pExistingLink =  FindLinkWithNodeNo(m_NodeIDtoNodeNoMap[from_node_id],m_NodeIDtoNodeNoMap[to_node_id]);
 
 						if(pExistingLink)
 						{
@@ -703,7 +702,7 @@ bool CTLiteDoc::ReadSynchroLaneFile(LPCTSTR lpszFileName)
 							continue;
 						}
 
-						if(pLink->m_FromNodeNumber ==0 || pLink->m_ToNodeNumber ==0 )
+						if(pLink->m_FromNodeID ==0 || pLink->m_ToNodeID ==0 )
 						{
 							//skip
 							continue;
@@ -724,27 +723,25 @@ bool CTLiteDoc::ReadSynchroLaneFile(LPCTSTR lpszFileName)
 						pLink->m_LinkID = m_LinkSet.size();
 
 
-						pLink->m_FromNodeNumber = from_node_id;
+						pLink->m_FromNodeID = from_node_id;
 
-						pLink->m_ToNodeNumber = to_node_id;
+						pLink->m_ToNodeID = to_node_id;
 						pLink->m_Direction  = 1;
 
-						if(pLink->m_FromNodeNumber == 12 && pLink->m_ToNodeNumber == 2)
+						if(pLink->m_FromNodeID == 12 && pLink->m_ToNodeID == 2)
 							TRACE("");
 
-						pLink->m_FromNodeID = m_NodeNumbertoNodeNoMap[from_node_id];
-						pLink->m_ToNodeID= m_NodeNumbertoNodeNoMap[to_node_id];
+						pLink->m_FromNodeNo = m_NodeIDtoNodeNoMap[from_node_id];
+						pLink->m_ToNodeNo= m_NodeIDtoNodeNoMap[to_node_id];
 
-						pLink->m_FromPoint = m_NodeNoMap[pLink->m_FromNodeID]->pt;
-						pLink->m_ToPoint = m_NodeNoMap[pLink->m_ToNodeID]->pt;
+						pLink->m_FromPoint = m_NodeNoMap[pLink->m_FromNodeNo]->pt;
+						pLink->m_ToPoint = m_NodeNoMap[pLink->m_ToNodeNo]->pt;
 						float length_in_mile =  pLink->DefaultDistance();  // cooridnates have been changed to mile for unit
 
 						pLink->m_bToBeShifted = bToBeShifted; 
 
 						pLink->m_NumberOfLanes= number_of_lanes;
 						pLink->m_FreeSpeed= max(10,free_speed);  // minimum Free Speed is 10 mph
-						pLink->m_avg_simulated_speed = pLink->m_FreeSpeed;
-
 						//				pLink->m_Length= max(length_in_mile, pLink->m_FreeSpeed*0.1f/60.0f);  // minimum distance, special note: we do not consider the minimum constraint here, but a Agent cannot travel longer then 0.1 seconds
 						pLink->m_Length= length_in_mile;
 						pLink->m_FreeFlowTravelTime = pLink->m_Length/pLink->m_FreeSpeed*60.0f;  // convert from hour to min
@@ -761,21 +758,19 @@ bool CTLiteDoc::ReadSynchroLaneFile(LPCTSTR lpszFileName)
 						pLink->m_Kjam = k_jam;
 						pLink->m_Wave_speed_in_mph  = wave_speed_in_mph;
 
-						m_NodeNoMap[pLink->m_FromNodeID ]->m_Connections+=1;
-						m_NodeNoMap[pLink->m_FromNodeID ]->m_OutgoingLinkVector.push_back(pLink->m_LinkNo);
-						m_NodeNoMap[pLink->m_ToNodeID ]->m_Connections+=1;
+						m_NodeNoMap[pLink->m_FromNodeNo ]->m_Connections+=1;
+						m_NodeNoMap[pLink->m_FromNodeNo ]->m_OutgoingLinkVector.push_back(pLink->m_LinkNo);
+						m_NodeNoMap[pLink->m_ToNodeNo ]->m_Connections+=1;
 
-						pLink->m_FromPoint = m_NodeNoMap[pLink->m_FromNodeID]->pt;
-						pLink->m_ToPoint = m_NodeNoMap[pLink->m_ToNodeID]->pt;
+						pLink->m_FromPoint = m_NodeNoMap[pLink->m_FromNodeNo]->pt;
+						pLink->m_ToPoint = m_NodeNoMap[pLink->m_ToNodeNo]->pt;
 
-						unsigned long LinkKey = GetLinkKey( pLink->m_FromNodeID, pLink->m_ToNodeID);
+						unsigned long LinkKey = GetLinkKey( pLink->m_FromNodeNo, pLink->m_ToNodeNo);
 
-						m_NodeNotoLinkMap[LinkKey] = pLink;
+						m_NodeIDtoLinkMap[LinkKey] = pLink;
 
-						__int64  LinkKey2 = GetLink64Key(pLink-> m_FromNodeNumber,pLink->m_ToNodeNumber);
-						m_NodeNumbertoLinkMap[LinkKey2] = pLink;
-
-						m_LinkNotoLinkMap[m_LinkSet.size()] = pLink;
+						__int64  LinkKey2 = GetLink64Key(pLink-> m_FromNodeID,pLink->m_ToNodeID);
+						m_NodeIDtoLinkMap[LinkKey2] = pLink;
 
 						default_distance_sum+= pLink->DefaultDistance();
 						length_sum += pLink ->m_Length;
@@ -793,14 +788,14 @@ bool CTLiteDoc::ReadSynchroLaneFile(LPCTSTR lpszFileName)
 						pLink->m_Original_ShapePoints .push_back (pt);
 						pLink->m_ShapePoints .push_back (pt);
 
-						TRACE("\nAdd link no.%d,  %d -> %d",i,pLink->m_FromNodeNumber, pLink->m_ToNodeNumber );
+						TRACE("\nAdd link no.%d,  %d -> %d",i,pLink->m_FromNodeID, pLink->m_ToNodeID );
 						m_LinkNoMap[m_LinkSet.size()]  = pLink;
 						m_LinkSet.push_back (pLink);
 					}  // per major approach
 
 				} // for each movement
 
-				DTANode* pNode = m_NodeNoMap[m_NodeNumbertoNodeNoMap[to_node_id]];	
+				DTANode* pNode = m_NodeIDMap[to_node_id];	
 
 				LaneDataMap.clear();  // clear data after adding a set of links
 			}
@@ -1078,25 +1073,25 @@ bool CTLiteDoc::ReadSynchroLaneFile(LPCTSTR lpszFileName)
 
 						DTANodeMovement element;
 
-						element.in_link_from_node_id = m_NodeNumbertoNodeNoMap[from_node_id];		
-						element.in_link_to_node_id = m_NodeNumbertoNodeNoMap[to_node_id];						
-						element.out_link_to_node_id = m_NodeNumbertoNodeNoMap[dest_node_id];	
+						element.in_link_from_node_id = m_NodeIDtoNodeNoMap[from_node_id];		
+						element.in_link_to_node_id = m_NodeIDtoNodeNoMap[to_node_id];						
+						element.out_link_to_node_id = m_NodeIDtoNodeNoMap[dest_node_id];	
 
-						DTALink* pIncomingLink =  FindLinkWithNodeIDs(m_NodeNumbertoNodeNoMap[from_node_id],m_NodeNumbertoNodeNoMap[to_node_id]);
+						DTALink* pIncomingLink =  FindLinkWithNodeNo(m_NodeIDtoNodeNoMap[from_node_id],m_NodeIDtoNodeNoMap[to_node_id]);
 
 						if(pIncomingLink)
 							element.IncomingLinkNo = pIncomingLink->m_LinkNo  ;
 
-						DTALink* pOutcomingLink =  FindLinkWithNodeIDs(m_NodeNumbertoNodeNoMap[to_node_id],m_NodeNumbertoNodeNoMap[dest_node_id]);
+						DTALink* pOutcomingLink =  FindLinkWithNodeNo(m_NodeIDtoNodeNoMap[to_node_id],m_NodeIDtoNodeNoMap[dest_node_id]);
 
 						if(pOutcomingLink)
 							element.OutgoingLinkNo = pOutcomingLink->m_LinkNo ;
 
 
 						GDPoint p1, p2, p3;
-						p1  = m_NodeNoMap[element.in_link_from_node_id]->pt;
-						p2  = m_NodeNoMap[element.in_link_to_node_id]->pt;
-						p3  = m_NodeNoMap[element.out_link_to_node_id]->pt;
+						p1  = m_NodeIDMap[element.in_link_from_node_id]->pt;
+						p2  = m_NodeIDMap[element.in_link_to_node_id]->pt;
+						p3  = m_NodeIDMap[element.out_link_to_node_id]->pt;
 
 						int relative_angel_difference_from_main_direction = 0;
 						element.movement_direction = Find_Angle_to_Approach_4_direction(Find_P2P_Angle(p1,p2),relative_angel_difference_from_main_direction);
@@ -1144,7 +1139,7 @@ bool CTLiteDoc::ReadSynchroLaneFile(LPCTSTR lpszFileName)
 						}
 
 
-						DTANode* pNode = m_NodeNoMap[m_NodeNumbertoNodeNoMap[to_node_id]];	
+						DTANode* pNode = m_NodeIDMap[to_node_id];	
 
 						ASSERT(pNode!=NULL);
 
@@ -1161,7 +1156,7 @@ bool CTLiteDoc::ReadSynchroLaneFile(LPCTSTR lpszFileName)
 						CString movement_vector = phasing_element.GetString((DTA_SIG_PHASE)(DTA_SIG_PHASE_VALUE + SelectedPhaseNumber), PHASE_MOVEMENT_VECTOR);
 						CString sub_movement_str;
 
-						sub_movement_str.Format(";%d_%d_%s", from_node_id, pOutcomingLink->m_ToNodeNumber,
+						sub_movement_str.Format(";%d_%d_%s", from_node_id, pOutcomingLink->m_ToNodeID,
 								GetTurnShortString(element.movement_turn));
 
 						movement_vector += sub_movement_str;
@@ -1182,7 +1177,7 @@ bool CTLiteDoc::ReadSynchroLaneFile(LPCTSTR lpszFileName)
 							CString movement_vector = phasing_element.GetString((DTA_SIG_PHASE)(DTA_SIG_PHASE_VALUE + SelectedPhaseNumber2), PHASE_MOVEMENT_VECTOR);
 							CString sub_movement_str;
 
-							sub_movement_str.Format(";%d_%d_%s", from_node_id, pOutcomingLink->m_ToNodeNumber,
+							sub_movement_str.Format(";%d_%d_%s", from_node_id, pOutcomingLink->m_ToNodeID,
 								GetTurnShortString(element.movement_turn));
 
 							movement_vector += sub_movement_str;
@@ -1269,7 +1264,7 @@ bool CTLiteDoc::ReadSynchroPhasingFile(LPCTSTR lpszFileName)
 					if (ActGreen > 0)
 					{
 						std::string timing_plan_name = "1";
-						long to_node_id = m_NodeNumbertoNodeNoMap[INTID];
+						long to_node_id = m_NodeIDtoNodeNoMap[INTID];
 						DTA_Phasing_Data_Matrix phasing_element = GetPhaseData(to_node_id, timing_plan_name);
 
 						int SelectedPhaseNumber = m + 1;
@@ -1293,84 +1288,6 @@ bool CTLiteDoc::ReadSynchroPhasingFile(LPCTSTR lpszFileName)
 	}
 
 	return 1;
-}
-
-void CTLiteDoc::OnImportDemanddataset()
-{
-	//CFileDialog dlg(TRUE, 0, 0, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT,
-	//	_T("Importing Configuration (*.ini)|*.ini|"));
-	//if(dlg.DoModal() == IDOK)
-	//{
-	//CTime LoadingStartTime = CTime::GetCurrentTime();
-
-	//FILE* st = NULL;
-	////	cout << "Reading file node.csv..."<< endl;
-
-	//CString directory;
-	//CString ProjectFile = dlg.GetPathName();
-	//directory = ProjectFile.Left(ProjectFile.ReverseFind('\\') + 1);
-
-	//// default data type definition files
-
-	//m_AMSLogFile.open ( m_ProjectDirectory + "AMS_demand_conversion_log.csv", ios::out);
-	//if (m_AMSLogFile.is_open())
-	//{
-	//	m_AMSLogFile.width(12);
-	//	m_AMSLogFile.precision(3) ;
-	//	m_AMSLogFile.setf(ios::fixed);
-	//	m_AMSLogFile << "Start AMS demand reading..." << endl;
-	//}else
-	//{
-	//	AfxMessageBox("File AMS_demand_conversion_log.csv cannot be opened, and it might be locked by another program or the target data folder is read-only.");
-	//	return false;
-	//}
-
-	//int demand_format_flag = 0;
-	//char demand_file_name[_MAX_STRING_SIZE] = "input_demand.csv";
-	//char demand_file_field_name[_MAX_STRING_SIZE] = "demand_file_name";
-	//char demand_type_field_name[_MAX_STRING_SIZE] ;
-	//char demand_start_time_field_name[_MAX_STRING_SIZE];
-	//char demand_end_field_name[_MAX_STRING_SIZE];
-
-	//WritePrivateProfileString("demand_table","format_definition","0: AMS Demand CSV; 1: OD Matrix CSV; 2: 3-column format; 3: TransCAD 3-column CSV;4:VISUM matrix 8; 10: Gravity model",ProjectFileName);
-	//demand_format_flag = g_GetPrivateProfileInt("demand_table","demand_format",1,ProjectFileName);
-
-	//int number_of_tables = g_GetPrivateProfileInt("demand_table","number_of_files ",1,ProjectFileName);
-
-	//for(int t = 1; t<= number_of_tables; t++)
-	//{
-	//fprintf(demand_file_field_name,"demand_file_name_table%d", t);
-	//fprintf(demand_start_time_field_name,"demand_type_table%d", t);
-	//fprintf(demand_end_field_name,"start_time_in_min_table%d", t);
-	//fprintf(demand_end_field_name,"end_time_in_min_table%d", t);
-
-	//g_GetProfileString("demand_table",demand_file_field_name,"input_demand.csv",demand_file_name,sizeof(demand_file_name),ProjectFileName);
-	//
-	//int demand_type = g_GetPrivateProfileInt("demand_table","number_of_files ",1,ProjectFileName);
-	//int start_time_in_min = g_GetPrivateProfileInt("demand_table","number_of_files ",1,ProjectFileName);
-	//int end_time_in_min = g_GetPrivateProfileInt("demand_table","number_of_files ",1,ProjectFileName);
-
-	//CString msg;
-	//msg.Format("demand_format= %d specified in %s is not supported. Please contact developers.",demand_format_flag,ProjectFileName);
-	//
-	//switch (demand_format_flag)
-	//{
-	//case 0:	ReadDemandCSVFile(directory+demand_file_name); break;
-	//case 1: ReadDemandMatrixFile(directory+demand_file_name,1); break;
-	//case 2: ReadTransCADDemandCSVFile(directory+demand_file_name); break;
-	//case 3: ReadTransCADDemandCSVFile(directory+demand_file_name); break;
-		//case 10: RunGravityModel(); break;
-	//	
-	//default:
-	//	{
-	//	AfxMessageBox(msg);
-	//	}
-	//}
-	//}  //for demand table
-
-	//m_AMSLogFile.close();
-
-	//}
 }
 
 void CTLiteDoc::OnImportSynchrocombinedcsvfile()
@@ -1558,10 +1475,10 @@ void CTLiteDoc::MapSignalDataAcrossProjects()
 						DTANode* pRefNode = NULL;
 						int reference_node_id =  CrossReferenceNodeInfoMap [baseline_node_id].reference_node_id;
 
-						if( pReferenceDoc->m_NodeNumbertoNodeNoMap.find(reference_node_id) !=  pReferenceDoc->m_NodeNumbertoNodeNoMap.end())
+						if( pReferenceDoc->m_NodeIDtoNodeNoMap.find(reference_node_id) !=  pReferenceDoc->m_NodeIDtoNodeNoMap.end())
 						{
 
-							int ReferenceNodeNo = pReferenceDoc->m_NodeNumbertoNodeNoMap[reference_node_id];
+							int ReferenceNodeNo = pReferenceDoc->m_NodeIDtoNodeNoMap[reference_node_id];
 
 							for(unsigned int m = 0; m< (*iNode)->m_MovementDataMap.m_MovementVector .size(); m++)
 							{
@@ -1602,8 +1519,8 @@ void CTLiteDoc::MapSignalDataAcrossProjects()
 
 									fprintf(st,"Baseline,Node,%d,Up Node,%d,Dest Node,%d,%s,%s, obtains # of lanes =,%d,shared=,%d,Width=,%d,Storage=,%d\n",  
 										baseline_node_id, 
-										m_NodeNoMap[pThisMovement-> in_link_from_node_id]->m_NodeID,
-										m_NodeNoMap[pThisMovement-> out_link_to_node_id]->m_NodeID,
+										m_NodeIDMap[pThisMovement-> in_link_from_node_id]->m_NodeID,
+										m_NodeIDMap[pThisMovement-> out_link_to_node_id]->m_NodeID,
 										GetTurnDirectionString( pThisMovement-> movement_approach_turn),
 										GetTurnString( pThisMovement->movement_turn),
 										pThisMovement->QEM_Lanes,
@@ -1614,8 +1531,8 @@ void CTLiteDoc::MapSignalDataAcrossProjects()
 								{
 									fprintf(st,"Baseline,Node,%d,Up Node,%d,Dest Node,%d,%s,%s,does not find reference movement.\n",  
 										baseline_node_id, 
-										m_NodeNoMap[(*iNode)->m_MovementDataMap.m_MovementVector[m]. in_link_from_node_id]->m_NodeID,
-										m_NodeNoMap[(*iNode)->m_MovementDataMap.m_MovementVector[m]. out_link_to_node_id]->m_NodeID,
+										m_NodeIDMap[(*iNode)->m_MovementDataMap.m_MovementVector[m]. in_link_from_node_id]->m_NodeID,
+										m_NodeIDMap[(*iNode)->m_MovementDataMap.m_MovementVector[m]. out_link_to_node_id]->m_NodeID,
 										GetTurnDirectionString((*iNode)->m_MovementDataMap.m_MovementVector[m]. movement_approach_turn),
 										GetTurnString((*iNode)->m_MovementDataMap.m_MovementVector[m].movement_turn));
 
@@ -1685,7 +1602,7 @@ void  CTLiteDoc::ConvertOriginBasedDemandFile(LPCTSTR lpszFileName)
 	if(st!=NULL)
 	{
 
-		fprintf(outfile, "from_zone_id,to_zone_id,number_of_trips_demand_type1\n");
+		fprintf(outfile, "o_zone_id,d_zone_id,volume\n");
 
 		// Number of matrices and the multiplication factor
 
@@ -1749,18 +1666,18 @@ void CTLiteDoc::IdentifyBottleNeckAndOnOffRamps()
 	{
 		DTALink * pLink = (*iLink);
 		if( m_LinkTypeMap[pLink->m_link_type].IsFreeway () 
-			&&  m_NodeNoMap[pLink->m_ToNodeID ]->m_OutgoingLinkVector.size()==1)  // freeway or highway
+			&&  m_NodeNoMap[pLink->m_ToNodeNo ]->m_OutgoingLinkVector.size()==1)  // freeway or highway
 		{
-			int FromID = pLink->m_FromNodeID;
-			int ToID   = pLink->m_ToNodeID;
+			int FromNo = pLink->m_FromNodeNo;
+			int ToNo   = pLink->m_ToNodeNo;
 
-			for(int i=0; i< m_NodeNoMap[ToID]->m_OutgoingLinkVector.size(); i++)
+			for(int i=0; i< m_NodeNoMap[ToNo]->m_OutgoingLinkVector.size(); i++)
 			{
-				DTALink* pNextLink =  m_LinkNoMap[m_NodeNoMap[ToID]->m_OutgoingLinkVector[i]];
-				if(m_LinkTypeMap[pNextLink->m_link_type ].IsFreeway () && pNextLink->m_NumberOfLanes  < pLink->m_NumberOfLanes && pNextLink->m_ToNodeID != FromID)
+				DTALink* pNextLink =  m_LinkNoMap[m_NodeNoMap[ToNo]->m_OutgoingLinkVector[i]];
+				if(m_LinkTypeMap[pNextLink->m_link_type ].IsFreeway () && pNextLink->m_NumberOfLanes  < pLink->m_NumberOfLanes && pNextLink->m_ToNodeNo != FromNo)
 				{
 					//					pLink->m_StochaticCapcityFlag = StochasticCapacityFlag;  //lane drop from current link to next link
-					//g_LogFile << "lane drop:" << g_NodeVector[pLink->m_FromNodeID].m_NodeID << " ->" << g_NodeVector[pLink->m_ToNodeID].m_NodeID << endl;
+					//g_LogFile << "lane drop:" << g_NodeVector[pLink->m_FromNodeNo].m_NodeID << " ->" << g_NodeVector[pLink->m_ToNodeNo].m_NodeID << endl;
 				}
 
 			}
@@ -1777,13 +1694,13 @@ void CTLiteDoc::IdentifyBottleNeckAndOnOffRamps()
 		int incoming_link_freeway_and_ramp_count = 0;
 		bool no_arterial_incoming_link = true;
 
-		DTANode* pFromNode = m_NodeNoMap[pLink->m_FromNodeID];
+		DTANode* pFromNode = m_NodeNoMap[pLink->m_FromNodeNo];
 
 		for(int incoming_link = 0; incoming_link <  pFromNode->m_IncomingLinkVector .size(); incoming_link++) // one outgoing link without considering u-turn
 		{
 			DTALink* pIncomingLink = m_LinkNoMap[pFromNode->m_IncomingLinkVector[incoming_link]];
 
-			if(pIncomingLink!=NULL && (pIncomingLink->m_FromNodeID != pLink->m_ToNodeID)) // non-uturn link
+			if(pIncomingLink!=NULL && (pIncomingLink->m_FromNodeNo != pLink->m_ToNodeNo)) // non-uturn link
 			{
 				if(m_LinkTypeMap[pIncomingLink->m_link_type ].IsFreeway() //freeway link
 					|| m_LinkTypeMap[pIncomingLink->m_link_type].IsRamp ())
@@ -1800,7 +1717,7 @@ void CTLiteDoc::IdentifyBottleNeckAndOnOffRamps()
 		}
 		if(incoming_link_freeway_and_ramp_count >=2 && no_arterial_incoming_link)
 		{
-			TRACE("\nMerge link: %d->%d",pLink->m_FromNodeNumber , pLink->m_ToNodeNumber );
+			TRACE("\nMerge link: %d->%d",pLink->m_FromNodeID , pLink->m_ToNodeID );
 			pLink->m_bMergeFlag = 1;
 		}
 
@@ -1811,8 +1728,8 @@ void CTLiteDoc::IdentifyBottleNeckAndOnOffRamps()
 	for (std::list<DTALink*>::iterator iLink = m_LinkSet.begin(); iLink != m_LinkSet.end(); iLink++)
 	{
 		DTALink * pLink = (*iLink);
-		int FromID = pLink->m_FromNodeID;
-		DTANode* pFromNode = m_NodeNoMap[FromID];
+		int FromNo = pLink->m_FromNodeNo;
+		DTANode* pFromNode = m_NodeNoMap[FromNo];
 		if(pLink->m_bMergeFlag ==1 && pFromNode->m_IncomingLinkVector .size() == 2)  // is a merge bottlebeck link with two incoming links
 		{
 			int il;
@@ -1844,9 +1761,9 @@ void CTLiteDoc::IdentifyBottleNeckAndOnOffRamps()
 				if(bRampExistFlag && bFreewayExistFlag)
 				{
 					pLink->m_bMergeFlag = 2; // merge with ramp and mainline street
-					//g_LogFile << "merge with ramp:" << g_NodeVector[pLink->m_FromNodeID].m_NodeID  << " ->" << g_NodeVector[pLink->m_ToNodeID].m_NodeID ;
-					//g_LogFile << " with onramp:" << g_NodeVector[m_LinkNoMap[pLink->m_MergeOnrampLinkID]->m_FromNodeID].m_NodeID  << " ->" << g_NodeVector[m_LinkNoMap[pLink->m_MergeOnrampLinkID]->m_ToNodeID].m_NodeID ;
-					//g_LogFile << " and freeway mainline:" << g_NodeVector[m_LinkNoMap[pLink->m_MergeMainlineLinkID]->m_FromNodeID ].m_NodeID << " ->" << g_NodeVector[m_LinkNoMap[pLink->m_MergeMainlineLinkID]->m_ToNodeID].m_NodeID << endl;
+					//g_LogFile << "merge with ramp:" << g_NodeVector[pLink->m_FromNodeNo].m_NodeID  << " ->" << g_NodeVector[pLink->m_ToNodeNo].m_NodeID ;
+					//g_LogFile << " with onramp:" << g_NodeVector[m_LinkNoMap[pLink->m_MergeOnrampLinkID]->m_FromNodeNo].m_NodeID  << " ->" << g_NodeVector[m_LinkNoMap[pLink->m_MergeOnrampLinkID]->m_ToNodeNo].m_NodeID ;
+					//g_LogFile << " and freeway mainline:" << g_NodeVector[m_LinkNoMap[pLink->m_MergeMainlineLinkID]->m_FromNodeNo ].m_NodeID << " ->" << g_NodeVector[m_LinkNoMap[pLink->m_MergeMainlineLinkID]->m_ToNodeNo].m_NodeID << endl;
 					break;
 				}
 

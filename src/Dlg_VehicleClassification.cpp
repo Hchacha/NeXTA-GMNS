@@ -16,7 +16,7 @@ CDlg_AgentClassification::CDlg_AgentClassification(CWnd* pParent /*=NULL*/)
 	, m_MaxColumnSize(100)
 {
 
-	m_XSelectionNo = CLS_demand_type;
+	m_XSelectionNo = CLS_agent_type;
 	m_YSelectionNo = CLS_Agent_count;
 	m_AgentSelectionNo = CLS_network;
 
@@ -104,10 +104,10 @@ BOOL CDlg_AgentClassification::OnInitDialog()
 	}
 	m_ColumnSizeList.SetCurSel (99);
 
-// enum Agent_X_CLASSIFICATION {CLS_demand_type=0,CLS_VOT_10,CLS_time_interval_15_min,CLS_information_class,CLS_Agent_type};
+// enum Agent_X_CLASSIFICATION {CLS_agent_type=0,CLS_VOT_10,CLS_time_interval_15_min,CLS_information_class,CLS_Agent_type};
 
 	m_ComboX.AddString("All Agents/Agents"); // 0;
-	m_ComboX.AddString("Demand Type");
+	m_ComboX.AddString("Agent Type");
 	m_ComboX.AddString ("--"); 
 	m_ComboX.AddString("5-min Departure Time Interval"); //2
 	m_ComboX.AddString("15-min Departure Time Interval"); //2
@@ -126,8 +126,6 @@ BOOL CDlg_AgentClassification::OnInitDialog()
 	m_ComboX.AddString("Travel Time Bin (5 min Interval)"); //2
 	m_ComboX.AddString("Travel Time Bin (10 min Interval)"); //2
 	m_ComboX.AddString("Travel Time Bin (30 min Interval)"); //2
-	m_ComboX.AddString ("--"); 
-	m_ComboX.AddString("Agent Type"); //4
 
 // enum Agent_Y_CLASSIFICATION {CLS_Agent_count=0,CLS_total_travel_time,CLS_avg_travel_time,CLS_total_toll_cost,CLS_avg_toll_cost,CLS_total_generalized_cost,CLS_avg_generalized_cost,CLS_total_travel_distance, CLS_avg_travel_distance,CLS_total_CO2,CLS_avg_CO2};
 
@@ -221,7 +219,7 @@ void CDlg_AgentClassification::AddChartData()
 			{
 
 				CString msg;
-				msg.Format("Link %s:%d -> %d",(*iLink)->m_Name .c_str (), (*iLink)->m_FromNodeNumber , (*iLink)->m_ToNodeNumber);
+				msg.Format("Link %s:%d -> %d",(*iLink)->m_Name .c_str (), (*iLink)->m_FromNodeID , (*iLink)->m_ToNodeID);
 				m_MessageList.AddString(msg);
 			}
 			

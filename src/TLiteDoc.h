@@ -67,8 +67,7 @@ enum layer_mode
 	layer_subarea
 };
 enum Network_Data_Settings {_NODE_DATA = 0,_LINK_DATA, _MOVEMENT_DATA, _AGENT_DATA, MAX_NUM_OF_NETWORK_DATA_FILES};
-enum Demand_Data_Settings { _DEMAND_FILE_LIST = 0, _DEMAND_TYPE_DATA, _Agent_TYPE_DATA, MAX_NUM_OF_DEMAND_DATA_FILES };
-enum Link_MOE {MOE_none,MOE_volume, MOE_speed, MOE_queue_length,MOE_impact, MOE_bottleneck,MOE_safety,MOE_user_defined,MOE_density,MOE_traveltime,MOE_capacity, MOE_speedlimit, MOE_reliability, MOE_fftt, MOE_length, MOE_queuelength,MOE_fuel,MOE_Agent, MOE_volume_copy, MOE_speed_copy, MOE_density_copy, MOE_emissions, MOE_CO2,MOE_NOX, MOE_CO,MOE_HC};
+enum Link_MOE {MOE_none,MOE_volume, MOE_speed, MOE_queue_length, MOE_bottleneck,MOE_density,MOE_traveltime,MOE_capacity, MOE_speedlimit,  MOE_fftt, MOE_length, MOE_queuelength,MOE_Agent};
 
 enum OD_MOE {odnone,critical_volume};
 
@@ -83,7 +82,7 @@ CLS_subarea_external_to_internal,
 CLS_subarea_internal_to_internal_trip,
 CLS_subarea_internal_to_internal_subtrip,
 CLS_subarea_boundary_to_bounary_subtrip};
-enum Agent_X_CLASSIFICATION {CLS_all_Agents=0,CLS_demand_type,
+enum Agent_X_CLASSIFICATION {CLS_all_Agents=0,CLS_agent_type,
 CLS_sep_1,
 CLS_time_interval_5_min, CLS_time_interval_15_min, CLS_time_interval_30_min, CLS_time_interval_60_min, CLS_time_interval_2_hour, CLS_time_interval_4_hour,
 CLS_sep_2,
@@ -113,8 +112,6 @@ enum Agent_Y_CLASSIFICATION {
 	CLS_travel_time_per_mile_90_percentile,
 	CLS_travel_time_per_mile_80_percentile,
 };
-enum LINK_BAND_WIDTH_MODE {LBW_number_of_lanes = 0, LBW_link_volume,LBW_number_of_marked_Agents, LBW_congestion_duration};
-
 
 class MovementBezier
 {
@@ -264,7 +261,7 @@ public:
 
 	int	  Origin;
 	int	  Destination;
-	int   NodeNumberSum;
+	int   NodeIDSum;
 	int   NodeSize;
 
 
@@ -272,7 +269,7 @@ public:
 	CString GetPathLabel()
 	{
 		CString label;
-		label.Format("%d,%d,%d,%d", Origin , Destination, NodeNumberSum, NodeSize);
+		label.Format("%d,%d,%d,%d", Origin , Destination, NodeIDSum, NodeSize);
 		return label;
 	}
 
@@ -283,11 +280,10 @@ public:
 	std::vector<DTAAgent*> m_AgentVector;
 
 
-	int date_id;
 	float departure_time_in_min;
 
 	float Accessibility_Factor;
-	int   TotalAgentSize;
+	float   TotalAgentSize;
 	float TotalTravelTime;
 	float	TotalTravelTimeVariance;
 	float	TotalTravelTimePerMileVariance;
@@ -343,13 +339,12 @@ class CTLiteDoc : public CDocument
 public: // create from serialization only
 
 	float m_DemandAlpha;
-	eLinkDataType m_PrimaryDataSource;
 	float*** TDDemandSOVMatrix;
 	float*** TDDemandHOVMatrix;
 	float*** TDDemandTruckMatrix;
 
 	void CreateAgents(int origin_zone, int destination_zone, float number_of_Agents, 
-		int demand_type, float starting_time_in_min, float ending_time_in_min);
+		int agent_type, float starting_time_in_min, float ending_time_in_min);
 
 	std::string m_CurrentDisplayTimingPlanName;
 	
@@ -406,14 +401,14 @@ public: // create from serialization only
 	
 	}
 
-	CString GetPhasingMapKey(int NodeID, std::string TimingPlanName)
+	CString GetPhasingMapKey(int NodeNo, std::string TimingPlanName)
 	{
 
 		if(TimingPlanName.size() == 0)
 			TimingPlanName = "0";
 
 	CString str;
-	str.Format("%d:%s", NodeID, TimingPlanName.c_str ());
+	str.Format("%d:%s", NodeNo, TimingPlanName.c_str ());
 
 	return str;
 	
@@ -570,9 +565,9 @@ public:
 
 	AgentStatistics*** m_ODMOEMatrix;
 
-	int m_DemandTypeSize; 
+	int m_AgentTypeSize; 
 
-	int m_PreviousDemandTypeSize;
+	int m_PreviousAgentTypeSize;
 	int m_PreviousZoneNoSize;
 
 
@@ -586,7 +581,7 @@ public:
 	int FindClosestNode(GDPoint point)
 	{
 
-		int SelectedNodeID = -1;
+		int SelectedNodeNo = -1;
 
 		double min_distance = 99999;
 		std::list<DTANode*>::iterator iNode;
@@ -599,13 +594,13 @@ public:
 			double distance = pow((cx*cx + cy*cy),0.5);
 			if( distance < min_distance)
 			{
-				SelectedNodeID = (*iNode)->m_NodeNo ;
+				SelectedNodeNo = (*iNode)->m_NodeID ;
 				min_distance = distance;
 			}
 
 		}
 
-		return SelectedNodeID;
+		return SelectedNodeNo;
 
 	}
 
@@ -613,7 +608,7 @@ public:
 
 	int m_OriginOnBottomFlag;
 	bool m_LongLatFlag;
-	int m_StartNodeNumberForNewNodes;
+	int m_StartNodeIDForNewNodes;
 	bool m_bShowCalibrationResults;
 
 	int m_TrafficFlowModelFlag;
@@ -671,8 +666,8 @@ public:
 	bool m_PathMOEDlgShowFlag;
 	int m_SelectPathNo;
 
-	int m_FromNodeID;
-	int m_ToNodeID;
+	int m_FromNodeNo;
+	int m_ToNodeNo;
 
 	double m_UnitDistance;
 	double m_OffsetInDistance;
@@ -688,7 +683,7 @@ public:
 	void FieldNameNotExistMessage(std::string FieldName, std::string KeyName, std::string FileName);
 	BOOL OnOpenAMSDocument(CString FileName);
 	bool RunGravityModel();
-	bool ReadDemandMatrixFile(LPCTSTR lpszFileName,int demand_type);
+	bool ReadDemandMatrixFile(LPCTSTR lpszFileName,int agent_type);
 	BOOL OnOpenTrafficNetworkDocument(CString ProjectFileName, bool bNetworkOnly = false, bool bImportShapeFiles = false);
 	
 	bool ReadGPSData(string FileName);
@@ -707,8 +702,7 @@ public:
 	// two basic input
 	bool ReadNodeCSVFile(LPCTSTR lpszFileName, int LayerNo=0);   // for road network
 	bool ReadLinkCSVFile(LPCTSTR lpszFileName, bool bCreateNewNodeFlag, int LayerNo);   // for road network
-	bool ReadSensorCSVFile(LPCTSTR lpszFileName);   // for road network
-	
+
 	bool ReadGPSCSVFile(LPCTSTR lpszFileName);   // for road network
 	bool ReadGPSDataFile(LPCTSTR lpszFileName);   // for road network
 	
@@ -729,14 +723,9 @@ public:
 
 	void ReCalculateLinkBandWidth();
 	float GetLinkBandWidth(float Value);
-	bool ReadDemandCSVFile(LPCTSTR lpszFileName);   // for road network
-	bool ReadMetaDemandCSVFile(LPCTSTR lpszFileName);   // for road network
-	bool ReadMetaSignalCSVFile(LPCTSTR lpszFileName);   // for road network
-	bool ReadScenarioSettingCSVFile(LPCTSTR lpszFileName);   // for road network
-	bool WriteScenarioSettingCSVFile(LPCTSTR lpszFileName);
 
 	   
-	bool ReadDemandTypeCSVFile(LPCTSTR lpszFileName);
+	bool ReadAgentTypeCSVFile(LPCTSTR lpszFileName);
 	bool ReadLinkTypeCSVFile(LPCTSTR lpszFileName); 
 
 	//scenario data
@@ -770,7 +759,7 @@ public:
 	};
 
 
-	int ReadWorkZoneScenarioData(int RemoveLinkFromNodeNumber= -1, int RemoveLinkToNodeNumber= -1);
+	int ReadWorkZoneScenarioData(int RemoveLinkFromNodeID= -1, int RemoveLinkToNodeID= -1);
 
 	bool WriteWorkZoneScenarioData();
 
@@ -830,7 +819,7 @@ public:
 
 	int GetVehilePosition(DTAAgent* pAgent, double CurrentTime, int &link_sequence_no, float& ratio );
 	bool GetAgentPosition(string agent_id, double CurrentTime, GDPoint& pt);
-	bool GetGPSVehilePosition(DTAAgent* pAgent, double CurrentTime, GDPoint & pt);
+	bool GetAgentPosition(DTAAgent* pAgent, double CurrentTime, GDPoint & pt);
 
 	float GetLinkMOE(DTALink* pLink, Link_MOE LinkMOEMode, int CurrentTime,  int AggregationIntervalInMin, float &value);
 
@@ -1060,11 +1049,11 @@ public:
 
 	
 	std::map<int, DTANode*> m_NodeNoMap;
-	std::map<int, DTANode*> m_NodeNumberMap;
+	std::map<int, DTANode*> m_NodeIDMap;
+
 	std::map<long, DTALink*> m_LinkNoMap;
-	std::map<unsigned long, DTALink*> m_NodeNotoLinkMap;
-	std::map<__int64, DTALink*> m_NodeNumbertoLinkMap;
-	std::map<long, DTALink*> m_LinkNotoLinkMap;
+	std::map<unsigned long, DTALink*> m_NodeIDtoLinkMap;
+	
 	std::map<string, DTALink*> m_LinkIDtoLinkMap;
 
 
@@ -1072,10 +1061,10 @@ public:
 	{
 	public:
 	std::map<int, DTANode*> l_NodeNoMap;
-	std::map<int, DTANode*> l_NodeNumberMap;
+	std::map<int, DTANode*> l_NodeIDMap;
 	std::map<long, DTALink*> l_LinkNoMap;
 	std::map<unsigned long, DTALink*> l_NodeNotoLinkMap;
-	std::map<__int64, DTALink*> l_NodeNumbertoLinkMap;
+	std::map<unsigned long, DTALink*> l_NodeIDtoLinkMap;
 	std::map<long, DTALink*> l_LinkNotoLinkMap;
 	std::map<string, DTALink*> l_LinkIDtoLinkMap;
 
@@ -1086,7 +1075,7 @@ public:
 	std::list<DTALink*>		l_SubareaLinkSet;
 	std::map<int, DTAZone>	l_ZoneMap;
 
-	std::map<long, long> l_NodeNumbertoNodeNoMap;
+	std::map<long, long> l_NodeIDtoNodeNoMap;
 	std::map<long, long> l_NodeNotoZoneNameMap;
 
 	std::vector<GDPoint> l_SubareaShapePoints;
@@ -1106,11 +1095,11 @@ public:
 	void GenerateMovementShapePoints();
 
 	std::map<long, DTALink*> m_SensorIDtoLinkMap;
-	std::map<long, long> m_AVISensorIDtoNodeIDMap;
+	std::map<long, long> m_AVISensorIDtoNodeNoMap;
 
 
 
-	std::map<int, DTANode*> m_SubareaNodeIDMap;
+	std::map<int, DTANode*> m_SubareaNodeNoMap;
 	bool CTLiteDoc::WriteSubareaFiles();
 
 
@@ -1138,12 +1127,9 @@ public:
 	bool WriteSelectAgentDataToCSVFile(LPCTSTR lpszFileName, std::vector<DTAAgent*> AgentVector);
 	void ReadAgentCSVFile_Parser(LPCTSTR lpszFileName);
 
-	int ReadAMSMovementCSVFile(LPCTSTR lpszFileName, int NodeID);
+	int ReadAMSMovementCSVFile(LPCTSTR lpszFileName, int NodeNo);
 	int ReadAMSSignalControlCSVFile(LPCTSTR lpszFileName);
 
-	bool ReadAgentBinFile(LPCTSTR lpszFileName,int version_number);
-	bool ReadAgentCSVFile(LPCTSTR lpszFileName, int version_number);
-	
 
 	void UpdateMovementDataFromAgentTrajector();
 	vector<int> ParseLineToIntegers(string line)
@@ -1201,19 +1187,26 @@ public:
 
 
 	
-	CString GetDemandTypeStr(int PricingType)
+	CString GetAgentTypeStr(int AgentTypeNo)
 	{
 
-		if(PricingType == 1) return "SOV";
-		if(PricingType == 2) return "HOV";
-		if(PricingType == 3) return "truck";
+			std::map<string, DTAAgentType>::const_iterator itr;
+
+			char text[100];
+			for (itr = m_AgentTypeMap.begin(); itr != m_AgentTypeMap.end(); itr++)
+			{
+				if (itr->second.agent_type_no == AgentTypeNo)
+				{
+					return itr->second.agent_type.c_str();
+				}
+			}
+
+
 
 		return "NULL";
 	}
 
 	Agent_CLASSIFICATION_SELECTION m_AgentSelectionMode;
-	LINK_BAND_WIDTH_MODE m_LinkBandWidthMode;
-	float m_MaxLinkWidthAsNumberOfLanes;
 	float m_MaxLinkWidthAsLinkVolume;
 
 	std::map<int, AgentStatistics> m_ClassificationTable;
@@ -1230,22 +1223,22 @@ public:
 	int m_PathNodeVectorSP[MAX_NODE_SIZE_IN_A_PATH];
 	long m_NodeSizeSP;
 
-	std::map<long, long> m_NodeNotoNumberMap;
-	std::map<long, long> m_NodeNumbertoNodeNoMap;
-	std::map<long, long> m_NodeNotoZoneNameMap;
+	std::map<long, long> m_NodeIDtoNumberMap;
+	std::map<long, long> m_NodeIDtoNodeNoMap;
+	std::map<long, long> m_NodeIDtoZoneNameMap;
 
 	int m_SelectedLinkNo;
 	bool m_ZoomToSelectedObject;
 	void ZoomToSelectedLink(int SelectedLinkNo);
-	void ZoomToSelectedNode(int SelectedNodeNumber);
+	void ZoomToSelectedNode(int SelectedNodeID);
 
-	int m_SelectedNodeID;
+	int m_SelectedNodeNo;
 	int m_SelectedZoneID;
 	int m_SelectedAgentID;
 	string m_SelectedTrainHeader;
 
 
-	std::vector<DTADemandType> m_DemandTypeVector;
+	std::map <string,DTAAgentType> m_AgentTypeMap;
 	std::map<int,DTALinkType> m_LinkTypeMap;
 	std::map<int, string> m_NodeTypeMap;
 
@@ -1279,80 +1272,79 @@ public:
 
 	bool m_bLinkToBeShifted;
 
-	int m_LaneWidthInMeter;
+	float m_LaneWidthInKM;
 
 	void ShowLegend(bool ShowLegendStatus);
-	DTALink* AddNewLinkWithNodeNumbers(int FromNodeNumber, int ToNodeNumber, bool bOffset = false, bool bLongLatFlag = false)	
+	DTALink* AddNewLinkWithNodeIDs(int FromNodeID, int ToNodeID, bool bOffset = false, bool bLongLatFlag = false)	
 	{
-		int FromNodeID =  -1;
-			if (m_NodeNumberMap.find(FromNodeNumber)!= m_NodeNumberMap.end())
+		int FromNodeNo =  -1;
+			if (m_NodeIDMap.find(FromNodeID)!= m_NodeIDMap.end())
 			{
-			FromNodeID = m_NodeNumberMap[FromNodeNumber]->m_NodeNo ;
+			FromNodeNo = m_NodeIDMap[FromNodeID]->m_NodeNo ;
 			}
 
-		int ToNodeID = -1;
-			if (m_NodeNumberMap.find(ToNodeNumber)!= m_NodeNumberMap.end())
+		int ToNodeNo = -1;
+			if (m_NodeIDMap.find(ToNodeID)!= m_NodeIDMap.end())
 			{
-			ToNodeID = m_NodeNumberMap[ToNodeNumber]->m_NodeNo ;
+			ToNodeNo = m_NodeIDMap[ToNodeID]->m_NodeID ;
 			}
 
-			if(FromNodeID>=0 && ToNodeID>=0)
+			if(FromNodeNo>=0 && ToNodeNo>=0)
 			{
-				return AddNewLink(FromNodeID,ToNodeID,bOffset,bLongLatFlag);
+				return AddNewLink(FromNodeNo,ToNodeNo,bOffset,bLongLatFlag);
 			}else
 
 				return NULL;
 			 
 	}
 
-		DTALink* AddNewLink(int FromNodeID, int ToNodeID, bool bOffset = false, bool bLongLatFlag = false)
+		DTALink* AddNewLink(int FromNodeNo, int ToNodeNo, bool bOffset = false, bool bLongLatFlag = false)
 	{
 
 
 		Modify();
 		DTALink* pLink = 0;
 
-		pLink = FindLinkWithNodeIDs(FromNodeID,ToNodeID);
+		pLink = FindLinkWithNodeNo(FromNodeNo,ToNodeNo);
 
 			if(pLink != NULL)
 				return NULL;  // a link with the same from and to node numbers exists!
 
 		pLink = new DTALink(1);
 		pLink->m_LinkNo = (int)(m_LinkSet.size());
-		pLink->m_FromNodeNumber = m_NodeNotoNumberMap[FromNodeID];
-		pLink->m_ToNodeNumber = m_NodeNotoNumberMap[ToNodeID];
-		pLink->m_FromNodeID = FromNodeID;
-		pLink->m_ToNodeID= ToNodeID;
+		pLink->m_FromNodeID = m_NodeIDtoNumberMap[FromNodeNo];
+		pLink->m_ToNodeID = m_NodeIDtoNumberMap[ToNodeNo];
+		pLink->m_FromNodeNo = FromNodeNo;
+		pLink->m_ToNodeNo= ToNodeNo;
 
-		pLink->m_FromPoint = m_NodeNoMap[pLink->m_FromNodeID]->pt;
-		pLink->m_ToPoint = m_NodeNoMap[pLink->m_ToNodeID]->pt;
+		pLink->m_FromPoint = m_NodeNoMap[pLink->m_FromNodeNo]->pt;
+		pLink->m_ToPoint = m_NodeNoMap[pLink->m_ToNodeNo]->pt;
 
-		m_NodeNoMap[FromNodeID ]->m_Connections+=1;
+		m_NodeNoMap[FromNodeNo ]->m_Connections+=1;
 
-		m_NodeNoMap[FromNodeID ]->m_OutgoingLinkVector.push_back(pLink->m_LinkNo);
-		m_NodeNoMap[ToNodeID]->m_IncomingLinkVector.push_back(pLink->m_LinkNo);
+		m_NodeNoMap[FromNodeNo ]->m_OutgoingLinkVector.push_back(pLink->m_LinkNo);
+		m_NodeNoMap[ToNodeNo]->m_IncomingLinkVector.push_back(pLink->m_LinkNo);
 
-		m_NodeNoMap[ToNodeID ]->m_Connections+=1;
+		m_NodeNoMap[ToNodeNo ]->m_Connections+=1;
 
 		if( m_LinkTypeMap[pLink->m_link_type].IsFreeway () ||  m_LinkTypeMap[pLink->m_link_type].IsRamp  ())
 		{
-		m_NodeNoMap[pLink->m_FromNodeID ]->m_bConnectedToFreewayORRamp = true;
-		m_NodeNoMap[pLink->m_ToNodeID ]->m_bConnectedToFreewayORRamp = true;
+		m_NodeNoMap[pLink->m_FromNodeNo ]->m_bConnectedToFreewayORRamp = true;
+		m_NodeNoMap[pLink->m_ToNodeNo ]->m_bConnectedToFreewayORRamp = true;
 		}
 
 
-		unsigned long LinkKey = GetLinkKey( pLink->m_FromNodeID, pLink->m_ToNodeID);
-		m_NodeNotoLinkMap[LinkKey] = pLink;
+		unsigned long LinkKey = GetLinkKey( pLink->m_FromNodeNo, pLink->m_ToNodeNo);
+		m_NodeIDtoLinkMap[LinkKey] = pLink;
 
-		__int64  LinkKey2 = GetLink64Key(pLink-> m_FromNodeNumber,pLink->m_ToNodeNumber);
-		m_NodeNumbertoLinkMap[LinkKey2] = pLink;
+		__int64  LinkKey2 = GetLink64Key(pLink-> m_FromNodeID,pLink->m_ToNodeID);
+		m_NodeIDtoLinkMap[LinkKey2] = pLink;
 
 		pLink->m_NumberOfLanes= m_DefaultNumLanes;
 		pLink->m_FreeSpeed= m_DefaultSpeedLimit;
 		pLink->m_SpeedAtCapacity = m_DefaultSpeedLimit - 20;
 		
 		pLink->m_ReversedSpeedLimit = m_DefaultSpeedLimit;
-		pLink->m_avg_simulated_speed = m_DefaultSpeedLimit;
 
 		double length  = pLink->DefaultDistance()/max(0.0000001,m_UnitDistance);
 
@@ -1376,8 +1368,8 @@ public:
 		pLink->m_LaneCapacity  = m_DefaultCapacity;
 		pLink->m_link_type= m_DefaultLinkType;
 
-		pLink->m_FromPoint = m_NodeNoMap[FromNodeID]->pt;
-		pLink->m_ToPoint = m_NodeNoMap[ToNodeID]->pt;
+		pLink->m_FromPoint = m_NodeNoMap[FromNodeNo]->pt;
+		pLink->m_ToPoint = m_NodeNoMap[ToNodeNo]->pt;
 
 	
 		if(bOffset)
@@ -1398,7 +1390,7 @@ public:
 
 		pLink->CalculateShapePointRatios();
 
-		double lane_offset = m_UnitDistance*m_LaneWidthInMeter;  // 20 feet per lane
+		double lane_offset = m_UnitDistance*m_LaneWidthInKM;  // 20 feet per lane
 
 		unsigned int last_shape_point_id = pLink ->m_ShapePoints .size() -1;
 		double DeltaX = pLink->m_ShapePoints[last_shape_point_id].x - pLink->m_ShapePoints[0].x;
@@ -1423,19 +1415,18 @@ public:
 
 		m_LinkSet.push_back (pLink);
 		m_LinkNoMap[pLink->m_LinkNo]  = pLink;
-
 		return pLink;
 	}
 
 	
-	void SplitLinksForOverlappingNodeOnLinks(int ThisNodeID, bool bOffset = false, bool bLongLatFlag = false)
+	void SplitLinksForOverlappingNodeOnLinks(int ThisNodeNo, bool bOffset = false, bool bLongLatFlag = false)
 	{
 		std::vector<DTALink*> OverlappingLinks;
 
-		if(m_NodeNoMap.find(ThisNodeID)== m_NodeNoMap.end())
+		if(m_NodeNoMap.find(ThisNodeNo)== m_NodeNoMap.end())
 			return;
 
-		GDPoint p0 = m_NodeNoMap[ThisNodeID]->pt ;
+		GDPoint p0 = m_NodeNoMap[ThisNodeNo]->pt ;
 
 		// step 1: find overlapping links
 
@@ -1466,72 +1457,71 @@ public:
 		for(int i = 0; i < OverlappingLinks.size(); i++)
 		{
 
-		int ExistingFromNodeID = OverlappingLinks[i]->m_FromNodeID ;
-		int ExistingToNodeID = OverlappingLinks[i]->m_ToNodeID ;
+		int ExistingFromNodeNo = OverlappingLinks[i]->m_FromNodeNo ;
+		int ExistingToNodeNo = OverlappingLinks[i]->m_ToNodeNo ;
 
 
 		for(int add_link_index = 1; add_link_index <=2; add_link_index++)
 		{
-		int FromNodeID, ToNodeID;
+		int FromNodeNo, ToNodeNo;
 		
 		if(add_link_index==1)  // first link
 		{
-		FromNodeID= ExistingFromNodeID;
-		ToNodeID = ThisNodeID;
+		FromNodeNo= ExistingFromNodeNo;
+		ToNodeNo = ThisNodeNo;
 		}
 		if(add_link_index==2) // second link
 		{
-		FromNodeID= ThisNodeID;
-		ToNodeID = ExistingToNodeID;
+		FromNodeNo= ThisNodeNo;
+		ToNodeNo = ExistingToNodeNo;
 		}
 
 
 		DTALink* pLink = 0;
 
-		pLink = FindLinkWithNodeIDs(FromNodeID,ToNodeID);
+		pLink = FindLinkWithNodeNo(FromNodeNo,ToNodeNo);
 
 		if(pLink != NULL)
 				continue;  // a link with the same from and to node numbers exists!
 
 		pLink = new DTALink(1);
 		pLink->m_LinkNo = (int)(m_LinkSet.size());
-		pLink->m_FromNodeNumber = m_NodeNotoNumberMap[FromNodeID];
-		pLink->m_ToNodeNumber = m_NodeNotoNumberMap[ToNodeID];
-		pLink->m_FromNodeID = FromNodeID;
-		pLink->m_ToNodeID= ToNodeID;
+		pLink->m_FromNodeID = m_NodeIDtoNumberMap[FromNodeNo];
+		pLink->m_ToNodeID = m_NodeIDtoNumberMap[ToNodeNo];
+		pLink->m_FromNodeNo = FromNodeNo;
+		pLink->m_ToNodeNo= ToNodeNo;
 
-		if(m_NodeNoMap.find(FromNodeID) == m_NodeNoMap.end())
+		if(m_NodeNoMap.find(FromNodeNo) == m_NodeNoMap.end())
 		{
 		
 		return;
 		}
 
-		if(m_NodeNoMap.find(ToNodeID) == m_NodeNoMap.end())
+		if(m_NodeNoMap.find(ToNodeNo) == m_NodeNoMap.end())
 		{
 		
 		return;
 		}
-		pLink->m_FromPoint = m_NodeNoMap[pLink->m_FromNodeID]->pt;
-		pLink->m_ToPoint = m_NodeNoMap[pLink->m_ToNodeID]->pt;
+		pLink->m_FromPoint = m_NodeNoMap[pLink->m_FromNodeNo]->pt;
+		pLink->m_ToPoint = m_NodeNoMap[pLink->m_ToNodeNo]->pt;
 
-		m_NodeNoMap[FromNodeID ]->m_Connections+=1;
+		m_NodeNoMap[FromNodeNo ]->m_Connections+=1;
 
-		m_NodeNoMap[FromNodeID ]->m_OutgoingLinkVector.push_back(pLink->m_LinkNo);
+		m_NodeNoMap[FromNodeNo ]->m_OutgoingLinkVector.push_back(pLink->m_LinkNo);
 
 
 
-		m_NodeNoMap[ToNodeID ]->m_Connections+=1;
+		m_NodeNoMap[ToNodeNo ]->m_Connections+=1;
 
-		unsigned long LinkKey = GetLinkKey( pLink->m_FromNodeID, pLink->m_ToNodeID);
-		m_NodeNotoLinkMap[LinkKey] = pLink;
+		unsigned long LinkKey = GetLinkKey( pLink->m_FromNodeNo, pLink->m_ToNodeNo);
+		m_NodeIDtoLinkMap[LinkKey] = pLink;
 
-		__int64  LinkKey2 = GetLink64Key(pLink-> m_FromNodeNumber,pLink->m_ToNodeNumber);
-		m_NodeNumbertoLinkMap[LinkKey2] = pLink;
+		__int64  LinkKey2 = GetLink64Key(pLink-> m_FromNodeID,pLink->m_ToNodeID);
+		m_NodeIDtoLinkMap[LinkKey2] = pLink;
 
 		pLink->m_NumberOfLanes= OverlappingLinks[i]->m_NumberOfLanes ;
 		pLink->m_FreeSpeed=  OverlappingLinks[i]->m_FreeSpeed ;
 		pLink->m_ReversedSpeedLimit =  OverlappingLinks[i]->m_FreeSpeed ;
-		pLink->m_avg_simulated_speed =  OverlappingLinks[i]->m_FreeSpeed ;
 
 		double length;  
 
@@ -1548,8 +1538,8 @@ public:
 		pLink->m_LaneCapacity  = OverlappingLinks[i]->m_LaneCapacity;
 		pLink->m_link_type= OverlappingLinks[i]->m_link_type;
 
-		pLink->m_FromPoint = m_NodeNoMap[FromNodeID]->pt;
-		pLink->m_ToPoint = m_NodeNoMap[ToNodeID]->pt;
+		pLink->m_FromPoint = m_NodeNoMap[FromNodeNo]->pt;
+		pLink->m_ToPoint = m_NodeNoMap[ToNodeNo]->pt;
 
 
 		if(bOffset)
@@ -1570,7 +1560,7 @@ public:
 
 		pLink->CalculateShapePointRatios();
 
-		double lane_offset = m_UnitDistance*m_LaneWidthInMeter;  // 20 feet per lane
+		double lane_offset = m_UnitDistance*m_LaneWidthInKM;  // 20 feet per lane
 
 		unsigned int last_shape_point_id = pLink ->m_ShapePoints .size() -1;
 		double DeltaX = pLink->m_ShapePoints[last_shape_point_id].x - pLink->m_ShapePoints[0].x;
@@ -1612,28 +1602,28 @@ public:
 	}
 	
 
-	DTANode* AddNewNode(GDPoint newpt, int NewNodeNumber=0 , int LayerNo =0, bool ActivityLocation = false, bool bSplitLink = false)
+	DTANode* AddNewNode(GDPoint newpt, int NewNodeID=0 , int LayerNo =0, bool ActivityLocation = false, bool bSplitLink = false)
 	{
 		Modify();
 		DTANode* pNode = new DTANode;
 		pNode->pt = newpt;
 		pNode->m_LayerNo = LayerNo;
-		pNode->m_NodeNo = GetUnusedNodeID();
+		pNode->m_NodeID = GetUnusedNodeNo();
 
-		TRACE("Adding Node ID: %d\n", pNode->m_NodeNo );
+		TRACE("Adding Node ID: %d\n", pNode->m_NodeID );
 
-		if(pNode->m_NodeNo ==31)
+		if(pNode->m_NodeID ==31)
 		{
 		TRACE("");
 		}
 
-		if(NewNodeNumber ==0 )
+		if(NewNodeID ==0 )
 		{
-			pNode->m_NodeID = GetUnusedNodeNumber();
+			pNode->m_NodeID = GetUnusedNodeID();
 		}
 		else
 		{
-			pNode->m_NodeID = NewNodeNumber;
+			pNode->m_NodeID = NewNodeID;
 		}
 
 
@@ -1641,24 +1631,24 @@ public:
 		pNode->m_bZoneActivityLocationFlag = ActivityLocation;
 		m_NodeSet.push_back(pNode);
 		m_NodeNoMap[pNode->m_NodeNo] = pNode;
-		m_NodeNumberMap[pNode->m_NodeID] = pNode;
-		m_NodeNotoNumberMap[pNode->m_NodeNo ] = pNode->m_NodeID;
-		m_NodeNumbertoNodeNoMap[pNode->m_NodeID] = pNode->m_NodeNo;
+		m_NodeIDMap[pNode->m_NodeID] = pNode;
+		m_NodeIDtoNumberMap[pNode->m_NodeID ] = pNode->m_NodeID;
+		m_NodeIDtoNodeNoMap[pNode->m_NodeID] = pNode->m_NodeID;
 
 		if(bSplitLink)
 		{
-		SplitLinksForOverlappingNodeOnLinks(pNode->m_NodeNo,false,false);
+		SplitLinksForOverlappingNodeOnLinks(pNode->m_NodeID,false,false);
 		}
 		return pNode;
 	}
 
-	bool DeleteNode(int NodeID)
+	bool DeleteNode(int NodeNo)
 	{
 		std::list<DTANode*>::iterator iNode;
 
 		for (iNode = m_NodeSet.begin(); iNode != m_NodeSet.end(); iNode++)
 		{
-			if((*iNode)->m_Connections  == 0 && (*iNode)->m_NodeNo  == NodeID)
+			if((*iNode)->m_Connections  == 0 && (*iNode)->m_NodeID  == NodeNo)
 			{
 
 				int ZoneID = (*iNode)->m_ZoneID;
@@ -1667,7 +1657,7 @@ public:
 				m_NodeNoMap[(*iNode)->m_NodeNo ] = NULL;
 				m_NodeNoMap.erase ((*iNode)->m_NodeNo);
 	
-				m_NodeNumbertoNodeNoMap[(*iNode)->m_NodeID  ] = -1;
+				m_NodeIDtoNodeNoMap[(*iNode)->m_NodeID  ] = -1;
 
 				m_NodeSet.erase  (iNode);
 				return true;
@@ -1681,26 +1671,26 @@ public:
 	{
 
 
-		int FromNodeID   = pLink->m_FromNodeID ;
-		int ToNodeID   = pLink->m_ToNodeID ;
-		unsigned long LinkKey = GetLinkKey( FromNodeID , ToNodeID );
+		int FromNodeNo   = pLink->m_FromNodeNo ;
+		int ToNodeNo   = pLink->m_ToNodeNo ;
+		unsigned long LinkKey = GetLinkKey( FromNodeNo , ToNodeNo );
 		
-		m_NodeNotoLinkMap.erase (LinkKey);  
-		m_NodeNotoLinkMap[LinkKey] =NULL;
+		m_NodeIDtoLinkMap.erase (LinkKey);  
+		m_NodeIDtoLinkMap[LinkKey] =NULL;
 
-		m_NodeNoMap[FromNodeID ]->m_Connections-=1;
+		m_NodeNoMap[FromNodeNo ]->m_Connections-=1;
 
-		for(int ii = 0; ii< m_NodeNoMap[FromNodeID ]->m_OutgoingLinkVector.size();ii++)
+		for(int ii = 0; ii< m_NodeNoMap[FromNodeNo ]->m_OutgoingLinkVector.size();ii++)
 		{
-			if(m_NodeNoMap[FromNodeID ]->m_OutgoingLinkVector[ii] == pLink->m_LinkNo)
+			if(m_NodeNoMap[FromNodeNo ]->m_OutgoingLinkVector[ii] == pLink->m_LinkNo)
 			{
-				m_NodeNoMap[FromNodeID ]->m_OutgoingLinkVector.erase(m_NodeNoMap[FromNodeID ]->m_OutgoingLinkVector.begin()+ii);
+				m_NodeNoMap[FromNodeNo ]->m_OutgoingLinkVector.erase(m_NodeNoMap[FromNodeNo ]->m_OutgoingLinkVector.begin()+ii);
 
 				break;
 			}
 		}
 
-		m_NodeNoMap[ToNodeID ]->m_Connections-=1;
+		m_NodeNoMap[ToNodeNo ]->m_Connections-=1;
 		m_LinkNoMap.erase (pLink->m_LinkNo);  
 
 		m_LinkNoMap[pLink->m_LinkNo]  = NULL;
@@ -1718,22 +1708,18 @@ public:
 
 		// 
 		//resort link no;
-
-		m_LinkNotoLinkMap.clear();
-
 		m_LinkNoMap.clear();
 		int i= 0;
 		for (iLink = m_LinkSet.begin(); iLink != m_LinkSet.end(); iLink++, i++)
 		{
 			(*iLink)->m_LinkNo = i;
-			m_LinkNotoLinkMap[i] = (*iLink);
 			m_LinkNoMap[i] = (*iLink);
 		}
 
 
 		// remove isolated nodes
-		DeleteNode (FromNodeID);
-		DeleteNode (ToNodeID);
+		DeleteNode (FromNodeNo);
+		DeleteNode (ToNodeNo);
 
 		return true;
 	
@@ -1750,31 +1736,31 @@ public:
 	}
 
 
-	int GetUnusedNodeNumber()
-	{
-		int NewNodeNumber = m_StartNodeNumberForNewNodes;
-
-		for (std::list<DTANode*>::iterator  iNode = m_NodeSet.begin(); iNode != m_NodeSet.end(); iNode++)
-		{
-			if(NewNodeNumber <= (*iNode)->m_NodeID  )  // this node number has been used
-				NewNodeNumber = (*iNode)->m_NodeID +1;
-		}
-
-		return NewNodeNumber;
-
-	}
-
 	int GetUnusedNodeID()
 	{
-		int NewNodeID = 0;
+		int NewNodeID = m_StartNodeIDForNewNodes;
 
 		for (std::list<DTANode*>::iterator  iNode = m_NodeSet.begin(); iNode != m_NodeSet.end(); iNode++)
 		{
-			if(NewNodeID <= (*iNode)->m_NodeNo)
-				NewNodeID = (*iNode)->m_NodeNo +1;
+			if(NewNodeID <= (*iNode)->m_NodeID  )  // this node number has been used
+				NewNodeID = (*iNode)->m_NodeID +1;
 		}
 
 		return NewNodeID;
+
+	}
+
+	int GetUnusedNodeNo()
+	{
+		int NewNodeNo = 0;
+
+		for (std::list<DTANode*>::iterator  iNode = m_NodeSet.begin(); iNode != m_NodeSet.end(); iNode++)
+		{
+			if(NewNodeNo <= (*iNode)->m_NodeID)
+				NewNodeNo = (*iNode)->m_NodeID +1;
+		}
+
+		return NewNodeNo;
 
 	}
 
@@ -1838,15 +1824,15 @@ public:
 
 
 
-	DTANodeMovement* FindMovement(int FromNodeNumber,int ToNodeNumber, int DestNodeNumber)
+	DTANodeMovement* FindMovement(int FromNodeID,int ToNodeID, int DestNodeID)
 	{
 		DTANodeMovement*  pMovement = NULL;
 
 	
 			CString label;
-		int up_node_id = m_NodeNoMap[FromNodeNumber]->m_NodeNo     ;
-		long to_node_id = m_NodeNoMap[ToNodeNumber]->m_NodeNo     ;
-		int dest_node_id = m_NodeNoMap[DestNodeNumber ]->m_NodeNo ;
+		int up_node_id = m_NodeIDMap[FromNodeID]->m_NodeID     ;
+		long to_node_id = m_NodeIDMap[ToNodeID]->m_NodeID     ;
+		int dest_node_id = m_NodeIDMap[DestNodeID ]->m_NodeID ;
 		label.Format("%d;%d;%d", up_node_id,to_node_id,dest_node_id);
 
 		if(m_MovementPointerMap.find(label)!= m_MovementPointerMap.end())
@@ -1906,27 +1892,27 @@ public:
 	eSEARCHMODE m_SearchMode;
 	int MaxNodeKey;
 	int MaxNode64Key;
-	unsigned long GetLinkKey(int FromNodeID, int ToNodeID)
+	unsigned long GetLinkKey(int FromNodeNo, int ToNodeNo)
 	{
 
-		unsigned long LinkKey = FromNodeID*MaxNodeKey+ToNodeID;
+		unsigned long LinkKey = FromNodeNo*MaxNodeKey+ToNodeNo;
 		return LinkKey;
 	}
 
-	__int64 GetLink64Key(int FromNodeNumber, int ToNodeNumber)
+	__int64 GetLink64Key(int FromNodeID, int ToNodeID)
 	{
 
-		__int64 LinkKey = FromNodeNumber*MaxNode64Key+ToNodeNumber;
+		__int64 LinkKey = FromNodeID*MaxNode64Key+ToNodeID;
 		return LinkKey;
 	}
 
-	DTANode* FindNodeWithNodeNumber(int NodeID)
+	DTANode* FindNodeWithNodeID(int NodeNo)
 	{
 		if(m_NodeSet.size()==0)
 			return NULL;
 		for (std::list<DTANode*>::iterator  iNode = m_NodeSet.begin(); iNode != m_NodeSet.end(); iNode++)
 		{
-			if(NodeID == (*iNode)->m_NodeID )
+			if(NodeNo == (*iNode)->m_NodeID )
 				return (*iNode);
 		}
 		return NULL;
@@ -1937,7 +1923,7 @@ public:
 		
 		DTANode* pNode= NULL;
 
-		int NodeID = -1;
+		int NodeNo = -1;
 		for (std::list<DTANode*>::iterator  iNode = m_NodeSet.begin(); iNode != m_NodeSet.end(); iNode++)
 		{
 			if((*iNode)->m_LayerNo == LayerNo && (*iNode)->m_ControlType == m_ControlType_PretimedSignal)
@@ -1954,13 +1940,13 @@ public:
 	}
 
 		
-	int FindNodeNumberWithCoordinate(double x, double y, double min_distance = 0.0000001)
+	int FindNodeIDWithCoordinate(double x, double y, double min_distance = 0.0000001)
 	{
 		
 		DTANode* pNode= NULL;
 
 		min_distance = 0.00000001;
-		int NodeID = -1;
+		int NodeNo = -1;
 		for (std::list<DTANode*>::iterator  iNode = m_NodeSet.begin(); iNode != m_NodeSet.end(); iNode++)
 		{
 
@@ -1977,13 +1963,13 @@ public:
 			return NULL;
 	}
 
-	int FindNodeIDWithCoordinate(double x, double y, double min_distance = 0.0000001)
+	int FindNodeNoWithCoordinate(double x, double y, double min_distance = 0.0000001)
 	{
 		
 		DTANode* pNode= NULL;
 
 		min_distance = 0.00000001;
-		int NodeID = -1;
+		int NodeNo = -1;
 		for (std::list<DTANode*>::iterator  iNode = m_NodeSet.begin(); iNode != m_NodeSet.end(); iNode++)
 		{
 
@@ -1995,65 +1981,23 @@ public:
 			}
 		}
 		if(pNode != NULL)
-			return pNode->m_NodeNo;
+			return pNode->m_NodeID;
 		else
 			return NULL;
 	}
 
 
-	int FindNonCentroidNodeNumberWithCoordinate(double x, double y, int this_node_name);
+	int FindNonCentroidNodeIDWithCoordinate(double x, double y, int this_node_name);
 
-	float GetNodeTotalDelay(int ToNodeNumber, int time, int& LOS);
+	float GetNodeTotalDelay(int ToNodeID, int time, int& LOS);
 
-	DTALink* FindFreewayLinkWithFromNodeNumber(int FromNodeNumber)
+
+	DTALink* FindLinkWithNodeIDs(int FromNodeID, int ToNodeID, CString FileName = "", bool bWarmingFlag = false)
 	{
-
-		if(m_NodeNumberMap.find(FromNodeNumber)!= m_NodeNumberMap.end())
+		if(m_NodeIDMap.find(FromNodeID)!= m_NodeIDMap.end())
 		{
 		
-		DTANode* pFromNode = m_NodeNumberMap[FromNodeNumber];
-
-		for(unsigned int i = 0; i< pFromNode->m_OutgoingLinkVector.size(); i++)
-		{
-			
-			DTALink* pLink = m_LinkNoMap[ pFromNode->m_OutgoingLinkVector[i]];
-
-			if(pLink->m_FromNodeNumber == FromNodeNumber && m_LinkTypeMap[pLink->m_link_type].IsFreeway() )
-				return pLink;
-		
-		}
-		
-		}
-		return NULL;
-	}
-	DTALink* FindFreewayLinkWithToNodeNumber(int ToNodeNumber)
-	{
-
-		if(m_NodeNumberMap.find(ToNodeNumber)!= m_NodeNumberMap.end())
-		{
-		
-		DTANode* pToNode = m_NodeNumberMap[ToNodeNumber];
-
-		for(unsigned int i = 0; i< pToNode->m_IncomingLinkVector.size(); i++)
-		{
-			
-			DTALink* pLink = m_LinkNoMap[pToNode->m_IncomingLinkVector[i]];
-
-			if(pLink->m_ToNodeNumber == ToNodeNumber && m_LinkTypeMap[pLink->m_link_type].IsFreeway() )
-				return pLink;
-		
-		}
-		
-		}
-		return NULL;
-	}
-
-	DTALink* FindLinkWithNodeNumbers(int FromNodeNumber, int ToNodeNumber, CString FileName = "", bool bWarmingFlag = false)
-	{
-		if(m_NodeNumberMap.find(FromNodeNumber)!= m_NodeNumberMap.end())
-		{
-		
-		DTANode* pFromNode = m_NodeNumberMap[FromNodeNumber];
+		DTANode* pFromNode = m_NodeIDMap[FromNodeID];
 
 		for(unsigned int i = 0; i< pFromNode->m_OutgoingLinkVector.size(); i++)
 		{
@@ -2062,7 +2006,7 @@ public:
 
 			DTALink* pLink = m_LinkNoMap[pFromNode->m_OutgoingLinkVector[i]];
 
-			if(pLink->m_FromNodeNumber == FromNodeNumber && pLink->m_ToNodeNumber == ToNodeNumber)
+			if(pLink->m_FromNodeID == FromNodeID && pLink->m_ToNodeID == ToNodeID)
 				return pLink;
 		
 		}
@@ -2076,51 +2020,51 @@ public:
 			}
 			else if (bWarmingFlag == true)
 			{
-			msg.Format ("Link %d-> %d cannot be found in file %s.", FromNodeNumber, ToNodeNumber,FileName);
+			msg.Format ("Link %d-> %d cannot be found in file %s.", FromNodeID, ToNodeID,FileName);
 			AfxMessageBox(msg);
 			return NULL;
 			}
 			return NULL;
 	}
 
-	DTALink* FastFindLinkWithNodeNumbers(int FromNodeNumber, int ToNodeNumber)
+	DTALink* FastFindLinkWithNodeIDs(int FromNodeID, int ToNodeID)
 	{
-		return FindLinkWithNodeNumbers(FromNodeNumber, ToNodeNumber);
+		return FindLinkWithNodeIDs(FromNodeID, ToNodeID);
 	}
-	//DTALink* FindLinkWithNodeNumbers(int FromNodeNumber, int ToNodeNumber, CString FileName = "", bool bWarmingFlag = false)
+	//DTALink* FindLinkWithNodeIDs(int FromNodeID, int ToNodeID, CString FileName = "", bool bWarmingFlag = false)
 	//{
-	//	int FromNodeID = m_NodeNumbertoNodeNoMap[FromNodeNumber];
-	//	int ToNodeID = m_NodeNumbertoNodeNoMap[ToNodeNumber];
+	//	int FromNodeNo = m_NodeIDtoNodeNoMap[FromNodeID];
+	//	int ToNodeNo = m_NodeIDtoNodeNoMap[ToNodeID];
 
-	//	unsigned long LinkKey = GetLinkKey( FromNodeID, ToNodeID);
+	//	unsigned long LinkKey = GetLinkKey( FromNodeNo, ToNodeNo);
 
-	//	map <unsigned long, DTALink*> :: const_iterator m_Iter = m_NodeNotoLinkMap.find(LinkKey);
+	//	map <unsigned long, DTALink*> :: const_iterator m_Iter = m_NodeIDtoLinkMap.find(LinkKey);
 
-	//	if(m_Iter == m_NodeNotoLinkMap.end( ) && bWarmingFlag)
+	//	if(m_Iter == m_NodeIDtoLinkMap.end( ) && bWarmingFlag)
 	//	{
 	//		CString msg;
 
 	//		if(FileName.GetLength() == 0)
 	//		{
-	//			msg.Format ("Link %d-> %d cannot be found.", FromNodeNumber, ToNodeNumber);
+	//			msg.Format ("Link %d-> %d cannot be found.", FromNodeID, ToNodeID);
 	//		}else
 	//		{
-	//			msg.Format ("Link %d-> %d cannot be found in file %s.", FromNodeNumber, ToNodeNumber,FileName);
+	//			msg.Format ("Link %d-> %d cannot be found in file %s.", FromNodeID, ToNodeID,FileName);
 	//		}
 	//		AfxMessageBox(msg);
 	//		return NULL;
 	//	}
-	//	return m_NodeNotoLinkMap[LinkKey];
+	//	return m_NodeIDtoLinkMap[LinkKey];
 	//}
 
 	void ClearNetworkData();
 
-	DTALink* FindLinkWithNodeIDs(int FromNodeID, int ToNodeID)
+	DTALink* FindLinkWithNodeNo(int FromNodeNo, int ToNodeNo)
 	{
 
-		unsigned long LinkKey = GetLinkKey( FromNodeID, ToNodeID);
-		if(m_NodeNotoLinkMap.find(LinkKey)!=m_NodeNotoLinkMap.end())
-			return m_NodeNotoLinkMap[LinkKey];
+		unsigned long LinkKey = GetLinkKey( FromNodeNo, ToNodeNo);
+		if(m_NodeIDtoLinkMap.find(LinkKey)!=m_NodeIDtoLinkMap.end())
+			return m_NodeIDtoLinkMap[LinkKey];
 		else
 			return NULL;
 	}
@@ -2128,8 +2072,8 @@ public:
 
 	DTALink* FindLinkWithLinkNo(int LinkNo)
 	{
-	if(m_LinkNotoLinkMap.find(LinkNo) != m_LinkNotoLinkMap.end())
-		return m_LinkNotoLinkMap[LinkNo];
+	if(m_LinkNoMap.find(LinkNo) != m_LinkNoMap.end())
+		return m_LinkNoMap[LinkNo];
 	else
 		return NULL;
 	}
@@ -2235,10 +2179,10 @@ public:
 	CString m_DefaultDataFolder;
 
 
-	int FindCloseDTANode_WithNodeNumber(GDPoint pt, double threadshold, int this_node_number = -1)
+	int FindCloseDTANode_WithNodeID(GDPoint pt, double threadshold, int this_node_number = -1)
 	{
 		 double min_distance  = 99999;
-		 int NodeID = 0;
+		 int NodeNo = 0;
 		for (std::list<DTANode*>::iterator iPoint = m_NodeSet.begin(); iPoint != m_NodeSet.end(); iPoint++)
 		{
 
@@ -2246,12 +2190,12 @@ public:
 				if(min_distance > distance && (*iPoint)->m_NodeID != this_node_number )
 				{
 					min_distance = distance;
-					NodeID = (*iPoint)->m_NodeID;
+					NodeNo = (*iPoint)->m_NodeID;
 				}
 		}
 	
 		if(min_distance < threadshold)
-			return NodeID;
+			return NodeNo;
 		else 
 			return 0;
 	}
@@ -2290,13 +2234,12 @@ public:
 	bool FindObject(eSEARCHMODE SearchMode, int value1, int value12);
 
 
-	void UpdateMovementGreenStartAndEndTimeFromPhasingData(int NodeID, std::string timing_plan_name);
+	void UpdateMovementGreenStartAndEndTimeFromPhasingData(int NodeNo, std::string timing_plan_name);
 	void UpdateAllMovementGreenStartAndEndTime(std::string timing_plan_name);
 
 	// Implementation
 	void GenerateMovementCountFromAgentFile(float PeakHourFactor);
 	void MapSignalDataAcrossProjects();
-	void UpdateUnitMile();
 public:
 	virtual ~CTLiteDoc();
 #ifdef _DEBUG
@@ -2326,14 +2269,10 @@ public:
 	afx_msg void OnMoeSpeed();
 	afx_msg void OnMoeDensity();
 	afx_msg void OnMoeQueuelength();
-	afx_msg void OnMoeFuelconsumption();
-	afx_msg void OnMoeEmissions();
 	afx_msg void OnUpdateMoeVolume(CCmdUI *pCmdUI);
 	afx_msg void OnUpdateMoeSpeed(CCmdUI *pCmdUI);
 	afx_msg void OnUpdateMoeDensity(CCmdUI *pCmdUI);
 	afx_msg void OnUpdateMoeQueuelength(CCmdUI *pCmdUI);
-	afx_msg void OnUpdateMoeFuelconsumption(CCmdUI *pCmdUI);
-	afx_msg void OnUpdateMoeEmissions(CCmdUI *pCmdUI);
 	afx_msg void OnMoeNone();
 	afx_msg void OnUpdateMoeNone(CCmdUI *pCmdUI);
 	afx_msg void OnToolsCarfollowingsimulation();
@@ -2380,7 +2319,6 @@ public:
 	afx_msg void OnMoeAgentpathanalaysis();
 	afx_msg void OnFileConstructandexportsignaldata();
 	afx_msg void OnLinkUserDefinedMOE();
-	afx_msg void OnUpdateUserDefinedMOE(CCmdUI *pCmdUI);
 	afx_msg void OnEditOffsetlinks();
 	afx_msg void OnFileOpenNetworkOnly();
 	afx_msg void OnLinkAddlink();
@@ -2388,7 +2326,6 @@ public:
 	afx_msg void OnLinkAgentstatisticsanalaysis();
 	afx_msg void OnSubareaDeletesubarea();
 	afx_msg void OnSubareaViewAgentstatisticsassociatedwithsubarea();
-	afx_msg void OnToolsTraveltimereliabilityanalysis();
 	afx_msg void OnLinkLinkbar();
 	afx_msg void OnLinkIncreaseoffsetfortwo();
 	afx_msg void OnLinkDecreaseoffsetfortwo();
@@ -2407,7 +2344,7 @@ public:
 	afx_msg void OnExportGenerateshapefiles();
 	afx_msg void OnLinkmoedisplayQueuelength();
 	afx_msg void OnUpdateLinkmoedisplayQueuelength(CCmdUI *pCmdUI);
-	afx_msg void OnUpdateLinkmoeTraveltimereliability(CCmdUI *pCmdUI);
+
 
 
 	afx_msg void OnMoePathlist();
@@ -2430,7 +2367,6 @@ public:
 	afx_msg void OnDemandfileIntermodaloddemandmatrix();
 	afx_msg void OnLinkAddIncident();
 	afx_msg void OnToolsGeneratephysicalzonecentroidsonroadnetwork();
-	afx_msg void OnImportDemanddataset();
 	afx_msg void OnNodeIncreasenodetextsize();
 	afx_msg void OnNodeDecreasenodetextsize();
 	afx_msg void OnImportSynchroutdfcsvfiles();
@@ -2454,7 +2390,6 @@ public:
 
 	afx_msg void OnTrafficcontroltoolsTransfermovementdatafromreferencenetworktocurrentnetwork();
 	afx_msg void OnDemandtoolsGenerateinput();
-	afx_msg void OnNetworktoolsResetlinklength();
 	afx_msg void OnSubareaCreatezonefromsubarea();
 	afx_msg void OnDemandConvert();
 	afx_msg void OnTrafficcontroltoolsTransfersignaldatafromreferencenetworktocurrentnetwork();

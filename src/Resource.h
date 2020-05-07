@@ -8,14 +8,12 @@
 #define ID_BarChart                     2
 #define IDOK3                           2
 #define ID_EXPORT                       3
-#define ID_IMPORT                       3
 #define IDOK_FIND_PATH                  3
 #define ID_HIGHLIGHT_AgentS             3
 #define ID_EXPORT_DATA2                 3
 #define IDOK2                           3
 #define IDDATA_Analysis                 3
 #define IDOK4                           3
-#define ID_IMPORT_Network_Only          4
 #define IDOK_FIND_Agent                 4
 #define ID_FindCriticalOD               4
 #define ID_FIND_RANDOM_ROUTE            4
@@ -23,7 +21,6 @@
 #define ID_EXPORT_ALL_DATA              4
 #define ID_EXPORT_PATH_DATA             5
 #define ID_IMPORT2                      5
-#define ID_EXPORT_DATA3                 5
 #define IDDATA_Analysis2                5
 #define ID_TravelTimeReliability        5
 #define ID_EXPORT_Agent_DATA            6
@@ -120,7 +117,6 @@
 #define IDB_TOLL                        184
 #define IDC_CURSOR_SUBAREA              186
 #define IDD_DIALOG_EXCEL_IMPORT         186
-#define IDD_DIALOG_PLANNING_IMPORT      186
 #define IDD_DIALOG_SIGNAL_DATA          188
 #define IDR_TOOLBARLAYER                191
 #define IDD_NSCHART_Agent_DIALOG        192
@@ -252,7 +248,6 @@
 #define IDC_COMBO_Destination           1046
 #define IDC_LIST_Agent                  1047
 #define IDC_COMBO_DepartureTime         1048
-#define IDC_COMBO_AgentType             1049
 #define IDC_LIST_LINK                   1050
 #define IDC_LIST_OD                     1050
 #define IDC_LIST_LINK2                  1051
@@ -263,7 +258,7 @@
 #define IDC_SCENARIO_TAB                1053
 #define IDC_MOETAB                      1053
 #define IDC_COMBO_InformationClass      1053
-#define IDC_COMBO_DemandType            1054
+#define IDC_COMBO_AgentType             1054
 #define IDC_BUTTON_ADD                  1055
 #define IDC_COMBO_TimeInterval          1055
 #define IDC_BUTTON2                     1056
@@ -276,9 +271,7 @@
 #define IDC_GRIDLIST_MOE                1058
 #define IDC_BUTTON_EDIT_DATA_IN_EXCEL   1058
 #define IDC_COMBO_DayNo                 1058
-#define IDC_EDIT_Demand_CSV_File        1060
 #define IDC_BUTTON_COPY_Agent_FILE      1063
-#define IDC_BUTTON_Find_Demand_CSV_File 1063
 #define IDC_COMBO_Min_Number_of_Agents  1065
 #define IDC_COMBO_Min_Travel_Time       1066
 #define IDC_COMBO_Min_TravelTimeIndex   1067
@@ -287,8 +280,6 @@
 #define IDC_CHECK_EMISSION_DATA         1071
 #define IDC_BUTTON_Upload2              1073
 #define IDC_LIST3                       1075
-#define IDC_BUTTON_Find_Exel_File       1076
-#define IDC_EDIT_ExcelFile              1077
 #define IDC_BUTTON_View_Sample_File     1078
 #define IDC_BUTTON_Find_Sensor_File     1079
 #define IDC_BUTTON_View_Sample_CSV_File 1080
@@ -320,25 +311,20 @@
 #define IDC_BUTTON_View_EXPORTED_KML_FILE 1104
 #define ID_View_Sample_TRANSIMS_File    1104
 #define IDC_BUTTON_IMPORT_TRANSIMS      1105
-#define IDC_BUTTON_View_TRANSCADA_File  1106
-#define IDC_EDIT_CURRENT_NODEID         1106
+#define IDC_EDIT_CURRENT_NodeNo         1106
 #define IDC_EDIT_CURRENT_NODENAME       1107
-#define IDC_BUTTON_View_CUBE_File       1108
 #define IDC_CHECK_REMOVE_CONNECTOR      1108
-#define IDC_BUTTON_View_CUBE_File2      1109
 #define IDC_CHECK_GENERATE_NODE_DATA    1109
-#define IDC_BUTTON_View_CUBE_File3      1110
 #define IDC_CHECK_ZOOM_TO_SELECTED_LINK 1110
 #define IDC_BUTTON_View_CUBE_File4      1111
 #define IDC_PATHMOE                     1111
 #define IDC_CHECK_ADD_CONNECTOR         1111
 #define IDC_CHECK_USE_LINK_TYPE         1112
 #define IDC_DOC_TITLE                   1113
-#define IDC_DemandTypeLIST              1118
+#define IDC_AgentTypeLIST               1118
 #define IDC_DemandFileLIST              1118
 #define IDC_EDIT_DemandMultipler        1119
-#define IDC_DemandTypeLIST2             1119
-#define IDC_SCROLLBAR1                  1120
+#define IDC_AgentTypeLIST2              1119
 #define IDC_LIST_GISLAYER               1122
 #define IDC_LIST_FEATURE_INFO           1123
 #define IDC_BUTTON_Database             1124
@@ -593,7 +579,6 @@
 #define ID_TOOLS_VIEWSIMULATIONSUMMARY  33009
 #define ID_TOOLS_VIEWASSIGNMENTSUMMARYLOG 33010
 #define ID_HELP_VISITDEVELOPMENTWEBSITE 33011
-#define ID_HELP_VISITDEVELOPMENTWEBSITE_DTALite 33834
 #define ID_WINDOW_SHOWESTIMATIONVIEW    33015
 #define ID_EDIT_CREATENODE              33017
 #define ID_EDIT_DELETESELECTEDNODE      33018
@@ -1206,7 +1191,7 @@
 #define ID_ANIMATION_BACKWARD_DecSecond 33831
 #define ID_ANIMATION_PLAY_DecSecond     33832
 #define ID_BUTTON33833                  33833
-
+#define ID_HELP_VISITDEVELOPMENTWEBSITE_DTALite 33834
 
 // Next default values for new objects
 // 

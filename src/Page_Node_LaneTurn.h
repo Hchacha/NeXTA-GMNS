@@ -18,7 +18,7 @@ public:
 
 	CGridListCtrlEx m_ListCtrl;
 	int m_SelectedMovementIndex;
-	int m_CurrentNodeID;
+	int m_CurrentNodeNo;
 	std::vector<bool> m_SelectedRowVector;
 	std::vector<MovementBezier> m_MovementBezierVector;
 

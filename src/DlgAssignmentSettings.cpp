@@ -156,12 +156,7 @@ void CDlgAssignmentSettings::UpdateScenarioFile()
 		m_pDoc->m_signal_reresentation_model = m_SignalMethodList.GetCurSel();
 	}
 
-	
 
-	if(m_bModifiedFlag == true)
-	{
-		m_pDoc->WriteScenarioSettingCSVFile(m_pDoc->m_ProjectDirectory +"input_scenario_settings.csv");
-	}
 
 }
 

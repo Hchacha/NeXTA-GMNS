@@ -559,7 +559,7 @@ bool g_detect_if_a_file_is_column_format(LPCTSTR lpszFileName)
 
 		fclose(st);
 
-		if (strstr(str_line, "number_of_trips_demand_type1") != NULL)
+		if (strstr(str_line, "number_of_trips_agent_type1") != NULL)
 			return true;
 		else
 			return false;
@@ -765,11 +765,11 @@ void ReadDSm_pNetworkData(char fname[_MAX_PATH])
 
          // Create and insert the node
          pNode = new DTANode;
-         pNode->m_NodeNo = i;
+         pNode->m_NodeID = i;
          pNode->m_ZoneID = 0;
          g_NodeSet.insert(pNode);
          g_NodeMap[id] = pNode;
-         g_NodeIDtoNameMap[i] = id;
+         g_NodeNotoNameMap[i] = id;
          }
 
       // Read link block
@@ -778,10 +778,10 @@ void ReadDSm_pNetworkData(char fname[_MAX_PATH])
          {
          pLink = new DTALink(g_SimulationHorizon);
          pLink->m_LinkNo = i;
-         pLink->m_FromNodeNumber = g_read_integer(st);
-         pLink->m_ToNodeNumber = g_read_integer(st);
-         pLink->m_FromNodeID = g_NodeMap[pLink->m_FromNodeNumber ]->m_NodeNo;
-         pLink->m_ToNodeID= g_NodeMap[pLink->m_ToNodeNumber]->m_NodeNo;
+         pLink->m_FromNodeID = g_read_integer(st);
+         pLink->m_ToNodeID = g_read_integer(st);
+         pLink->m_FromNodeNo = g_NodeMap[pLink->m_FromNodeID ]->m_NodeID;
+         pLink->m_ToNodeNo= g_NodeMap[pLink->m_ToNodeID]->m_NodeID;
 
          int m_LeftBays= g_read_integer(st);
          int m_RightBays= g_read_integer(st);

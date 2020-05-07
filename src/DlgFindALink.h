@@ -52,8 +52,8 @@ protected:
 public:
 	eSEARCHMODE m_SearchMode;
 	int m_NodeID;
-	int m_FromNodeNumber;
-	int m_ToNodeNumber;
+	int m_FromNodeID;
+	int m_ToNodeID;
     int m_AgentNumber;
 
 	CString m_PathNodeSequence; 

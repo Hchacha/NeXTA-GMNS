@@ -31,7 +31,6 @@ public:
 	afx_msg void OnPaint();
    afx_msg void OnSize(UINT nType, int cx, int cy);
    CComboBox m_ComboBox_EmissionType;
-   afx_msg void OnCbnSelchangeComboEmissiontype();
    CComboBox m_QueueCutOffComboBox;
    afx_msg void OnCbnSelchangeComboAggregation();
    CStatic m_TextCutOff;

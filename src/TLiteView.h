@@ -61,27 +61,22 @@ enum link_text_display_mode
    link_display_free_flow_travel_time, 
    link_display_link_type_in_text,
    link_display_link_type_in_number,
+   link_display_total_link_volume,
 
-   link_display_avg_simulated_speed_mph,
-   link_display_avg_travel_time,
-   link_display_avg_delay,
+   link_display_time_dependent_link_volume,
+   link_display_time_dependent_lane_volume,
+   link_display_time_dependent_density,
+   link_display_time_dependent_speed_mph,
+   link_display_time_dependent_queue_length,
 
 	link_display_separator_3,
 
-	   link_display_demand_type_code,
-	    link_display_total_link_volume,
+	   link_display_agent_type_code,
+
      link_display_LevelOfService,
   link_display_total_delay,
 
-	link_display_avg_simulated_speed_kmph,
 	link_display_avg_waiting_time_on_loading_buffer,
-
-	link_display_time_dependent_link_volume,
-	link_display_time_dependent_lane_volume,
-	link_display_time_dependent_speed_mph,
-	link_display_time_dependent_speed_kmph,
-	link_display_time_dependent_density,
-	link_display_time_dependent_queue_length,
 
 	link_display_time_dependent_congestion_duration,
 	link_display_time_dependent_congestion_start_time,
@@ -354,7 +349,6 @@ public:
 
 	BezierCurve m_BezierCurve;
 
-	bool m_bLineDisplayConditionalMode;
 	link_display_mode m_link_display_mode;
 
 void SetStatusText(CString text) const
@@ -377,8 +371,8 @@ bool RectIsInsideScreen(CRect rect, CRect screen_bounds)
 }
 	bool isCreatingSubarea, isFinishSubarea;
 	
-	int m_SelectFromNodeNumber; 
-	int m_SelectToNodeNumber; 
+	int m_SelectFromNodeID; 
+	int m_SelectToNodeID; 
 
 	bool m_bHighlightSubareaLinks;
 	bool m_bHighlightSubareaBoundaryLinks;
@@ -484,12 +478,12 @@ bool RectIsInsideScreen(CRect rect, CRect screen_bounds)
 	void SetGlobalViewParameters();
 
 
-	void MoveNode(int NodeID, CPoint point)
+	void MoveNode(int NodeNo, CPoint point)
 	{
 
 		CTLiteDoc* pDoc = GetDocument();
 
-		DTANode * pNode = pDoc->m_NodeNoMap[NodeID];
+		DTANode * pNode = pDoc->m_NodeNoMap[NodeNo];
 		
 
 		// update node's position
@@ -502,13 +496,13 @@ bool RectIsInsideScreen(CRect rect, CRect screen_bounds)
 		{
 
 			bool bConnected = false;
-			if((*iLink)->m_FromNodeID == pNode->m_NodeNo )
+			if((*iLink)->m_FromNodeNo == pNode->m_NodeID )
 			{
 				(*iLink)->m_FromPoint = pNode->pt;
 				bConnected = true;
 			}
 
-			if((*iLink)->m_ToNodeID == pNode->m_NodeNo )
+			if((*iLink)->m_ToNodeNo == pNode->m_NodeID )
 			{
 				(*iLink)->m_ToPoint = pNode->pt;
 				bConnected = true;
@@ -522,7 +516,7 @@ bool RectIsInsideScreen(CRect rect, CRect screen_bounds)
 				else 
 					(*iLink)->m_Length   = (*iLink)->DefaultDistance()/max(0.0000001,pDoc->m_UnitDistance);
 
-				(*iLink)->UpdateShapePointsBasedOnEndPoints(pDoc->m_UnitDistance*pDoc->m_LaneWidthInMeter);  // 20 feet per lane)
+				(*iLink)->UpdateShapePointsBasedOnEndPoints(pDoc->m_UnitDistance*pDoc->m_LaneWidthInKM);  // 20 feet per lane)
 			}
 		}
 	}
@@ -580,7 +574,6 @@ public:
 
 	bool DrawLinkAsBand(DTALink* pLink, CDC* pDC, bool bObservationFlag);
 	bool DrawLinkAsStraightBand(DTALink* pLink, CDC* pDC, bool bObservationFlag);
-	bool DrawLinkAsLaneGroup(DTALink* pLink, CDC* pDC);
 	
 void ArrowTo(HDC hDC, int x, int y, ARROWSTRUCT *pA) 
 {
@@ -666,7 +659,7 @@ bool m_bShowWalkLinksOnly;
 bool m_bShowFixedDetectorLocation;
 bool m_bShowSpeedSensorLocation;
 
-int m_DislayedDemandType;
+int m_DislayedAgentType;
 bool m_DislayReferenceLineNo;
 // Overrides
 public:
@@ -722,8 +715,8 @@ public:
 	afx_msg void OnUpdateShowShownode(CCmdUI *pCmdUI);
 	afx_msg void OnShowShowallpaths();
 	afx_msg void OnUpdateShowShowallpaths(CCmdUI *pCmdUI);
-	afx_msg void OnShowShownodenumber();
-	afx_msg void OnUpdateShowShownodenumber(CCmdUI *pCmdUI);
+	afx_msg void OnShowShowNodeID();
+	afx_msg void OnUpdateShowShowNodeID(CCmdUI *pCmdUI);
 	afx_msg void OnEditCreate1waylink();
 	afx_msg void OnEditCreate2waylinks();
 	afx_msg void OnUpdateEditCreate1waylink(CCmdUI *pCmdUI);

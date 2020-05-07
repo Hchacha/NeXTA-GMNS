@@ -76,8 +76,8 @@ public:
 	enum { IDD = IDD_DIALOG_NODE_PHASES };
 
 	int m_SelectedMovementIndex;
+	int m_CurrentNodeNo;
 	int m_CurrentNodeID;
-	int m_CurrentNodeNumber;
 
 
 
@@ -111,7 +111,7 @@ public:
 		float min_distance  = 50;
 		int SelectedMovement = -1;
 
-		DTANode* pNode  = m_pDoc->m_NodeNoMap [m_CurrentNodeID];
+		DTANode* pNode  = m_pDoc->m_NodeNoMap [m_CurrentNodeNo];
 		for(unsigned int i = 0; i< m_MovementBezierVector.size(); i++)
 		{
 		

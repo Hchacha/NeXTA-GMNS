@@ -384,10 +384,7 @@ void CTLiteApp::UpdateAllViews()
 		g_LinkMOEDlg->Invalidate (true);
 	}
 
-	if( g_pLegendDlg!=NULL && g_pLegendDlg->GetSafeHwnd()  && g_pLegendDlg->m_pDoc->m_LinkMOEMode == MOE_impact)
-	{
-		g_pLegendDlg->Invalidate (true);
-	}	
+	
 
 }
 

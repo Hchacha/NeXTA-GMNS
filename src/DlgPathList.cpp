@@ -207,7 +207,7 @@ void CDlgPathList::ReloadData()
 			int Index = m_ListCtrl.InsertItem(LVIF_TEXT,i,text , 0, 0, 0, NULL);
 
 			// from -> to
-			sprintf_s(text, "%d->%d",pLink->m_FromNodeNumber , pLink->m_ToNodeNumber );
+			sprintf_s(text, "%d->%d",pLink->m_FromNodeID , pLink->m_ToNodeID );
 			m_ListCtrl.SetItemText(Index,column_count++,text );
 
 			// street name
@@ -466,9 +466,9 @@ void CDlgPathList::OnPathDataExportCSV()
 				{
 					if (i == 0)
 					{
-						fprintf(st, "%d;", pLink->m_FromNodeNumber);
+						fprintf(st, "%d;", pLink->m_FromNodeID);
 					}
-					fprintf(st, "%d;", pLink->m_ToNodeNumber);
+					fprintf(st, "%d;", pLink->m_ToNodeID);
 				}
 
 			}
@@ -487,7 +487,7 @@ void CDlgPathList::OnPathDataExportCSV()
 				{
 
 					fprintf(st,"%d,%d,\"[%d,%d]\",%d,%d,%s,%5.3f,%5.0f,%5.3f,%d,%5.0f,%5.1f,",
-						p+1,i+1,pLink->m_FromNodeNumber , pLink->m_ToNodeNumber, pLink->m_FromNodeNumber , pLink->m_ToNodeNumber,   pLink->m_Name.c_str (), pLink->m_Length ,
+						p+1,i+1,pLink->m_FromNodeID , pLink->m_ToNodeID, pLink->m_FromNodeID , pLink->m_ToNodeID,   pLink->m_Name.c_str (), pLink->m_Length ,
 						pLink->m_FreeSpeed, pLink->m_FreeFlowTravelTime , pLink->m_NumberOfLanes,  pLink->m_Saturation_flow_rate_in_vhc_per_hour_per_lane ,pLink->m_LaneCapacity );
 
 					if(m_pDoc->m_LinkTypeMap.find(pLink->m_link_type) != m_pDoc->m_LinkTypeMap.end())
@@ -618,8 +618,8 @@ void CDlgPathList::OnDataCleanallpaths()
 
 	m_ListCtrl.DeleteAllItems();
 
-	m_pDoc->m_FromNodeID = -1;
-	m_pDoc->m_ToNodeID = -1;
+	m_pDoc->m_FromNodeNo = -1;
+	m_pDoc->m_ToNodeNo = -1;
 	m_StrPathMOE.Format ("");
 	UpdateData(0);
 	m_pDoc->UpdateAllViews(0);
@@ -942,7 +942,7 @@ void CDlgPathList::DrawPlot(CPaintDC* pDC,CRect PlotRect)
 
 	if(pLink!=NULL)
 	{
-	wsprintf(buff,"A: %d",pLink->m_FromNodeNumber );
+	wsprintf(buff,"A: %d",pLink->m_FromNodeID );
 	pDC->TextOut(PlotRect.left-50,TimeYPosition-5,buff);
 	}
 
@@ -963,14 +963,14 @@ void CDlgPathList::DrawPlot(CPaintDC* pDC,CRect PlotRect)
 	{
 	if(i== m_pDoc->m_PathDisplayList[m_pDoc->m_SelectPathNo]->m_LinkSize-1)
 	{
-	wsprintf(buff,"B: %d",pLink->m_ToNodeNumber );
+	wsprintf(buff,"B: %d",pLink->m_ToNodeID );
 	pDC->TextOut(PlotRect.left-50,TimeYPosition-5,buff);
 	}
 	else
 	{
 	if(TimeYPosition < TimeYPositionPrev-10 && TimeYPosition >= PlotRect.bottom-10)
 	{
-	wsprintf(buff,"%d",pLink->m_ToNodeNumber );
+	wsprintf(buff,"%d",pLink->m_ToNodeID );
 	pDC->TextOut(PlotRect.left-40,TimeYPosition-5,buff);
 	}
 	}
@@ -1029,7 +1029,7 @@ void CDlgPathList::CalculateTimeDependentTravelTime()
 				if(pLink == NULL)
 					break;
 
-				path_element.m_TimeDependentTravelTime[t] += pLink->GetDynamicTravelTime(path_element.m_TimeDependentTravelTime[t],m_pDoc->m_PrimaryDataSource );
+				path_element.m_TimeDependentTravelTime[t] += pLink->GetDynamicTravelTime(path_element.m_TimeDependentTravelTime[t] );
 
 				int current_time = path_element.m_TimeDependentTravelTime[t];
 				if(current_time >=1440)
@@ -1201,7 +1201,7 @@ void CDlgPathList::ChangeLinkAttributeAlongPath(float value, CString value_strin
 				{
 					m_pDoc->Modify (true);
 
-					int ToNodeID; 
+					int ToNodeNo; 
 					DTANode* pNode =NULL;
 					switch(m_ChangeLinkAttributeMode)
 					{
@@ -1280,10 +1280,10 @@ void CDlgPathList::OnBnClickedDynamicDensityContour()
 
 							//if(pLink->m_Name  == "(null)")
 							//{
-							//label.Format ("%d->%d",pLink->m_FromNodeNumber , pLink->m_ToNodeNumber);
+							//label.Format ("%d->%d",pLink->m_FromNodeID , pLink->m_ToNodeID);
 							//}
 
-							//fprintf(st,"%d->%d,%s,%s,", pLink->m_FromNodeNumber , pLink->m_ToNodeNumber , m_pDoc->m_LinkTypeMap[pLink->m_link_type ].link_type_name.c_str (),label);
+							//fprintf(st,"%d->%d,%s,%s,", pLink->m_FromNodeID , pLink->m_ToNodeID , m_pDoc->m_LinkTypeMap[pLink->m_link_type ].link_type_name.c_str (),label);
 
 							for(int t = m_TimeLeft ; t< m_TimeRight; t+= step_size)  // for each starting time
 							{
@@ -1384,9 +1384,9 @@ void CDlgPathList::OnBnClickedDynamicDensityContour()
 
 							if(pLink->m_Name  == "(null)" || pLink->m_Name.size() ==0)
 							{
-							label.Format ("%d",pLink->m_FromNodeNumber);
+							label.Format ("%d",pLink->m_FromNodeID);
 
-							last_node_number.Format ("%d",pLink->m_ToNodeNumber);
+							last_node_number.Format ("%d",pLink->m_ToNodeID);
 							}
 
 							if(s==0 && (i%ytics_stepsize) ==0)   // first segment 
@@ -1493,15 +1493,15 @@ void CDlgPathList::OnBnClickedDynamicSpeedContour()
 
 							//if(pLink->m_Name  == "(null)")
 							//{
-							//label.Format ("%d->%d",pLink->m_FromNodeNumber , pLink->m_ToNodeNumber);
+							//label.Format ("%d->%d",pLink->m_FromNodeID , pLink->m_ToNodeID);
 							//}
 
-							//fprintf(st,"%d->%d,%s,%s,", pLink->m_FromNodeNumber , pLink->m_ToNodeNumber , m_pDoc->m_LinkTypeMap[pLink->m_link_type ].link_type_name.c_str (),label);
+							//fprintf(st,"%d->%d,%s,%s,", pLink->m_FromNodeID , pLink->m_ToNodeID , m_pDoc->m_LinkTypeMap[pLink->m_link_type ].link_type_name.c_str (),label);
 
 							for(int t = m_TimeLeft ; t< m_TimeRight; t+= step_size)  // for each starting time
 							{
 
-								fprintf(st, "%.1f ", pLink->GetDynamicSpeed (t, m_pDoc->m_PrimaryDataSource));
+								fprintf(st, "%.1f ", pLink->GetDynamicSpeed (t));
 
 							}
 							fprintf(st,"\n");
@@ -1598,9 +1598,9 @@ void CDlgPathList::OnBnClickedDynamicSpeedContour()
 
 							if(pLink->m_Name  == "(null)" || pLink->m_Name.size() ==0)
 							{
-							label.Format ("%d",pLink->m_FromNodeNumber);
+							label.Format ("%d",pLink->m_FromNodeID);
 
-							last_node_number.Format ("%d",pLink->m_ToNodeNumber);
+							last_node_number.Format ("%d",pLink->m_ToNodeID);
 							}
 
 							if(s==0 && (i%ytics_stepsize) ==0)   // first segment 
@@ -1710,10 +1710,10 @@ void CDlgPathList::OnBnClickedDynamicFlowContour()
 
 							//if(pLink->m_Name  == "(null)")
 							//{
-							//label.Format ("%d->%d",pLink->m_FromNodeNumber , pLink->m_ToNodeNumber);
+							//label.Format ("%d->%d",pLink->m_FromNodeID , pLink->m_ToNodeID);
 							//}
 
-							//fprintf(st,"%d->%d,%s,%s,", pLink->m_FromNodeNumber , pLink->m_ToNodeNumber , m_pDoc->m_LinkTypeMap[pLink->m_link_type ].link_type_name.c_str (),label);
+							//fprintf(st,"%d->%d,%s,%s,", pLink->m_FromNodeID , pLink->m_ToNodeID , m_pDoc->m_LinkTypeMap[pLink->m_link_type ].link_type_name.c_str (),label);
 
 							for(int t = m_TimeLeft ; t< m_TimeRight; t+= step_size)  // for each starting time
 							{
@@ -1726,7 +1726,7 @@ void CDlgPathList::OnBnClickedDynamicFlowContour()
 									voc = 1.0;
 								fprintf(st, "%.2f ", voc);
 
-								if( pLink->m_FromNodeNumber == 30 && pLink->m_ToNodeNumber == 31)
+								if( pLink->m_FromNodeID == 30 && pLink->m_ToNodeID == 31)
 								{
 						
 								TRACE("\n%f; %f; %f", volume, Capacity, voc);
@@ -1826,9 +1826,9 @@ void CDlgPathList::OnBnClickedDynamicFlowContour()
 							last_node_number.Empty ();
 							if(pLink->m_Name  == "(null)" || pLink->m_Name.size() ==0)
 							{
-							label.Format ("%d",pLink->m_FromNodeNumber);
+							label.Format ("%d",pLink->m_FromNodeID);
 
-							last_node_number.Format ("%d",pLink->m_ToNodeNumber);
+							last_node_number.Format ("%d",pLink->m_ToNodeID);
 							}
 
 							if(s==0 && (i%ytics_stepsize) ==0)   // first segment 

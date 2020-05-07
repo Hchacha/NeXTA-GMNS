@@ -254,10 +254,10 @@ void CDlgLinkList::ReloadData()
 		int column_index = 1;
 		m_ListCtrl.SetItemText(Index,column_index++,pLink1->m_Name .c_str ());
 
-		sprintf_s(text, "%d",pLink1->m_FromNodeNumber);
+		sprintf_s(text, "%d",pLink1->m_FromNodeID);
 		m_ListCtrl.SetItemText(Index,column_index++,text);
 
-		sprintf_s(text, "%d",pLink1->m_ToNodeNumber);
+		sprintf_s(text, "%d",pLink1->m_ToNodeID);
 		m_ListCtrl.SetItemText(Index,column_index++,text);
 
 		sprintf_s(text, "%5.2f",pLink1->m_Length);
@@ -283,10 +283,9 @@ void CDlgLinkList::ReloadData()
 		column_index++;
 
 
-
 		float max_volume , avg_volume, avg_lane_volume;
 
-		avg_volume = pLink1->GetSimulationVolumeMOE(MOE_start_time_in_min,MOE_end_time_in_min,max_volume);
+		avg_volume = pLink1->GetTDVolume(MOE_start_time_in_min,MOE_end_time_in_min,max_volume);
 
 		sprintf_s(text, "%.0f",pLink1->m_total_link_volume     );
 		m_ListCtrl.SetItemText(Index,column_index++,text);
@@ -299,15 +298,13 @@ void CDlgLinkList::ReloadData()
 
 		float max_density , avg_density;
 
-		avg_density = pLink1->GetSimulatedDensityMOE(MOE_start_time_in_min,MOE_end_time_in_min,max_density);
+		avg_density = pLink1->GetTDDensity(MOE_start_time_in_min,MOE_end_time_in_min,max_density);
 
 		sprintf_s(text, "%.1f",avg_density );
 		m_ListCtrl.SetItemText(Index,column_index++,text);
 
 		sprintf_s(text, "%.1f",max_density );
 		m_ListCtrl.SetItemText(Index,column_index++,text);
-
-				sprintf_s(text, "%5.2f",pLink1->m_avg_simulated_speed    );
 
 		m_ListCtrl.SetItemText(Index,column_index++,text);
 
@@ -329,7 +326,7 @@ void CDlgLinkList::ReloadData()
 
 		//if(m_bDoc2Ready)
 		//{
-		//	DTALink* pLink2 = m_pDoc2->FindLinkWithNodeNumbers (pLink1->m_FromNodeNumber ,pLink1->m_ToNodeNumber );
+		//	DTALink* pLink2 = m_pDoc2->FindLinkWithNodeIDs (pLink1->m_FromNodeID ,pLink1->m_ToNodeID );
 		//	if(pLink2!=NULL)  // a link is found in the second document
 		//	{
 		//		sprintf_s(text, "%.0f",pLink2->m_total_link_volume        );
@@ -339,9 +336,9 @@ void CDlgLinkList::ReloadData()
 		//		m_ListCtrl.SetItemText(Index,column_index++,text);
 
 		//if(m_pDoc->m_bUseMileVsKMFlag )
-		//		sprintf_s(text, "%5.2f",pLink2->m_avg_simulated_speed        );
+		//		sprintf_s(text, "%5.2f",pLink2->m_TD_speed        );
 		//else
-		//		sprintf_s(text, "%5.2f",pLink2->m_avg_simulated_speed*1.60934        );
+		//		sprintf_s(text, "%5.2f",pLink2->m_TD_speed*1.60934        );
 
 		//		m_ListCtrl.SetItemText(Index,column_index++,text);
 		//	// calculate difference
@@ -351,11 +348,11 @@ void CDlgLinkList::ReloadData()
 		//		sprintf_s(text, "%.0f",pLink2->m_simulated_AADT   - pLink1->m_simulated_AADT     );
 		//		m_ListCtrl.SetItemText(Index,column_index++,text);
 
-		//		sprintf_s(text, "%5.2f",pLink2->m_avg_simulated_speed   - pLink1->m_avg_simulated_speed    );
+		//		sprintf_s(text, "%5.2f",pLink2->m_TD_speed   - pLink1->m_TD_speed    );
 		//		m_ListCtrl.SetItemText(Index,column_index++,text);
 
-		//		double total_travel_time = pLink2->m_total_link_volume* pLink2->m_Length / max (0.1, pLink2->m_avg_simulated_speed);
-		//		double total_travel_time_2 = pLink1 ->m_total_link_volume*pLink1->m_Length / max (0.1, pLink1->m_avg_simulated_speed);
+		//		double total_travel_time = pLink2->m_total_link_volume* pLink2->m_Length / max (0.1, pLink2->m_TD_speed);
+		//		double total_travel_time_2 = pLink1 ->m_total_link_volume*pLink1->m_Length / max (0.1, pLink1->m_TD_speed);
 		//		sprintf_s(text, "%.2f",total_travel_time -  total_travel_time_2   );
 		//		m_ListCtrl.SetItemText(Index,column_index++,text);
 
