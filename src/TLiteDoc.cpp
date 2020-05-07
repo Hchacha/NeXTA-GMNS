@@ -671,22 +671,15 @@ CTLiteDoc::CTLiteDoc()
 	if(theApp.m_VisulizationTemplate == e_traffic_assignment)
 	{
 
-		m_NodeDisplaySize = 100;  // in feet
+		m_NodeDisplaySize = 0.01;  // in km
 		m_BottleneckDisplaySize = 1;
-		m_AgentDisplaySize = 10; // in feet
+		m_AgentDisplaySize = 0.001; // in km
 		theApp.m_BackgroundColor =  RGB(255,255,255);  //white
 		m_NodeTextDisplayRatio = 4;
 
 	}
 
-	if(theApp.m_VisulizationTemplate == e_train_scheduling)
-	{
-		m_NodeDisplaySize = 2000;  // in feet
-		m_AgentDisplaySize= 1000; // in feet
-		theApp.m_BackgroundColor =  RGB(255,255,255);
-		m_NodeTextDisplayRatio = 8;
-	}
-
+	
 
 	char CurrentDirectory[MAX_PATH + 1];
 	GetCurrentDirectory(MAX_PATH, CurrentDirectory);
@@ -703,7 +696,7 @@ CTLiteDoc::CTLiteDoc()
 	m_UnitDistance = 1;
 
 
-	m_OffsetInDistance = 15;
+	m_OffsetInDistance = 0.001;
 	m_LaneWidthInKM = 4/1000.0;
 	m_bFitNetworkInitialized = false; 
 
@@ -1093,7 +1086,7 @@ BOOL CTLiteDoc::OnOpenTrafficNetworkDocument(CString ProjectFileName, bool bNetw
 {
 
 
-	m_NodeDisplaySize = 50;  // in feet
+	m_NodeDisplaySize = 0.01;  // in KM
 
 
 	CTime LoadingStartTime = CTime::GetCurrentTime();
@@ -1181,12 +1174,6 @@ BOOL CTLiteDoc::OnOpenTrafficNetworkDocument(CString ProjectFileName, bool bNetw
 BOOL CTLiteDoc::OnOpenDocument(CString ProjectFileName, bool bLoadNetworkOnly )
 {
 	CWaitCursor wait;
-
-	//m_NodeDisplaySize = max(1, g_GetPrivateProfileDouble("GUI", "node_display_size", 50, ProjectFileName));
-
-	//m_NodeTextDisplayRatio = max(1, g_GetPrivateProfileDouble("GUI", "node_text_display_ratio", 4, ProjectFileName));
-
-	//m_bLoadMovementData = (bool)(g_GetPrivateProfileInt("GUI", "load_movement_data", 1, ProjectFileName));
 
 
 	CTime LoadingStartTime = CTime::GetCurrentTime();
@@ -1902,11 +1889,6 @@ void CTLiteDoc::OffsetLink()
 		//}
 	}
 
-		double AvgLinkLengthInMeter = length_sum_in_mile/max(1,m_LinkSet.size());
-
-		m_NodeDisplaySize = max(100, AvgLinkLengthInMeter*0.05);  // in feet
-
-
 	if(m_bLinkToBeShifted)
 	{
 		std::list<DTALink*>::iterator iLink;
@@ -2527,10 +2509,7 @@ bool CTLiteDoc::ReadLinkCSVFile(LPCTSTR lpszFileName, bool bCreateNewNodeFlag = 
 
 
 		double AvgLinkLength = length_sum_in_mile / max(1, m_LinkSet.size());
-
-		m_NodeDisplaySize = min(10, AvgLinkLength*0.05);  
-
-
+			   		 
 
 		m_MovementTextBoxSizeInDistance = AvgLinkLength * 0.2; // 20% of average link length
 
@@ -6735,7 +6714,7 @@ void CTLiteDoc::OnLinkIncreaseoffsetfortwo()
 		}
 	}
 
-	double min_offset_value = max(minimum_link_length*0.01, 2);
+	double min_offset_value = max(minimum_link_length*0.01, 0.001);
 	m_OffsetInDistance += min_offset_value;
 	m_bLinkToBeShifted  = true;
 	OffsetLink();  // offset shape points
@@ -6757,14 +6736,10 @@ void CTLiteDoc::OnLinkDecreaseoffsetfortwo()
 		}
 	}
 
-	double min_offset_value = max(minimum_link_length*0.01, 2);
+	double min_offset_value = max(minimum_link_length*0.01, 0.001);
 	m_OffsetInDistance -= min_offset_value;
 
-	//if(m_OffsetInDistance<0)
-	//	m_OffsetInDistance = 0;
 
-
-	//	m_OffsetInDistance = max (5,m_OffsetInDistance);  // minimum 5 feet
 	m_bLinkToBeShifted  = true;
 	OffsetLink();
 	GenerateOffsetLinkBand();
@@ -6784,7 +6759,7 @@ void CTLiteDoc::OnLinkNooffsetandnobandwidth()
 		(*iLink)->m_ShapePoints .push_back ((*iLink)->m_ToPoint);
 	}
 
-	m_OffsetInDistance=10;
+	m_OffsetInDistance=0.001;
 	m_bLinkToBeShifted  = true;
 	m_LaneWidthInKM = 0.004;
 	OffsetLink();

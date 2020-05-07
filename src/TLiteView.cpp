@@ -1900,7 +1900,6 @@ void CTLiteView::DrawObjects(CDC* pDC)
 					}
 
 
-					//				if(feet_size*pDoc->m_NodeDisplaySize > 0.2) // add or condition to show all nodes
 					if ((*iNode)->m_LayerNo == 1)
 					{
 						pDC->SelectObject(&g_PenReference);
@@ -3735,8 +3734,6 @@ void CTLiteView::OnNodeOrigin()
 	pDoc->m_SelectedNodeNo = FindClosestNode(m_CurrentMousePoint, 300);  // 300 is screen unit
 
 	pDoc->m_FromNodeNo = pDoc->m_SelectedNodeNo;
-	if(pDoc->m_SelectedNodeNo>=0)
-		TRACE("ONode %s selected.\n", pDoc->m_NodeNoMap [pDoc->m_FromNodeNo]->m_Name );
 	pDoc->Routing(false);
 
 	m_ShowAllPaths = true;
@@ -3752,8 +3749,6 @@ void CTLiteView::OnNodeDestination()
 	pDoc->m_SelectedNodeNo = FindClosestNode(m_CurrentMousePoint, 300);  // 300 is screen unit
 
 	pDoc->m_ToNodeNo = pDoc->m_SelectedNodeNo;
-	if(pDoc->m_SelectedNodeNo>=0)
-		TRACE("ONode %s selected.\n", pDoc->m_NodeNoMap [pDoc->m_ToNodeNo]->m_Name );
 
 	m_ShowAllPaths = true;
 	if(pDoc->Routing(false)==0)
@@ -5091,7 +5086,7 @@ void CTLiteView::OnViewIncreasenodesize()
 
 	if(pDoc->m_LinkMOEMode != MOE_bottleneck && pDoc->m_LinkMOEMode != MOE_Agent)
 	{
-		pDoc->m_NodeDisplaySize = max(pDoc->m_NodeDisplaySize *1.2, pDoc->m_NodeDisplaySize+1);
+		pDoc->m_NodeDisplaySize = max(pDoc->m_NodeDisplaySize *1.2, pDoc->m_NodeDisplaySize+0.01);
 
 	}
 	else if(pDoc->m_LinkMOEMode == MOE_bottleneck)
