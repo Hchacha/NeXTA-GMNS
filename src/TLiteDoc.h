@@ -46,7 +46,7 @@
 
 
 enum _GIS_DATA_TYPE {GIS_Point_Type=0,GIS_Line_Type, GIS_Polygon_Type}; 
-enum eSEARCHMODE { efind_node = 0, efind_link, efind_path, efind_Agent, efind_path_node_sequence };
+enum eSEARCHMODE { efind_node = 0, efind_link, efind_road_link_id, efind_path, efind_Agent, efind_path_node_sequence };
 enum layer_mode
 { 
 	layer_node = 0,
@@ -666,8 +666,8 @@ public:
 	bool m_PathMOEDlgShowFlag;
 	int m_SelectPathNo;
 
-	int m_FromNodeNo;
-	int m_ToNodeNo;
+	int m_ONodeNo;
+	int m_DNodeNo;
 
 	double m_UnitDistance;
 	double m_OffsetInDistance;
@@ -2311,7 +2311,7 @@ public:
 	afx_msg void OnToolsPerformscheduling();
 	afx_msg void OnFileChangecoordinatestolong();
 	afx_msg void OnToolsExportopmodedistribution();
-	afx_msg void OnToolsEnumeratepath();
+	
 	afx_msg void OnResearchtoolsExporttodtalitesensordataformat();
 	afx_msg void OnScenarioConfiguration();
 	afx_msg void OnMoeViewmoes();

@@ -618,8 +618,8 @@ void CDlgPathList::OnDataCleanallpaths()
 
 	m_ListCtrl.DeleteAllItems();
 
-	m_pDoc->m_FromNodeNo = -1;
-	m_pDoc->m_ToNodeNo = -1;
+	m_pDoc->m_ONodeNo = -1;
+	m_pDoc->m_DNodeNo = -1;
 	m_StrPathMOE.Format ("");
 	UpdateData(0);
 	m_pDoc->UpdateAllViews(0);

@@ -25,6 +25,7 @@
 #pragma once
 #include <vector>
 #include <math.h>
+#include <string>
 int g_read_integer(FILE* f, bool speicial_char_handling=false);
 int g_read_integer_with_special_character(FILE* f, bool speicial_char_handling, char special_ch);
 

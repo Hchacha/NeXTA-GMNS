@@ -1394,7 +1394,7 @@ void CTLiteView::DrawObjects(CDC* pDC)
 					str_text.Format ("%d->%d", (*iLink)->m_FromNodeID , (*iLink)->m_ToNodeID ); break;
 
 				case link_display_link_id: 
-					str_text.Format ("%d", (*iLink)->m_LinkID  ); break;
+					str_text.Format ("%s", (*iLink)->m_LinkID.c_str()  ); break;
 
 			case link_display_agent_type_code:
 					str_text.Format("%s", (*iLink)->m_agent_type_code.c_str()); break;
@@ -1683,11 +1683,11 @@ void CTLiteView::DrawObjects(CDC* pDC)
 			{
 				if(i==0) //
 				{
-					pDoc->m_FromNodeNo = pLink->m_FromNodeNo ;
+					pDoc->m_ONodeNo = pLink->m_FromNodeNo ;
 				}
 				if(i== pDoc->m_PathDisplayList[pDoc->m_SelectPathNo].m_LinkVector.size()-1)
 				{
-					pDoc->m_ToNodeNo =  pLink->m_ToNodeNo ;
+					pDoc->m_DNodeNo =  pLink->m_ToNodeNo ;
 				}
 
 				// select link color 
@@ -1797,7 +1797,7 @@ void CTLiteView::DrawObjects(CDC* pDC)
 
 			}
 
-			if((*iNode)->m_NodeID == pDoc->m_FromNodeNo && pMainFrame->m_bShowLayerMap[layer_path] ==true)
+			if((*iNode)->m_NodeNo == pDoc->m_ONodeNo && pMainFrame->m_bShowLayerMap[layer_path] ==true)
 			{
 
 				CFont* oldFont = pDC->SelectObject(&od_font);
@@ -1820,7 +1820,7 @@ void CTLiteView::DrawObjects(CDC* pDC)
 
 
 
-			}else if((*iNode)->m_NodeID == pDoc->m_ToNodeNo && pMainFrame->m_bShowLayerMap[layer_path] ==true)
+			}else if((*iNode)->m_NodeNo == pDoc->m_DNodeNo && pMainFrame->m_bShowLayerMap[layer_path] ==true)
 			{
 				CFont* oldFont = pDC->SelectObject(&od_font);// these are local font, created inside the function, we do not want to create them in another sub functions to speed up the display efficiency.
 
@@ -2969,7 +2969,7 @@ int CTLiteView::FindClosestNode(CPoint point, float Min_distance)
 		double distance = pow((size.cx*size.cx + size.cy*size.cy),0.5);
 		if( distance < Min_distance)
 		{
-			SelectedNodeNo = (*iNode)->m_NodeID ;
+			SelectedNodeNo = (*iNode)->m_NodeNo ;
 			Min_distance = distance;
 		}
 
@@ -3316,7 +3316,7 @@ void CTLiteView::OnLButtonUp(UINT nFlags, CPoint point)
 					DTALink* pLink = pDoc->m_LinkNoMap [pDoc->m_SelectedLinkNo ];
 					CFeatureInfo element;
 					element.Attribute = "Link ID";
-					element.Data.Format ("%d",pLink->m_LinkID  );
+					element.Data.Format ("%s",pLink->m_LinkID.c_str()  );
 					pMainFrame->m_FeatureInfoVector.push_back (element);
 
 					element.Attribute = "name";
@@ -3733,7 +3733,7 @@ void CTLiteView::OnNodeOrigin()
 
 	pDoc->m_SelectedNodeNo = FindClosestNode(m_CurrentMousePoint, 300);  // 300 is screen unit
 
-	pDoc->m_FromNodeNo = pDoc->m_SelectedNodeNo;
+	pDoc->m_ONodeNo = pDoc->m_SelectedNodeNo;
 	pDoc->Routing(false);
 
 	m_ShowAllPaths = true;
@@ -3748,7 +3748,7 @@ void CTLiteView::OnNodeDestination()
 	CTLiteDoc* pDoc = GetDocument();
 	pDoc->m_SelectedNodeNo = FindClosestNode(m_CurrentMousePoint, 300);  // 300 is screen unit
 
-	pDoc->m_ToNodeNo = pDoc->m_SelectedNodeNo;
+	pDoc->m_DNodeNo = pDoc->m_SelectedNodeNo;
 
 	m_ShowAllPaths = true;
 	if(pDoc->Routing(false)==0)
@@ -4019,6 +4019,25 @@ void CTLiteView::OnSearchFindlink()
 
 			}
 		}
+		if (dlg.m_SearchMode == efind_road_link_id)
+		{
+			std::string str_link_id = pDoc->CString2StdString(dlg.m_LinkID);
+
+			DTALink* pLink = pDoc->FindLinkWithLinkID (str_link_id);
+
+			if (pLink != NULL)
+			{
+				pDoc->m_SelectedLinkNo = pLink->m_LinkNo;
+				pDoc->m_SelectedNodeNo = -1;
+
+				pDoc->ZoomToSelectedLink(pLink->m_LinkNo);
+
+				m_SelectFromNodeID = dlg.m_FromNodeID;
+				m_SelectToNodeID = dlg.m_ToNodeID;
+				Invalidate();
+
+			}
+		}
 
 		if(dlg.m_SearchMode == efind_node)
 		{
@@ -4060,7 +4079,7 @@ void CTLiteView::OnSearchFindlink()
 				return;
 			}else
 			{
-				pDoc->m_FromNodeNo = pFromNode->m_NodeID;
+				pDoc->m_ONodeNo = pFromNode->m_NodeNo;
 
 			}
 			DTANode* pToNode = pDoc->FindNodeWithNodeID (dlg.m_ToNodeID);
@@ -4072,7 +4091,7 @@ void CTLiteView::OnSearchFindlink()
 				return;
 			}else
 			{
-				pDoc->m_ToNodeNo = pToNode->m_NodeID;
+				pDoc->m_DNodeNo = pToNode->m_NodeNo;
 			}
 
 			pDoc->Routing(false);
@@ -4391,7 +4410,7 @@ void CTLiteView::OnLinkEditlink()
 
 		dlg.m_pDoc = pDoc;
 
-//		dlg.m_LinkID = pLink->m_LinkID ;
+		dlg.m_LinkID = pLink->m_LinkID.c_str() ;
 		dlg.StreetName  = pLink->m_Name.c_str () ;
 		dlg.FromNode = pLink->m_FromNodeID ;
 		dlg.ToNode = pLink->m_ToNodeID ;
@@ -5686,7 +5705,7 @@ void CTLiteView::OnNodeCheckconnectivityfromhere()
 {
 	CTLiteDoc* pDoc = GetDocument();
 	pDoc->m_SelectedNodeNo = FindClosestNode(m_CurrentMousePoint, 300);  // 300 is screen unit
-	pDoc->m_FromNodeNo = pDoc->m_SelectedNodeNo;
+	pDoc->m_ONodeNo = pDoc->m_SelectedNodeNo;
 	pDoc->Routing(true);
 	m_ShowAllPaths = true;
 	Invalidate();
