@@ -19,7 +19,7 @@ CDlgLinkProperties::CDlgLinkProperties(CWnd* pParent /*=NULL*/)
 	, FreeFlowTravelTime(0)
 	, LaneCapacity(0)
 	, nLane(0)
-	, m_LinkID(0)
+	, m_LinkID("")
 	, StreetName(_T(""))
 {
 m_bEditChange = false;

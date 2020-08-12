@@ -83,7 +83,7 @@ int CTLiteDoc::Routing(bool bCheckConnectivity, bool bRebuildNetwork)
 	
 	if(bCheckConnectivity == false)
 	{
-		if(m_FromNodeNo < 0 || m_ToNodeNo <0)
+		if(m_ONodeNo < 0 || m_DNodeNo <0)
 	{
 		m_SelectPathNo = -1;
 		return 0;
@@ -97,12 +97,12 @@ int CTLiteDoc::Routing(bool bCheckConnectivity, bool bRebuildNetwork)
 	if(m_pNetwork ==NULL)  
 		{
 		m_pNetwork = new DTANetworkForSP(m_NodeSet.size(), m_LinkSet.size(), 1, 1, m_AdjLinkSize);  //  network instance for single processor in multi-thread environment
-		m_pNetwork->BuildPhysicalNetwork(&m_NodeSet, &m_LinkSet, m_RandomRoutingCoefficient, false, m_FromNodeNo, m_ToNodeNo);
+		m_pNetwork->BuildPhysicalNetwork(&m_NodeSet, &m_LinkSet, m_RandomRoutingCoefficient, false, m_ONodeNo, m_DNodeNo);
 		}
 
 	if(bRebuildNetwork)  // link cost changed
 	{
-		m_pNetwork->BuildPhysicalNetwork(&m_NodeSet, &m_LinkSet, m_RandomRoutingCoefficient, false,m_FromNodeNo, m_ToNodeNo);
+		m_pNetwork->BuildPhysicalNetwork(&m_NodeSet, &m_LinkSet, m_RandomRoutingCoefficient, false,m_ONodeNo, m_DNodeNo);
 
 	}
 		int NodeNodeSum = 0;
@@ -117,7 +117,7 @@ int CTLiteDoc::Routing(bool bCheckConnectivity, bool bRebuildNetwork)
 			
 			if(bCheckConnectivity==true)
 			{
-				m_pNetwork->SimplifiedTDLabelCorrecting_DoubleQueue(m_FromNodeNo, 0, m_ToNodeNo, 1, 10.0f,PathLinkList,TotalCost, distance_flag, true, false,0);   // Pointer to previous node (node)
+				m_pNetwork->SimplifiedTDLabelCorrecting_DoubleQueue(m_ONodeNo, 0, m_DNodeNo, 1, 10.0f,PathLinkList,TotalCost, distance_flag, true, false,0);   // Pointer to previous node (node)
 
 					for (std::list<DTANode*>::iterator  iNode = m_NodeSet.begin(); iNode != m_NodeSet.end(); iNode++)
 					{
@@ -131,7 +131,7 @@ int CTLiteDoc::Routing(bool bCheckConnectivity, bool bRebuildNetwork)
 
 			std::vector<int> ODNodeSequenceVector;
 
-			ODNodeSequenceVector.push_back(m_FromNodeNo);
+			ODNodeSequenceVector.push_back(m_ONodeNo);
 
 			// add intermediate destinations 
 			for(unsigned int idest = 0; idest < m_IntermediateDestinationVector.size(); idest++)
@@ -139,7 +139,7 @@ int CTLiteDoc::Routing(bool bCheckConnectivity, bool bRebuildNetwork)
 			ODNodeSequenceVector.push_back(m_IntermediateDestinationVector[idest]);
 			}
 
-			ODNodeSequenceVector.push_back(m_ToNodeNo);
+			ODNodeSequenceVector.push_back(m_DNodeNo);
 
 
 				DTAPath path_element;
@@ -208,44 +208,44 @@ int CTLiteDoc::Routing(bool bCheckConnectivity, bool bRebuildNetwork)
 	// calculate time-dependent travel time
 
 
-		for(unsigned int p = 0; p < m_PathDisplayList.size(); p++) // for each path
-		{
-			DTAPath path_element = m_PathDisplayList[p];
+		//for(unsigned int p = 0; p < m_PathDisplayList.size(); p++) // for each path
+		//{
+		//	DTAPath path_element = m_PathDisplayList[p];
 
-			for(int t=0; t< g_Simulation_Time_Horizon; t+= TIME_DEPENDENT_TRAVLE_TIME_CALCULATION_INTERVAL)  // for each starting time
-			{
-				path_element.m_TimeDependentTravelTime[t] = t;  // t is the departure time
+		//	for(int t=0; t< g_Simulation_Time_Horizon; t+= TIME_DEPENDENT_TRAVLE_TIME_CALCULATION_INTERVAL)  // for each starting time
+		//	{
+		//		path_element.m_TimeDependentTravelTime[t] = t;  // t is the departure time
 
-				for (int i=0 ; i < path_element.m_LinkVector.size(); i++)  // for each pass link
-				{
-					DTALink* pLink = m_LinkNoMap[m_PathDisplayList[p].m_LinkVector[i]];
-					if(pLink == NULL)
-						break;
+		//		for (int i=0 ; i < path_element.m_LinkVector.size(); i++)  // for each pass link
+		//		{
+		//			DTALink* pLink = m_LinkNoMap[m_PathDisplayList[p].m_LinkVector[i]];
+		//			if(pLink == NULL)
+		//				break;
 
-					path_element.m_TimeDependentTravelTime[t] += pLink->GetDynamicTravelTime(path_element.m_TimeDependentTravelTime[t] );
+		//			path_element.m_TimeDependentTravelTime[t] += pLink->GetDynamicTravelTime(path_element.m_TimeDependentTravelTime[t] );
 
-				}
+		//		}
 
-				path_element.m_TimeDependentTravelTime[t] -= t; // remove the starting time, so we have pure travel time;
+		//		path_element.m_TimeDependentTravelTime[t] -= t; // remove the starting time, so we have pure travel time;
 
-				ASSERT(path_element.m_TimeDependentTravelTime[t]>=0);
+		//		ASSERT(path_element.m_TimeDependentTravelTime[t]>=0);
 
-				if( path_element.m_MaxTravelTime < path_element.m_TimeDependentTravelTime[t])
-					path_element.m_MaxTravelTime = path_element.m_TimeDependentTravelTime[t];
+		//		if( path_element.m_MaxTravelTime < path_element.m_TimeDependentTravelTime[t])
+		//			path_element.m_MaxTravelTime = path_element.m_TimeDependentTravelTime[t];
 
-				for(int tt=1; tt<TIME_DEPENDENT_TRAVLE_TIME_CALCULATION_INTERVAL; tt++)
-				{
-					path_element.m_TimeDependentTravelTime[t+tt] = path_element.m_TimeDependentTravelTime[t];
-				}
+		//		for(int tt=1; tt<TIME_DEPENDENT_TRAVLE_TIME_CALCULATION_INTERVAL; tt++)
+		//		{
+		//			path_element.m_TimeDependentTravelTime[t+tt] = path_element.m_TimeDependentTravelTime[t];
+		//		}
 
 
-				//                              TRACE("\n path %d, time at %d = %f",p, t,path_element.m_TimeDependentTravelTime[t]  );
+		//		//                              TRACE("\n path %d, time at %d = %f",p, t,path_element.m_TimeDependentTravelTime[t]  );
 
-			}
+		//	}
 
 	
 
-		}
+		//}
 
 
 /*

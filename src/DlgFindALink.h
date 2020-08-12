@@ -53,6 +53,7 @@ public:
 	eSEARCHMODE m_SearchMode;
 	int m_NodeID;
 	int m_FromNodeID;
+	CString m_LinkID;
 	int m_ToNodeID;
     int m_AgentNumber;
 

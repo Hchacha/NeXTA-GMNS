@@ -650,9 +650,9 @@ CTLiteDoc::CTLiteDoc()
 	m_ColorHighway = RGB(100,149,237);
 	m_ColorArterial = RGB(0,0,0);
 	m_pNetwork = NULL;
-	m_FromNodeNo = -1;
+	m_ONodeNo = -1;
 
-	m_ToNodeNo = -1;
+	m_DNodeNo = -1;
 	m_NodeSizeSP = 0;
 
 
@@ -949,6 +949,7 @@ void CTLiteDoc::SetStatusText(CString StatusText)
 
 bool CTLiteDoc::ReadSimulationLinkMOEData_Parser(LPCTSTR lpszFileName)
 {
+	int error_count = 0;
 	CCSVParser parser;
 	int i= 0;
 	if (parser.OpenCSVFile(lpszFileName))
@@ -998,6 +999,17 @@ bool CTLiteDoc::ReadSimulationLinkMOEData_Parser(LPCTSTR lpszFileName)
 						//parser.GetValueByFieldName("queue_length", queue_length_percentage);
 						//parser.GetValueByFieldName("number_of_queued_agents", number_of_queued_agents);
 
+						if (travel_time_in_min < 0.01 && speed>0.1)  // travel time data invalid, but with speed data
+						{
+							travel_time_in_min = pLink->m_Length / speed * 60;
+						}
+
+						if (travel_time_in_min > 0.01 && speed<0.01)  // travel time data valid, but without speed data
+						{
+							speed = pLink->m_Length / (travel_time_in_min / 60);
+						}
+
+
 						pLink->m_total_link_volume += link_volume;
 
 						float time_duration_per_hour = max(0.01,(time_stamp_vector[1] - time_stamp_vector[0]) / 60.0);
@@ -1028,10 +1040,14 @@ bool CTLiteDoc::ReadSimulationLinkMOEData_Parser(LPCTSTR lpszFileName)
 
 			}else
 			{
+				error_count++;
+				if(error_count<=4)
+				{ 
 				CString msg;
-				msg.Format ("Please check if link %s at file %s still exists inroad_ink.csv.", road_link_id.c_str(), lpszFileName);  // +2 for the first field name line
+				msg.Format ("Please check if link_id %s at link_performance.csv is defined in road_link.csv.", road_link_id.c_str());  // +2 for the first field name line
 				AfxMessageBox(msg);
-				break;
+				}
+				continue;
 			}
 
 		}
@@ -1069,7 +1085,7 @@ bool CTLiteDoc::ReadSimulationLinkMOEData_Parser(LPCTSTR lpszFileName)
 		g_Simulation_Time_Stamp = 0; // reset starting time
 		g_SimulationStartTime_in_min = 0;
 
-		m_SimulationLinkTDMOEDataLoadingStatus.Format ("%d link time-dependent MOE records are loaded from file %s.",i,lpszFileName);
+		m_SimulationLinkTDMOEDataLoadingStatus.Format ("%d link time-dependent MOE records are loaded from file %s. %d records do not have valid link_id.",i,lpszFileName, error_count);
 		return true;
 	}
 	else
@@ -2600,8 +2616,9 @@ bool CTLiteDoc::ReadAgentTypeCSVFile(LPCTSTR lpszFileName)
 			string agent_type;
 			float averageVOT;
 
-			if(parser.GetValueByFieldName("agent_type",agent_type) == false)
+			if (parser.GetValueByFieldName("agent_type", agent_type) == false)
 				break;
+				
 			string agent_type_name;
 			parser.GetValueByFieldName("name",agent_type_name);
 
@@ -3255,12 +3272,6 @@ void CTLiteDoc::ReadAgentCSVFile_Parser(LPCTSTR lpszFileName)
 						return;
 				}
 
-				if (!parser_test.GetValueByFieldName("travel_time", pAgent->m_TripTime))
-				{
-					AfxMessageBox("Field travel_time does not exist in agent.csv");
-					return;
-
-				}
 
 				if (!parser_test.GetValueByFieldName("agent_type", pAgent->m_AgentType))
 				{
@@ -3269,14 +3280,7 @@ void CTLiteDoc::ReadAgentCSVFile_Parser(LPCTSTR lpszFileName)
 
 				}
 
-				std::string path_node_sequence;
-				if (!parser_test.GetValueByFieldName("node_sequence", path_node_sequence))
-				{
-					AfxMessageBox("Field node_sequence does not exist in agent.csv");
-					return;
-
-				}
-				
+			
 				delete pAgent;
 				parser_test.CloseCSVFile();
 		}
@@ -3355,12 +3359,12 @@ void CTLiteDoc::ReadAgentCSVFile_Parser(LPCTSTR lpszFileName)
 			std::vector<float> node_time_sequence;
 
 
-			if(pAgent->m_NodeSize>=1)  // in case reading error
+			if (pAgent->m_NodeSize >= 1)  // in case reading error
 			{
 
 				pAgent->m_NodeAry = new SAgentLink[pAgent->m_NodeSize];
 				pAgent->m_NodeIDSum = 0;
-				for(int i=0; i< pAgent->m_NodeSize; i++)
+				for (int i = 0; i < pAgent->m_NodeSize; i++)
 				{
 					m_PathNodeVectorSP[i] = node_sequence[i];
 					pAgent->m_NodeIDSum += m_PathNodeVectorSP[i];
@@ -3374,33 +3378,34 @@ void CTLiteDoc::ReadAgentCSVFile_Parser(LPCTSTR lpszFileName)
 
 						if (pLink != NULL)
 						{
-					
-						pAgent->m_NodeAry[i].LinkNo = pLink->m_LinkNo;
-						pAgent->m_NodeAry[i].from_pt = pLink->m_FromPoint;
-						pAgent->m_NodeAry[i].to_pt = pLink->m_ToPoint;
 
-						
-						pLink->m_TotalTravelTime +=  pAgent->m_NodeAry[i].ArrivalTimeOnDSN - pAgent->m_NodeAry[i-1].ArrivalTimeOnDSN;
+							pAgent->m_NodeAry[i].LinkNo = pLink->m_LinkNo;
+							pAgent->m_NodeAry[i].from_pt = pLink->m_FromPoint;
+							pAgent->m_NodeAry[i].to_pt = pLink->m_ToPoint;
+
+
+							pLink->m_TotalTravelTime += pAgent->m_NodeAry[i].ArrivalTimeOnDSN - pAgent->m_NodeAry[i - 1].ArrivalTimeOnDSN;
 						}
-				
+
 					}
 
 					// random error beyond 6 seconds for better ainimation
-				
-					float random_value = g_RNNOF()*0.01; // 0.1 min = 6 seconds
 
-					if(time_sequence.size()>0)
+					float random_value = g_RNNOF() * 0.01; // 0.1 min = 6 seconds
+
+					if (time_sequence.size() > 0)
 					{
-					pAgent->m_NodeAry[i].ArrivalTimeOnDSN = time_sequence[i]+random_value;
+						pAgent->m_NodeAry[i].ArrivalTimeOnDSN = time_sequence[i] + random_value;
 					}
 				}
 
+			}
 				m_AgentSet.push_back (pAgent);
 				m_AgentIDMap[pAgent->m_AgentID]  = pAgent;
 
 
 				count++;
-			} 
+			 
 		}
 
 		UpdateMovementDataFromAgentTrajector();
@@ -5287,87 +5292,6 @@ void CTLiteDoc::OpenWarningLogFile(CString directory)
 }
 void CTLiteDoc::OnToolsExportopmodedistribution()
 {
-
-}
-
-void CTLiteDoc::OnToolsEnumeratepath()
-{
-
-	CWaitCursor cws;
-
-	int OD_index;
-
-	int O_array[10]={53661,101846,165091,226988,209476,41017,54466,94991,78110,16589};
-
-	int D_array[10]={144304,33737,70979,72725,79930,101989,89676,21233,84885,156041};
-
-	float TravelTime_array[10]={132.3,112.87,65,92.12,124.03,147.83,152.58,82.9,54.63,65.49};
-
-	for(OD_index = 0; OD_index<10; OD_index++)
-	{
-		m_FromNodeNo = m_NodeIDtoNodeNoMap[O_array[OD_index]];
-		m_ToNodeNo = m_NodeIDtoNodeNoMap[D_array[OD_index]];
-		float TravelTimeBound  = TravelTime_array[OD_index];
-		if(m_FromNodeNo>0 && m_ToNodeNo>0)
-		{
-			if(m_pNetwork !=NULL)
-			{
-				delete m_pNetwork;
-				m_pNetwork = NULL;
-			}
-
-			m_pNetwork = new DTANetworkForSP(m_NodeSet.size(), m_LinkSet.size(), 1, 1, m_AdjLinkSize);  //  network instance for single processor in multi-thread environment
-
-			m_pNetwork->BuildPhysicalNetwork(&m_NodeSet, &m_LinkSet, m_RandomRoutingCoefficient, false);
-
-			m_pNetwork->GenerateSearchTree (m_FromNodeNo,m_ToNodeNo,m_NodeSet.size()*5,TravelTimeBound);
-
-			FILE* st = NULL;
-
-			//		CFileDialog dlg(TRUE, 0, 0, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT,
-			//			_T("Path file (*.csv)|*.csv|"));
-			//		if(dlg.DoModal() == IDOK)
-			//		{
-			CString str;
-			str.Format ("C:\\path_set_%d.csv",OD_index);
-			fopen_s(&st,str,"w");
-
-			int NodeList[1000];
-
-			int PathNo = 0;
-
-			int i;
-			for(i = 0; i < m_pNetwork->m_TreeListTail; i++)
-			{
-				if(m_pNetwork->m_SearchTreeList[i].CurrentNode == m_ToNodeNo)
-				{
-					int nodeindex = 0;
-					NodeList[nodeindex++] = m_pNetwork->m_SearchTreeList[i].CurrentNode;
-					int Pred = m_pNetwork->m_SearchTreeList[i].PredecessorNode ;
-
-					while(Pred!=0)
-					{
-						NodeList[nodeindex++] = m_pNetwork->m_SearchTreeList[Pred].CurrentNode;
-
-						Pred = m_pNetwork->m_SearchTreeList[Pred].PredecessorNode ;
-					}
-					NodeList[nodeindex++] = m_pNetwork->m_SearchTreeList[Pred].CurrentNode;
-
-					fprintf(st,"%d,%d,", PathNo,nodeindex);
-
-					for(int n = nodeindex-1; n>=0; n--)
-					{
-						fprintf(st,"%d,", m_NodeNoMap[NodeList[n]]->m_NodeID);
-					}
-
-					fprintf(st, "\n");
-					PathNo++;
-				}
-
-			}
-			fclose(st);
-		}
-	}
 
 }
 
@@ -8219,7 +8143,7 @@ bool CTLiteDoc::FindObject(eSEARCHMODE SearchMode, int value1, int value2)
 			return false; 
 		}else
 		{
-			m_FromNodeNo = pFromNode->m_NodeID;
+			m_ONodeNo = pFromNode->m_NodeNo;
 
 		}
 		DTANode* pToNode = FindNodeWithNodeID (value2);
@@ -8231,7 +8155,7 @@ bool CTLiteDoc::FindObject(eSEARCHMODE SearchMode, int value1, int value2)
 			return false;
 		}else
 		{
-			m_ToNodeNo = pToNode->m_NodeID;
+			m_DNodeNo = pToNode->m_NodeNo;
 		}
 
 		Routing(false);
@@ -9319,8 +9243,8 @@ void CTLiteDoc::OnPathClearallpathdisplay()
 	}
 	m_PathDisplayList.clear();
 
-	m_FromNodeNo = -1;
-	m_ToNodeNo = -1;
+	m_ONodeNo = -1;
+	m_DNodeNo = -1;
 
 	UpdateAllViews(0);
 }

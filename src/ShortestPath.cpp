@@ -45,7 +45,7 @@ void DTANetworkForSP::BuildPhysicalNetwork(std::list<DTANode*>*	p_NodeSet, std::
 
 	m_NodeSize = p_NodeSet->size();
 
-	int FromID, ToID;
+	int FromNodeNo, ToNodeNo;
 
 	int i;
 
@@ -61,17 +61,17 @@ void DTANetworkForSP::BuildPhysicalNetwork(std::list<DTANode*>*	p_NodeSet, std::
 	for(iterLink = p_LinkSet->begin(); iterLink != p_LinkSet->end(); iterLink++)
 	{
 
-		FromID = (*iterLink)->m_FromNodeNo;
-		ToID   = (*iterLink)->m_ToNodeNo;
+		FromNodeNo = (*iterLink)->m_FromNodeNo;
+		ToNodeNo   = (*iterLink)->m_ToNodeNo;
 
-		if (FromID == 19)
+		if (FromNodeNo == 19)
 		{
 		TRACE("");
 		}
 
 		if ((*iterLink)->m_bConnector || (*iterLink)->m_bTransit || (*iterLink)->m_bWalking)  // no connectors: here we might have some problems here, as the users cannot select a zone centroid as origin/destination
 		{
-			if(FromID!=OriginNodeNo && ToID !=DestinationNodeNo)  // if not the first link or last link, skip
+			if(FromNodeNo!=OriginNodeNo && ToNodeNo !=DestinationNodeNo)  // if not the first link or last link, skip
 				continue; 
 		}
 
@@ -81,16 +81,16 @@ void DTANetworkForSP::BuildPhysicalNetwork(std::list<DTANode*>*	p_NodeSet, std::
 		int link_type = (*iterLink)->m_link_type ;
 
 
-		m_FromIDAry[(*iterLink)->m_LinkNo] = FromID;
-		m_ToIDAry[(*iterLink)->m_LinkNo]   = ToID;
+		m_FromIDAry[(*iterLink)->m_LinkNo] = FromNodeNo;
+		m_ToIDAry[(*iterLink)->m_LinkNo]   = ToNodeNo;
 
-		//      TRACE("FromID %d -> ToID %d \n", FromID, ToID);
-		m_OutboundNodeAry[FromID][m_OutboundSizeAry[FromID]] = ToID;
-		m_OutboundLinkAry[FromID][m_OutboundSizeAry[FromID]] = (*iterLink)->m_LinkNo ;
-		m_OutboundSizeAry[FromID] +=1;
+		//      TRACE("FromNodeNo %d -> ToNodeNo %d \n", FromNodeNo, ToNodeNo);
+		m_OutboundNodeAry[FromNodeNo][m_OutboundSizeAry[FromNodeNo]] = ToNodeNo;
+		m_OutboundLinkAry[FromNodeNo][m_OutboundSizeAry[FromNodeNo]] = (*iterLink)->m_LinkNo ;
+		m_OutboundSizeAry[FromNodeNo] +=1;
 
-		m_InboundLinkAry[ToID][m_InboundSizeAry[ToID]] = (*iterLink)->m_LinkNo  ;
-		m_InboundSizeAry[ToID] +=1;
+		m_InboundLinkAry[ToNodeNo][m_InboundSizeAry[ToNodeNo]] = (*iterLink)->m_LinkNo  ;
+		m_InboundSizeAry[ToNodeNo] +=1;
 
 		m_LinkTDTimeAry[(*iterLink)->m_LinkNo][0] = (*iterLink)->m_Length + (*iterLink)->m_AdditionalCost;
 		m_LinkTDCostAry[(*iterLink)->m_LinkNo][0]=  (*iterLink)->m_Length ;
@@ -139,31 +139,31 @@ int DTANetworkForSP::SimplifiedTDLabelCorrecting_DoubleQueue(int origin, int dep
 	SEList_clear();
 	SEList_push_front(origin);
 
-	int FromID, LinkNo, ToID;
+	int FromNodeNo, LinkNo, ToNodeNo;
 
 
 	float NewTime, NewCost;
 	while(!SEList_empty())
 	{
-		FromID  = SEList_front();
+		FromNodeNo  = SEList_front();
 		SEList_pop_front();
 
 		if(debug_flag)
-			TRACE("\nScan from node %d",FromID);
+			TRACE("\nScan from node %d",FromNodeNo);
 
-		NodeStatusAry[FromID] = 2;        //scaned
+		NodeStatusAry[FromNodeNo] = 2;        //scaned
 
-		for(i=0; i<m_OutboundSizeAry[FromID];  i++)  // for each arc (i,j) belong A(j)
+		for(i=0; i<m_OutboundSizeAry[FromNodeNo];  i++)  // for each arc (i,j) belong A(j)
 		{
-			LinkNo = m_OutboundLinkAry[FromID][i];
-			ToID = m_OutboundNodeAry[FromID][i];
+			LinkNo = m_OutboundLinkAry[FromNodeNo][i];
+			ToNodeNo = m_OutboundNodeAry[FromNodeNo][i];
 
-			if(ToID == origin)
+			if(ToNodeNo == origin)
 				continue;
 
 
-			  TRACE("\n   to node %d",ToID);
-			// need to check here to make sure  LabelTimeAry[FromID] is feasible.
+			  TRACE("\n   to node %d",ToNodeNo);
+			// need to check here to make sure  LabelTimeAry[FromNodeNo] is feasible.
 
 			float random_value = g_RNNOF();
 			if(random_value >5)
@@ -172,35 +172,35 @@ int DTANetworkForSP::SimplifiedTDLabelCorrecting_DoubleQueue(int origin, int dep
 			float random_cost = max(0.1f,m_LinkTDTimeAry[LinkNo][0]*(1+RandomCostCoef*random_value));
 
 
-			NewTime	 = LabelTimeAry[FromID] + random_cost;  // time-dependent travel times come from simulator
-			NewCost    = LabelCostAry[FromID] +random_cost;       // costs come from time-dependent tolls, VMS, information provisions
+			NewTime	 = LabelTimeAry[FromNodeNo] + random_cost;  // time-dependent travel times come from simulator
+			NewCost    = LabelCostAry[FromNodeNo] +random_cost;       // costs come from time-dependent tolls, VMS, information provisions
 
-			if(NewCost < LabelCostAry[ToID] &&  NewCost < CostUpperBound) // be careful here: we only compare cost not time
+			if(NewCost < LabelCostAry[ToNodeNo] &&  NewCost < CostUpperBound) // be careful here: we only compare cost not time
 			{
 
 				TRACE("\n         UPDATE to %f, link travel time %f", NewCost, m_LinkTDCostAry[LinkNo][0]);
 
-				LabelTimeAry[ToID] = NewTime;
-				LabelCostAry[ToID] = NewCost;
-				NodePredAry[ToID]   = FromID;
-				LinkNoAry[ToID] = LinkNo;
+				LabelTimeAry[ToNodeNo] = NewTime;
+				LabelCostAry[ToNodeNo] = NewCost;
+				NodePredAry[ToNodeNo]   = FromNodeNo;
+				LinkNoAry[ToNodeNo] = LinkNo;
 
-				if (ToID == destination) // special feature 7.2: update upper bound cost
+				if (ToNodeNo == destination) // special feature 7.2: update upper bound cost
 				{
-					CostUpperBound = LabelCostAry[ToID];
+					CostUpperBound = LabelCostAry[ToNodeNo];
 				}
 
 				// Dequeue implementation
 				//
-				if(NodeStatusAry[ToID]==2) // in the SEList_TD before
+				if(NodeStatusAry[ToNodeNo]==2) // in the SEList_TD before
 				{
-					SEList_push_front(ToID);
-					NodeStatusAry[ToID] = 1;
+					SEList_push_front(ToNodeNo);
+					NodeStatusAry[ToNodeNo] = 1;
 				}
-				if(NodeStatusAry[ToID]==0)  // not be reached
+				if(NodeStatusAry[ToNodeNo]==0)  // not be reached
 				{
-					SEList_push_back(ToID);
-					NodeStatusAry[ToID] = 1;
+					SEList_push_back(ToNodeNo);
+					NodeStatusAry[ToNodeNo] = 1;
 				}
 
 				//another condition: in the SELite now: there is no need to put this node to the SEList, since it is already there.
@@ -253,7 +253,7 @@ void DTANetworkForSP::BuildSpaceTimeNetworkForTimetabling(std::list<DTANode*>* p
 
 	m_NodeSize = p_NodeSet->size();
 
-	int FromID, ToID;
+	int FromNodeNo, ToNodeNo;
 
 	int i,t;
 
@@ -268,22 +268,22 @@ void DTANetworkForSP::BuildSpaceTimeNetworkForTimetabling(std::list<DTANode*>* p
 
 	for(iterLink = p_LinkSet->begin(); iterLink != p_LinkSet->end(); iterLink++)
 	{
-		FromID = (*iterLink)->m_FromNodeNo;
-		ToID   = (*iterLink)->m_ToNodeNo;
+		FromNodeNo = (*iterLink)->m_FromNodeNo;
+		ToNodeNo   = (*iterLink)->m_ToNodeNo;
 
-		m_FromIDAry[(*iterLink)->m_LinkNo] = FromID;
-		m_ToIDAry[(*iterLink)->m_LinkNo]   = ToID;
+		m_FromIDAry[(*iterLink)->m_LinkNo] = FromNodeNo;
+		m_ToIDAry[(*iterLink)->m_LinkNo]   = ToNodeNo;
 
-		m_OutboundNodeAry[FromID][m_OutboundSizeAry[FromID]] = ToID;
-		m_OutboundLinkAry[FromID][m_OutboundSizeAry[FromID]] = (*iterLink)->m_LinkNo ;
-		m_OutboundSizeAry[FromID] +=1;
+		m_OutboundNodeAry[FromNodeNo][m_OutboundSizeAry[FromNodeNo]] = ToNodeNo;
+		m_OutboundLinkAry[FromNodeNo][m_OutboundSizeAry[FromNodeNo]] = (*iterLink)->m_LinkNo ;
+		m_OutboundSizeAry[FromNodeNo] +=1;
 
-		m_InboundLinkAry[ToID][m_InboundSizeAry[ToID]] = (*iterLink)->m_LinkNo  ;
-		m_InboundSizeAry[ToID] +=1;
+		m_InboundLinkAry[ToNodeNo][m_InboundSizeAry[ToNodeNo]] = (*iterLink)->m_LinkNo  ;
+		m_InboundSizeAry[ToNodeNo] +=1;
 
 
-//		TRACE("------Link %d->%d:\n",FromID,ToID);
-		ASSERT(m_AdjLinkSize > m_OutboundSizeAry[FromID]);
+//		TRACE("------Link %d->%d:\n",FromNodeNo,ToNodeNo);
+		ASSERT(m_AdjLinkSize > m_OutboundSizeAry[FromNodeNo]);
 
 		for(t=0; t <m_OptimizationHorizon; t+=m_OptimizationTimeInveral)
 		{
@@ -345,40 +345,40 @@ bool DTANetworkForSP::OptimalTDLabelCorrecting_DoubleQueue(int origin, int depar
 
 	while(!SEList_empty())
 	{
-		int FromID  = SEList_front();
-		SEList_pop_front();  // remove current node FromID from the SE list
+		int FromNodeNo  = SEList_front();
+		SEList_pop_front();  // remove current node FromNodeNo from the SE list
 
 
-		NodeStatusAry[FromID] = 2;        //scaned
+		NodeStatusAry[FromNodeNo] = 2;        //scaned
 
 		//scan all outbound nodes of the current node
-		for(i=0; i<m_OutboundSizeAry[FromID];  i++)  // for each arc (i,j) belong A(j)
+		for(i=0; i<m_OutboundSizeAry[FromNodeNo];  i++)  // for each arc (i,j) belong A(j)
 		{
-			int LinkNo = m_OutboundLinkAry[FromID][i];
-			int ToID = m_OutboundNodeAry[FromID][i];
+			int LinkNo = m_OutboundLinkAry[FromNodeNo][i];
+			int ToNodeNo = m_OutboundNodeAry[FromNodeNo][i];
 
-			if(ToID == origin)  // remove possible loop back to the origin
+			if(ToNodeNo == origin)  // remove possible loop back to the origin
 				continue;
 
 			if(debug_flag)
-				TRACE("\nScan from node %d to node %d",FromID,ToID);
+				TRACE("\nScan from node %d to node %d",FromNodeNo,ToNodeNo);
 
 			// for each time step, starting from the departure time
 			for(int t=departure_time; t <m_OptimizationHorizon; t+=m_OptimizationTimeInveral)
 			{
-				if(TD_LabelCostAry[FromID][t]<MAX_SPLABEL-1)  // for feasible time-space point only
+				if(TD_LabelCostAry[FromNodeNo][t]<MAX_SPLABEL-1)  // for feasible time-space point only
 				{
 
 					for(int time_delay = 0; time_delay <=AllowedDelayTime; time_delay++)
 					{
 						int NewToNodeArrivalTime	 = (int)(t + m_LinkTDTimeAry[LinkNo][t] + time_delay);  // time-dependent travel times for different train type
-						float NewCost  =  TD_LabelCostAry[FromID][t] + m_LinkTDCostAry[LinkNo][t] + m_LinkTDTimeAry[LinkNo][t];
+						float NewCost  =  TD_LabelCostAry[FromNodeNo][t] + m_LinkTDCostAry[LinkNo][t] + m_LinkTDTimeAry[LinkNo][t];
 						// costs come from time-dependent resource price or road toll
 
 						if(NewToNodeArrivalTime > (m_OptimizationHorizon -1))  // prevent out of bound error
 							NewToNodeArrivalTime = (m_OptimizationHorizon-1);
 
-						if(NewCost < TD_LabelCostAry[ToID][NewToNodeArrivalTime] ) // we only compare cost at the downstream node ToID at the new arrival time t
+						if(NewCost < TD_LabelCostAry[ToNodeNo][NewToNodeArrivalTime] ) // we only compare cost at the downstream node ToNodeNo at the new arrival time t
 						{
 
 							if(debug_flag)
@@ -386,20 +386,20 @@ bool DTANetworkForSP::OptimalTDLabelCorrecting_DoubleQueue(int origin, int depar
 
 							// update cost label and node/time predecessor
 
-							TD_LabelCostAry[ToID][NewToNodeArrivalTime] = NewCost;
-							TD_NodePredAry[ToID][NewToNodeArrivalTime] = FromID;  // pointer to previous NODE INDEX from the current label at current node and time
-							TD_TimePredAry[ToID][NewToNodeArrivalTime] = t;  // pointer to previous TIME INDEX from the current label at current node and time
+							TD_LabelCostAry[ToNodeNo][NewToNodeArrivalTime] = NewCost;
+							TD_NodePredAry[ToNodeNo][NewToNodeArrivalTime] = FromNodeNo;  // pointer to previous NODE INDEX from the current label at current node and time
+							TD_TimePredAry[ToNodeNo][NewToNodeArrivalTime] = t;  // pointer to previous TIME INDEX from the current label at current node and time
 
 							// Dequeue implementation
-							if(NodeStatusAry[ToID]==2) // in the SEList_TD before
+							if(NodeStatusAry[ToNodeNo]==2) // in the SEList_TD before
 							{
-								SEList_push_front(ToID);
-								NodeStatusAry[ToID] = 1;
+								SEList_push_front(ToNodeNo);
+								NodeStatusAry[ToNodeNo] = 1;
 							}
-							if(NodeStatusAry[ToID]==0)  // not be reached
+							if(NodeStatusAry[ToNodeNo]==0)  // not be reached
 							{
-								SEList_push_back(ToID);
-								NodeStatusAry[ToID] = 1;
+								SEList_push_back(ToNodeNo);
+								NodeStatusAry[ToNodeNo] = 1;
 							}
 
 						}
@@ -453,17 +453,17 @@ bool DTANetworkForSP::GenerateSearchTree(int origin, int destination, int node_s
 	m_TreeListFront = 0;
 	m_TreeListTail = 1;
 
-	int FromID, LinkNo, ToID;
+	int FromNodeNo, LinkNo, ToNodeNo;
 
 	int PathNo = 0;
 
 	while(m_TreeListTail < m_TreeListSize-1 && m_TreeListFront <  m_TreeListTail)
 		// not exceed search tree size, or not search to the end of queue/list
 	{
-		FromID  = m_SearchTreeList[m_TreeListFront].CurrentNode ;
+		FromNodeNo  = m_SearchTreeList[m_TreeListFront].CurrentNode ;
 
 
-		if(FromID==destination || m_SearchTreeList[m_TreeListFront].SearchLevel  >= node_size || m_SearchTreeList[m_TreeListFront].TravelTime   >= TravelTimeBound)
+		if(FromNodeNo==destination || m_SearchTreeList[m_TreeListFront].SearchLevel  >= node_size || m_SearchTreeList[m_TreeListFront].TravelTime   >= TravelTimeBound)
 		{
 
 		m_TreeListFront ++; // move to the next front node for breadth first search
@@ -472,21 +472,21 @@ bool DTANetworkForSP::GenerateSearchTree(int origin, int destination, int node_s
 		// when we finish all search, we should backtrace from a node at position i == destination)
 		}
 
-		for(i=0; i<m_OutboundSizeAry[FromID];  i++)  // for each arc (i,j) belong A(j)
+		for(i=0; i<m_OutboundSizeAry[FromNodeNo];  i++)  // for each arc (i,j) belong A(j)
 		{
-			LinkNo = m_OutboundLinkAry[FromID][i];
-			ToID = m_OutboundNodeAry[FromID][i];
+			LinkNo = m_OutboundLinkAry[FromNodeNo][i];
+			ToNodeNo = m_OutboundNodeAry[FromNodeNo][i];
 
-			if(ToID == origin)
+			if(ToNodeNo == origin)
 				continue;
 
-			// search if ToID in the path
+			// search if ToNodeNo in the path
 			bool bToID_inSubPathFlag = false;
 			{
 				int Pred = m_SearchTreeList[m_TreeListFront].PredecessorNode ;
 				while(Pred>0)
 				{
-						if(m_SearchTreeList[Pred].CurrentNode == ToID)  // in the subpath
+						if(m_SearchTreeList[Pred].CurrentNode == ToNodeNo)  // in the subpath
 						{
 						bToID_inSubPathFlag = true;
 						break;
@@ -501,7 +501,7 @@ bool DTANetworkForSP::GenerateSearchTree(int origin, int destination, int node_s
 			if(bToID_inSubPathFlag)
 				continue;
 
-			m_SearchTreeList[m_TreeListTail].CurrentNode = ToID;
+			m_SearchTreeList[m_TreeListTail].CurrentNode = ToNodeNo;
 			m_SearchTreeList[m_TreeListTail].PredecessorNode = m_TreeListFront;
 			m_SearchTreeList[m_TreeListTail].SearchLevel = m_SearchTreeList[m_TreeListFront].SearchLevel + 1;
 

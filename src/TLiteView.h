@@ -496,13 +496,13 @@ bool RectIsInsideScreen(CRect rect, CRect screen_bounds)
 		{
 
 			bool bConnected = false;
-			if((*iLink)->m_FromNodeNo == pNode->m_NodeID )
+			if((*iLink)->m_FromNodeNo == pNode->m_NodeNo )
 			{
 				(*iLink)->m_FromPoint = pNode->pt;
 				bConnected = true;
 			}
 
-			if((*iLink)->m_ToNodeNo == pNode->m_NodeID )
+			if((*iLink)->m_ToNodeNo == pNode->m_NodeNo )
 			{
 				(*iLink)->m_ToPoint = pNode->pt;
 				bConnected = true;

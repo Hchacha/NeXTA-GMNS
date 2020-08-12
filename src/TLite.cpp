@@ -244,7 +244,7 @@ BOOL CTLiteApp::InitInstance()
 
         GetCurrentDirectory(MAX_PATH,pMainFrame->m_CurrentDirectory);
 
-		pMainFrame->SetTitle ("NeXTA-GMNS v0.8");
+		pMainFrame->SetTitle ("NeXTA-GMNS v0.81");
 
         // The main window has been initialized, so show and update it
         pMainFrame->ShowWindow(SW_SHOWMAXIMIZED);

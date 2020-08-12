@@ -52,7 +52,7 @@ public:
 	afx_msg void OnBnClickedSaveasdefault();
 	afx_msg void OnBnClickedCancel();
 	afx_msg void OnCbnSelchangeCombo1();
-	int m_LinkID;
+	CString m_LinkID;
 	CString StreetName;
 	afx_msg void OnEnChangeEditLength();
 	afx_msg void OnBnClickedButtonUpdate();
