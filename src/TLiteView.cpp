@@ -1376,7 +1376,7 @@ void CTLiteView::DrawObjects(CDC* pDC)
 
 				if(m_ShowLinkTextMode == link_display_street_name)
 				{
-					if((*iLink)->m_Name.length () > 0 && (*iLink)->m_Name!="(null)"  && screen_distance > 100 )
+					if((*iLink)->m_Name.length () > 0 && (*iLink)->m_Name!="(null)"  && screen_distance > 5 )
 					{
 						str_text = (*iLink)->m_Name.c_str ();
 						with_text = true;
@@ -1435,7 +1435,7 @@ void CTLiteView::DrawObjects(CDC* pDC)
 
 
 				case link_display_total_link_volume:
-					str_text.Format("%.0f", (*iLink)->m_total_link_volume);
+					str_text.Format("%.1f", (*iLink)->m_total_link_volume);
 
 					break;
 
@@ -1443,7 +1443,7 @@ void CTLiteView::DrawObjects(CDC* pDC)
 
 				case link_display_total_delay:
 					if((*iLink)->m_total_delay>=1 && pDoc->m_LinkTypeMap[(*iLink)->m_link_type].IsConnector () == false)
-						str_text.Format ("%.0f",(*iLink)->m_total_delay/60.0   );
+						str_text.Format ("%.1f",(*iLink)->m_total_delay/60.0   );
 
 					break;
 
@@ -1456,7 +1456,7 @@ void CTLiteView::DrawObjects(CDC* pDC)
 
 					value = max(0,value);
 
-					str_text.Format ("%.0f",value);
+					str_text.Format ("%.1f",value);
 					break;
 
 				case link_display_time_dependent_lane_volume:
@@ -1500,7 +1500,6 @@ void CTLiteView::DrawObjects(CDC* pDC)
 					}
 					break;
 
-					with_text = true;
 				case link_display_time_dependent_congestion_start_time:
 					value = (*iLink)->GetImpactRelativeStartTime  ((int)g_Simulation_Time_Stamp );
 
@@ -5166,6 +5165,8 @@ void CTLiteView::DrawLinkAsLine(DTALink* pLink, CDC* pDC)
 	// normal line
 	CTLiteDoc* pDoc = GetDocument();
 
+	if (pLink->m_FromNodeID == 7720 && pLink->m_ToNodeID == 7721)
+		TRACE("");
 
 	FromPoint = NPtoSP(pLink->m_ShapePoints[0]);
 	ToPoint = NPtoSP(pLink->m_ShapePoints[pLink->m_ShapePoints.size() - 1]);
@@ -5414,6 +5415,9 @@ bool CTLiteView::DrawLinkAsBand(DTALink* pLink, CDC* pDC, bool bObservationFlag 
 		return false;
 
 	int band_point_index = 0;  
+
+	if (pLink->m_FromNodeID == 7720 && pLink->m_ToNodeID == 7721)
+		TRACE("");
 
 	if(pLink ->m_ShapePoints.size() > 900)
 	{
@@ -6217,18 +6221,6 @@ void CTLiteView::OnNodeMovementproperties()
 		if(pNode==NULL)
 			return;
 
-		//if(pNode->m_ControlType !=  pDoc->m_ControlType_PretimedSignal &&
-		//		pNode->m_ControlType !=  pDoc->m_ControlType_ActuatedSignal )  //this movement vector is the same as the current node
-		//	{
-		//
-		//		CString str;
-		//		str.Format("The selected node %d does not have signal information.", pNode->m_NodeID );
-		//		AfxMessageBox(str,MB_ICONINFORMATION);
-		//		return;
-		//	}
-		//	
-
-		//CWaitCursor wait;
 		//pDoc->GenerateMovementCountFromAgentFile();
 		//pDoc->ExportQEMData(pNode->m_NodeID );
 
@@ -6237,85 +6229,27 @@ void CTLiteView::OnNodeMovementproperties()
 		CPage_Node_Movement MovementPage;
 		MovementPage.m_psp.pszTitle = _T("Movemnent");
 		MovementPage.m_psp.dwFlags |= PSP_USETITLE;
-
 		MovementPage.m_pDoc = pDoc;
-		MovementPage.m_PeakHourFactor = pDoc->m_PeakHourFactor ;
-		MovementPage.m_CurrentNodeID = pNode->m_NodeID;
+		MovementPage.m_CurrentNodeNo = pNode->m_NodeNo;
 		MovementPage.m_CurrentNode_Name = pNode->m_Name.c_str () ;
 
-		if(pNode->m_ControlType == pDoc->m_ControlType_PretimedSignal
-			|| pNode->m_ControlType == pDoc->m_ControlType_ActuatedSignal)
-			MovementPage.m_bSigalizedNode  = true;
-		else
-			MovementPage.m_bSigalizedNode  = false;
-
+		MovementPage.m_bSigalizedNode  = true;
 		sheet.AddPage(&MovementPage);  // 0
-
-
 
 		CPage_Node_Phase PhasePage;
 
-		if(pNode->m_ControlType == pDoc->m_ControlType_PretimedSignal
-			|| pNode->m_ControlType == pDoc->m_ControlType_ActuatedSignal)
-		{
 			PhasePage.m_psp.pszTitle = _T("Phase");
 			PhasePage.m_psp.dwFlags |= PSP_USETITLE;
 			PhasePage.m_pDoc = pDoc;
 			PhasePage.m_PeakHourFactor = pDoc->m_PeakHourFactor ;
+			PhasePage.m_CurrentNodeNo = pNode->m_NodeNo;
 			PhasePage.m_CurrentNodeID = pNode->m_NodeID;
+			
 			PhasePage.m_CurrentNode_Name = pNode->m_Name.c_str () ;
 			sheet.AddPage(&PhasePage);  // 0
-		}
 
-		sheet.SetActivePage (0);
-		if(sheet.DoModal() == IDOK)
-		{
+		sheet.DoModal();
 
-
-		}
-
-		//if ( 0 == m_msStatus )
-		//{
-		//	m_ms.m_pDoc = pDoc;
-		//	m_ms.PrepareData4Editing();
-		//	m_msStatus = 1;
-		//}
-
-		//CString str;
-		//str.Format("Node %d",pDoc->m_NodeNotoIDMap[pDoc->m_SelectedNodeNo]);
-
-		//CMyPropertySheet sheet(str);
-		//sheet.SetTitle(str);
-		//CPage_Node_Movement MovementPage;
-		//MovementPage.m_pDoc = pDoc;
-		//MovementPage.m_pView= this;
-		//MovementPage.m_psp.dwFlags |= PSP_USETITLE;
-		//MovementPage.m_psp.pszTitle = _T("Movement");
-		//sheet.AddPage(&MovementPage);  // 0
-
-
-		////if(pDoc->m_NodeNoMap.find(pDoc->m_SelectedNodeNo) ==pDoc->m_NodeNoMap.end())
-		////	return;
-
-		////DTANode*  pNode = pDoc->m_NodeNoMap[pDoc->m_SelectedNodeNo];
-
-		//CPage_Node_Lane LanePage;
-		//LanePage.m_pDoc = pDoc;
-		//LanePage.m_pView= this;
-		//LanePage.m_psp.dwFlags |= PSP_USETITLE;
-		//LanePage.m_psp.pszTitle = _T("Lane");
-		//sheet.AddPage(&LanePage);  // 2
-
-		//CPage_Node_LaneTurn LaneTurnPage;
-		//LaneTurnPage.m_pDoc = pDoc;
-		//LaneTurnPage.m_pView= this;
-		//LaneTurnPage.m_psp.dwFlags |= PSP_USETITLE;
-		//LaneTurnPage.m_psp.pszTitle = _T("LaneTurn");
-		//sheet.AddPage(&LaneTurnPage);  // 3
-
-
-
-		//sheet.DoModal();
 	}
 }
 
@@ -6690,9 +6624,9 @@ void CTLiteView::DrawNodeMovements(CDC* pDC, DTANode* pNode, CRect PlotRect)
 
 	std::map<CString, double> Turn_Degree_map;
 
-		for (unsigned int i = 0; i< pNode->m_MovementDataMap.m_MovementVector.size(); i++)
+		for (unsigned int i = 0; i< pNode->m_MovementVector.size(); i++)
 	{	
-		DTANodeMovement movement = pNode->m_MovementDataMap.m_MovementVector[i];
+		DTANodeMovement movement = pNode->m_MovementVector[i];
 
 		if( pDoc->m_hide_non_specified_movement_on_freeway_and_ramp && movement.bNonspecifiedTurnDirectionOnFreewayAndRamps )
 			continue;

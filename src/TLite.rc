@@ -16,7 +16,7 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
-// ??(??,??) resources
+// Chinese (Simplified, PRC) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)
 LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED
@@ -568,12 +568,12 @@ BEGIN
                             "Start Animation  (second by second)\nStart Animation (second by second)"
 END
 
-#endif    // ??(??,??) resources
+#endif    // Chinese (Simplified, PRC) resources
 /////////////////////////////////////////////////////////////////////////////
 
 
 /////////////////////////////////////////////////////////////////////////////
-// ?????(???) resources
+// Neutral (Default) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_NEUD)
 LANGUAGE LANG_NEUTRAL, SUBLANG_DEFAULT
@@ -1153,18 +1153,16 @@ EXSTYLE WS_EX_RIGHT
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     LTEXT           "Node ID:",IDC_STATIC,6,9,30,8
-    EDITTEXT        IDC_EDIT_CURRENT_NodeNo,37,7,47,14,ES_AUTOHSCROLL | ES_READONLY
+    EDITTEXT        IDC_EDIT_CURRENT_NodeNo,37,7,55,14,ES_AUTOHSCROLL | ES_READONLY
     CONTROL         "Custom1",IDC_GRID_Phasing,"MFCGridCtrl",WS_TABSTOP,7,261,669,88
     LTEXT           "Timing Plans:",IDC_STATIC,7,238,46,10
-    CONTROL         "Movement-Phasing Edit Mode",IDC_EDIT_MODE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,547,250,129,10
     COMBOBOX        IDC_COMBO_Timing_Plan,59,237,206,104,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
-    EDITTEXT        IDC_EDIT_CURRENT_NODENAME,89,7,107,14,ES_AUTOHSCROLL | ES_READONLY
+    EDITTEXT        IDC_EDIT_CURRENT_NODENAME,106,7,90,14,ES_AUTOHSCROLL | ES_READONLY
     LTEXT           "Control Type:",IDC_STATIC,199,7,46,10
     COMBOBOX        IDC_COMBO1,246,7,93,62,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
     CONTROL         "Hide Right Turn Movements",IDC_EDIT_MODE2,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,547,240,129,10
     CONTROL         "Multi-Phase Diagram",IDC_CHECK_MULTIPLE_PHASE_DIAGRAM,
                     "Button",BS_AUTOCHECKBOX | NOT WS_VISIBLE | WS_TABSTOP,589,7,80,11
-    PUSHBUTTON      "Save Timing File",IDC_BUTTONSAVE,277,237,97,14
 END
 
 IDD_DIALOG_INFORMATION_WITH_HELP DIALOGEX 0, 0, 316, 136
@@ -2273,12 +2271,12 @@ BEGIN
     0
 END
 
-#endif    // ?????(???) resources
+#endif    // Neutral (Default) resources
 /////////////////////////////////////////////////////////////////////////////
 
 
 /////////////////////////////////////////////////////////////////////////////
-// ??(??) resources
+// English (United States) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
 LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
@@ -2291,7 +2289,7 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 
 IDB_COLOR_RAMP          BITMAP                  "res\\bitmap1.bmp"
 
-#endif    // ??(??) resources
+#endif    // English (United States) resources
 /////////////////////////////////////////////////////////////////////////////
 
 

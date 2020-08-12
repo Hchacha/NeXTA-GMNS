@@ -115,7 +115,7 @@ public:
 		for(unsigned int i = 0; i< m_MovementBezierVector.size(); i++)
 		{
 		
-			if(m_bHideRightTurnMovement &&( pNode->m_MovementDataMap.m_MovementVector[i].movement_turn == DTA_RightTurn ||  pNode->m_MovementDataMap.m_MovementVector[i].movement_turn == DTA_RightTurn2))
+			if(m_bHideRightTurnMovement &&( pNode->m_MovementVector[i].movement_turn == DTA_RightTurn ||  pNode->m_MovementVector[i].movement_turn == DTA_RightTurn2))
 			continue;
 
 			float distance  = m_MovementBezierVector[i].GetMinDistance(pt) ;
@@ -168,12 +168,10 @@ public:
     afx_msg void OnGridEndSelChange(NMHDR *pNotifyStruct, LRESULT* pResult);
 
 
-	BOOL m_bPhasingDataEditMode;
-	afx_msg void OnBnClickedEditMode();
+
 	afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);
 	afx_msg void OnContextMenu(CWnd* /*pWnd*/, CPoint /*point*/);
 
-	afx_msg void OnCbnSelchangeComboTimingPlan();
 	CString m_CurrentNode_Name;
 	CString m_MovementMsg;
 	CComboBox m_ControlTypeComboBox;
@@ -184,16 +182,4 @@ public:
 	int m_CycleLength;
 	int m_Offset;
 	BOOL m_bHideRightTurnMovement;
-	afx_msg void OnBnClickedEditMode2();
-	afx_msg void OnCbnSelchangeComboPhasemovementdiagram();
-	afx_msg void OnBnClickedButtonQemView();
-	afx_msg void OnBnClickedCheckMultiplePhaseDiagram();
-	BOOL m_bMultiPhaseDisplay;
-	BOOL m_bOptimizationMethod;
-	afx_msg void OnBnClickedCheckOptimizationmethod();
-	float m_VolumeAdjustmentFactor;
-	afx_msg void OnBnClickedCheckOptimizationObs();
-	BOOL m_bUsingObsHourlyCount;
-	afx_msg void OnCbnEditchangeComboTimingPlan();
-	afx_msg void OnBnClickedButtonsave();
 };

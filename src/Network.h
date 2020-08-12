@@ -951,9 +951,7 @@ int out_lane_index;
 	  int amber;
 	  float VehExt1;
 
-
-      std::map<CString,bool> movement_index_map;
-      std::vector<int> movement_type_vector;  // prohibited, permitted, protected, free
+      std::vector<CString> movement_vector;
 
 
 	  // if a link is added or deleted from a link, the corresponding movement array should be adjusted. 
@@ -964,11 +962,6 @@ int out_lane_index;
 extern bool compare_MovementData (DTANodeMovement first, DTANodeMovement second);
 
 
-
-class DTANodeMovementVector {
-public:
-	std::vector <DTANodeMovement> m_MovementVector;
-};
 
 class DTANode
 {
@@ -1027,29 +1020,29 @@ public:
 	std::vector<int> m_IncomingLinkVector;
 	
 	int m_IncomingNonConnectors;
-
-	DTANodeMovementVector m_MovementDataMap;  // key is the timing plan name; default is FREE
+	std::vector <DTANodeMovement> m_MovementVector;
+	
 
 
 	void SetupNodeMovementVector(DTANodeMovement movement_element)
 	{
 	
-		m_MovementDataMap.m_MovementVector.push_back(movement_element);
+		m_MovementVector.push_back(movement_element);
 		
 	}
 
 	DTANodeMovement GetNodeMovementVector( int MovementIndex)
 	{
 			// FREE as the backup value
-			return m_MovementDataMap.m_MovementVector[MovementIndex];
+			return m_MovementVector[MovementIndex];
 		
 	}
 
 	bool IsEmptyPhaseNumber()
 	{
-		for(unsigned int i  = 0; i < m_MovementDataMap.m_MovementVector.size(); i++)
+		for(unsigned int i  = 0; i < m_MovementVector.size(); i++)
 		{
-			if(m_MovementDataMap.m_MovementVector[i].QEM_Phase1 >0)
+			if(m_MovementVector[i].QEM_Phase1 >0)
 			{
 				return false;
 			}
@@ -1062,17 +1055,17 @@ public:
 
 	void ResetToDefaultPhaseNumbers()
 	{
-		for(unsigned int i  = 0; i < m_MovementDataMap. m_MovementVector.size(); i++)
+		for(unsigned int i  = 0; i <  m_MovementVector.size(); i++)
 		{
-			switch(m_MovementDataMap.m_MovementVector[i].movement_direction)
+			switch(m_MovementVector[i].movement_direction)
 			{
-			case DTA_North: m_MovementDataMap.m_MovementVector[i].QEM_Phase1 = 2; 
+			case DTA_North: m_MovementVector[i].QEM_Phase1 = 2; 
 				break;
-			case DTA_South: m_MovementDataMap.m_MovementVector[i].QEM_Phase1 = 6; 
+			case DTA_South: m_MovementVector[i].QEM_Phase1 = 6; 
 				break;
-			case DTA_East: m_MovementDataMap.m_MovementVector[i].QEM_Phase1 = 4; 
+			case DTA_East: m_MovementVector[i].QEM_Phase1 = 4; 
 				break;
-			case DTA_West: m_MovementDataMap.m_MovementVector[i].QEM_Phase1 = 8; 
+			case DTA_West: m_MovementVector[i].QEM_Phase1 = 8; 
 				break;
 			}
 	
@@ -1081,17 +1074,16 @@ public:
 	void SortMovementVector()
 	{
 
-	std::sort(m_MovementDataMap.m_MovementVector.begin(), m_MovementDataMap.m_MovementVector.end(), compare_MovementData);
-	
+	std::sort(m_MovementVector.begin(), m_MovementVector.end(), compare_MovementData);
 	
 	}
 
 	int FindMovementIndexFromDirecion(DTA_SIG_MOVEMENT movement_approach_turnection)
 	{
 	
-		for(unsigned int i  = 0; i < m_MovementDataMap.m_MovementVector.size(); i++)
+		for(unsigned int i  = 0; i < m_MovementVector.size(); i++)
 		{
-			if(m_MovementDataMap.m_MovementVector[i].movement_approach_turn == movement_approach_turnection)
+			if(m_MovementVector[i].movement_approach_turn == movement_approach_turnection)
 				return i;
 
 		}
@@ -1104,10 +1096,10 @@ public:
 	
 		int link_count = 0;
 		// sum up all movement along the same approach
-		for(unsigned int i  = 0; i < m_MovementDataMap.m_MovementVector.size(); i++)
+		for(unsigned int i  = 0; i < m_MovementVector.size(); i++)
 		{
-			if(m_MovementDataMap.m_MovementVector[i].movement_direction   == movement_approach)
-				link_count+= m_MovementDataMap.m_MovementVector[i].QEM_TurnVolume;
+			if(m_MovementVector[i].movement_direction   == movement_approach)
+				link_count+= m_MovementVector[i].QEM_TurnVolume;
 
 		}
 
@@ -1129,15 +1121,15 @@ public:
 	void make_Link_Pair_to_Movement_Map()
 	{
 
-		for(unsigned int i  = 0; i < m_MovementDataMap.m_MovementVector.size(); i++)
+		for(unsigned int i  = 0; i < m_MovementVector.size(); i++)
 		{
-			CString pair_key = get_link_pair_key( m_MovementDataMap.m_MovementVector[i].in_link_from_node_id,m_MovementDataMap.m_MovementVector[i].out_link_to_node_id);
+			CString pair_key = get_link_pair_key( m_MovementVector[i].in_link_from_node_id,m_MovementVector[i].out_link_to_node_id);
 
 			m_Link_Pair_to_Movement_Map[pair_key] = i;
 
-			if(i <  m_MovementDataMap.m_MovementVector.size())
+			if(i <  m_MovementVector.size())
 			{
-			m_MovementDataMap.m_MovementVector[i].pair_key = pair_key;
+			m_MovementVector[i].pair_key = pair_key;
 			}else
 			{
 			TRACE("");
@@ -1150,12 +1142,12 @@ public:
 	void ResetMovementMOE()
 	{
 
-		for(unsigned int i  = 0; i < m_MovementDataMap.m_MovementVector.size(); i++)
+		for(unsigned int i  = 0; i < m_MovementVector.size(); i++)
 		{
 
-			m_MovementDataMap.m_MovementVector[i].sim_turn_count  = 0;
-			m_MovementDataMap.m_MovementVector[i].turning_percentage   = 0;
-			m_MovementDataMap.m_MovementVector[i].sim_turn_delay = 0;
+			m_MovementVector[i].sim_turn_count  = 0;
+			m_MovementVector[i].turning_percentage   = 0;
+			m_MovementVector[i].sim_turn_delay = 0;
 		}
 
 	}
@@ -1168,7 +1160,7 @@ public:
 		if(m_Link_Pair_to_Movement_Map.size()==0)
 			make_Link_Pair_to_Movement_Map();
 
-		if(m_MovementDataMap.m_MovementVector.size()==0)
+		if(m_MovementVector.size()==0)
 			return;
 
 		CString link_pair_key = get_link_pair_key( in_link_from_node_id,out_link_to_node_id);
@@ -1179,39 +1171,27 @@ public:
 		int movement_index = m_Link_Pair_to_Movement_Map[link_pair_key];
 
 		
-		if(movement_index>=0 && movement_index < m_MovementDataMap.m_MovementVector.size())
+		if(movement_index>=0 && movement_index < m_MovementVector.size())
 		{
-		m_MovementDataMap.m_MovementVector[movement_index].sim_turn_count++;
-		m_MovementDataMap.m_MovementVector[movement_index].sim_turn_delay+=delay;
+		m_MovementVector[movement_index].sim_turn_count++;
+		m_MovementVector[movement_index].sim_turn_delay+=delay;
 		}
 
 
 	}
 
 
-	
-
-	CString GetMovementIndex(int in_link_from_node_id, int in_link_to_node_id, int out_link_to_node_id)
-	{
-		if(m_Link_Pair_to_Movement_Map.size()==0) //movement vector empy
-			make_Link_Pair_to_Movement_Map();
-
-		return get_link_pair_key(in_link_from_node_id, out_link_to_node_id);
-
-	//	return "1";  //not found
-
-	}
 
 
 	int GetMovementNo(int in_link_from_node_id, int in_link_to_node_id, int out_link_to_node_id)
 	{
 
-		for(unsigned int i  = 0; i < m_MovementDataMap.m_MovementVector.size(); i++)
+		for(unsigned int i  = 0; i < m_MovementVector.size(); i++)
 		{
 
-		if(m_MovementDataMap. m_MovementVector[i].in_link_from_node_id== in_link_from_node_id
-		&& m_MovementDataMap.m_MovementVector[i].in_link_to_node_id== in_link_to_node_id
-		&& m_MovementDataMap.m_MovementVector[i].out_link_to_node_id== out_link_to_node_id)
+		if( m_MovementVector[i].in_link_from_node_id== in_link_from_node_id
+		&& m_MovementVector[i].in_link_to_node_id== in_link_to_node_id
+		&& m_MovementVector[i].out_link_to_node_id== out_link_to_node_id)
 		return i;
 		}
 
@@ -1255,6 +1235,7 @@ public:
 
 	//DTA_NodeMovementSet m_Movementt;
 	// signal data
+	std::vector<DTANodePhase> m_node_phase_vector;
 
 };
 

@@ -348,114 +348,17 @@ public: // create from serialization only
 
 	std::string m_CurrentDisplayTimingPlanName;
 	
-	std::vector<DTATimingPlan> m_TimingPlanVector;
-
-	DTATimingPlan GetTimingPlanInfo(std::string timing_plan_name)
-	{ 
-		DTATimingPlan element;
-
-		for(int tp = 0 ; tp < m_TimingPlanVector.size(); tp++)
-		{
-			if(m_TimingPlanVector[tp].timing_plan_name == timing_plan_name)
-				return m_TimingPlanVector[tp];
-			
-		}
 	
-		return element;
-	}
-
-	int GetTimingPlanNo(std::string timing_plan_name)
-	{ 
-		for(int tp = 0 ; tp < m_TimingPlanVector.size(); tp++)
-		{
-			if(m_TimingPlanVector[tp].timing_plan_name == timing_plan_name)
-				return tp;
-			
-		}
-	
-		return 0;
-	}
-
-	DTATimingPlan FindTimingPlanFromStartTime(int Agent_time_in_min)
+	CString GetPhasingMapKey(int NodeNo)
 	{
 
-		DTATimingPlan element;
-
-		element.start_time_in_min = m_DemandLoadingStartTimeInMin;
-		element.end_time_in_min = m_DemandLoadingEndTimeInMin;
-
-		for(int i = 0; i< m_TimingPlanVector.size(); i++)
-		{
-			if(element.timing_plan_name !="0" && Agent_time_in_min >= m_TimingPlanVector[i].start_time_in_min && 
-				Agent_time_in_min <= m_TimingPlanVector[i].end_time_in_min )  
-				{
-					
-					element = m_TimingPlanVector[i] ;
-
-				}
-		}
-
-		if(element.timing_plan_name .size() ==0)
-			element.timing_plan_name = "0";
-		return element;
-	
-	}
-
-	CString GetPhasingMapKey(int NodeNo, std::string TimingPlanName)
-	{
-
-		if(TimingPlanName.size() == 0)
-			TimingPlanName = "0";
 
 	CString str;
-	str.Format("%d:%s", NodeNo, TimingPlanName.c_str ());
+	str.Format("0");
 
 	return str;
 	
 	}
-
-	bool AddNameIntoTimingPlanVector(int start_time_in_min, int end_time_in_min, std::string Name)
-	{
-		bool bDefined = false;
-
-		for(int i = 0; i< m_TimingPlanVector.size(); i++)
-		{
-			if(m_TimingPlanVector[i].timing_plan_name.compare (Name) ==0 )  //exist
-			{
-				bDefined =true;
-
-				if(end_time_in_min > m_TimingPlanVector[i].end_time_in_min )  // update end_time in min
-				{
-				m_TimingPlanVector[i].end_time_in_min  = end_time_in_min;
-
-				}
-
-				if(start_time_in_min < m_TimingPlanVector[i].start_time_in_min )  // update end_time in min
-				{
-				m_TimingPlanVector[i].end_time_in_min  = start_time_in_min;
-				
-				}
-
-
-				return false;
-		
-			}
-		}
-	
-		if(!bDefined)
-		{
-
-			DTATimingPlan element;
-			element.timing_plan_name = Name;
-			element.start_time_in_min = start_time_in_min;
-			element.end_time_in_min = end_time_in_min;
-			m_TimingPlanVector.push_back (element);
-		}
-
-		return true;
-	}
-
-	void ScanAMSTimingPlanCSVFile(LPCTSTR lpszFileName, int scenario_no);
 
 
 	bool m_hide_non_specified_movement_on_freeway_and_ramp;
@@ -1783,25 +1686,27 @@ public:
 	std::map<CString, DTA_Movement_Data_Matrix> m_DTAMovementMap;
 	std::map<CString, DTA_Phasing_Data_Matrix> m_DTAPhasingMap;
 
-	DTA_Phasing_Data_Matrix GetPhaseData(int node_id, std::string timing_plan_name);
+	DTA_Phasing_Data_Matrix GetPhaseData(int node_id);
 
-	BOOL IfMovementIncludedInPhase(int node_id, std::string timing_plan_name, int phase_no, long from_node_id, int destination_node_id); 
-	BOOL IfMovementDirIncludedInPhase(int node_id, std::string timing_plan_name, int phase_no, int movement_index);
+	BOOL IfMovementIncludedInPhase(int node_id, int phase_no, long from_node_id, int destination_node_id); 
+	BOOL IfMovementDirIncludedInPhase(int node_id, int phase_no, int movement_index);
 
-	void SetupPhaseData(int node_id, std::string timing_plan_name, int phase_numbr, DTA_SIG_PHASE_ROW attribute, float value);
-	void SetupPhaseData(int node_id, std::string timing_plan_name, int phase_numbr, DTA_SIG_PHASE_ROW attribute, int value);
-	void SetupPhaseData(int node_id, std::string timing_plan_name,int phase_numbr, DTA_SIG_PHASE_ROW attribute, std::string value_str);
-	void SetupPhaseData(int node_id, std::string timing_plan_name,int phase_numbr, DTA_SIG_PHASE_ROW attribute, CString value_str);
+	void SetupPhaseData(int node_id, int phase_numbr, DTA_SIG_PHASE_ROW attribute, float value);
+	void SetupPhaseData(int node_id, int phase_numbr, DTA_SIG_PHASE_ROW attribute, int value);
+	void SetupPhaseData(int node_id, int phase_numbr, DTA_SIG_PHASE_ROW attribute, std::string value_str);
+	void SetupPhaseData(int node_id, int phase_numbr, DTA_SIG_PHASE_ROW attribute, CString value_str);
 
-	void SetupSignalValue(int node_id, std::string timing_plan_name, DTA_SIG_PHASE_ROW attribute, float value);
-	void SetupSignalValue(int node_id, std::string timing_plan_name, DTA_SIG_PHASE_ROW attribute, int value);
-	void SetupSignalValue(int node_id, std::string timing_plan_name, DTA_SIG_PHASE_ROW attribute, CString value_str);
+	void SetupSignalValue(int node_id, DTA_SIG_PHASE_ROW attribute, float value);
+	void SetupSignalValue(int node_id, DTA_SIG_PHASE_ROW attribute, int value);
+	void SetupSignalValue(int node_id, DTA_SIG_PHASE_ROW attribute, CString value_str);
 
 	// 	void ConstructMovementVector(bool flag_Template);
 	// function declaration for Synchro /////////////////////////////////////////////////////////////////////////////////
 	void ConstructMovementVector();
 
 	void ExportSingleSynchroFile(CString SynchroProjectFile);
+	BOOL OnOpenDYNASMARTProject(CString ProjectFileName, bool bNetworkOnly);
+	bool ReadDYNASMART_ControlFile_ForAMSHub();
 
 
 	std::map<CString, PathStatistics> m_PathMap;
@@ -1820,8 +1725,6 @@ public:
 
 
 	std::map<CString, DTANodeMovement*> m_MovementPointerMap;  // turnning movement pointer
-
-
 
 
 	DTANodeMovement* FindMovement(int FromNodeID,int ToNodeID, int DestNodeID)
@@ -1843,7 +1746,7 @@ public:
 	}
 
 	
-	void ReadAMSPhasingFile(LPCTSTR lpszPathName);
+	
 	void SaveTimingData();
 
 	
@@ -2234,8 +2137,7 @@ public:
 	bool FindObject(eSEARCHMODE SearchMode, int value1, int value12);
 
 
-	void UpdateMovementGreenStartAndEndTimeFromPhasingData(int NodeNo, std::string timing_plan_name);
-	void UpdateAllMovementGreenStartAndEndTime(std::string timing_plan_name);
+	void UpdateMovementGreenStartAndEndTimeFromPhasingData(int NodeNo);
 
 	// Implementation
 	void GenerateMovementCountFromAgentFile(float PeakHourFactor);

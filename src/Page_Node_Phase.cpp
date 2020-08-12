@@ -43,15 +43,11 @@ IMPLEMENT_DYNAMIC(CPage_Node_Phase, CPropertyPage)
 
 CPage_Node_Phase::CPage_Node_Phase()
 : CPropertyPage(CPage_Node_Phase::IDD)
-, m_bPhasingDataEditMode(FALSE)
 , m_CurrentNode_Name(_T(""))
 , m_MovementMsg(_T(""))
 , m_CycleLength(0)
 , m_Offset(0)
 , m_bHideRightTurnMovement(TRUE)
-, m_bMultiPhaseDisplay(FALSE)
-, m_bOptimizationMethod(FALSE)
-, m_bUsingObsHourlyCount(FALSE)
 {
 	m_bColumnWidthIncludeHeader = true;
 	m_SelectedMovementIndex = -1;
@@ -71,17 +67,13 @@ CPage_Node_Phase::~CPage_Node_Phase()
 void CPage_Node_Phase::DoDataExchange(CDataExchange* pDX)
 {
 	CPropertyPage::DoDataExchange(pDX);
+	DDX_Text(pDX, IDC_EDIT_CURRENT_NodeNo, m_CurrentNodeID);
 
 	DDX_Control(pDX, IDC_GRID_Phasing, m_PhasingGrid);
-	DDX_Check(pDX, IDC_EDIT_MODE, m_bPhasingDataEditMode);
-	DDX_Text(pDX, IDC_EDIT_CURRENT_NodeNo, m_CurrentNodeID);
-	DDX_Text(pDX, IDC_EDIT_CURRENT_NODENAME, m_CurrentNode_Name);
+
 	DDX_Control(pDX, IDC_COMBO1, m_ControlTypeComboBox);
 	DDX_Control(pDX, IDC_COMBO_Timing_Plan, m_TimingPlanComboBox);
-
-	
 	DDX_Check(pDX, IDC_EDIT_MODE2, m_bHideRightTurnMovement);
-	DDX_Check(pDX, IDC_CHECK_MULTIPLE_PHASE_DIAGRAM, m_bMultiPhaseDisplay);
 }
 
 
@@ -91,28 +83,17 @@ BEGIN_MESSAGE_MAP(CPage_Node_Phase, CPropertyPage)
 	ON_LBN_SELCHANGE(IDC_LIST1, &CPage_Node_Phase::OnLbnSelchangeList1)
 	ON_LBN_DBLCLK(IDC_LIST1, &CPage_Node_Phase::OnLbnDblclkList1)
 	ON_NOTIFY(GVN_SELCHANGED, IDC_GRID_Phasing, OnGridEndSelChange)
-
-	ON_BN_CLICKED(IDC_EDIT_MODE, &CPage_Node_Phase::OnBnClickedEditMode)
 	ON_WM_LBUTTONDBLCLK()
-	ON_CBN_SELCHANGE(IDC_COMBO_Timing_Plan, &CPage_Node_Phase::OnCbnSelchangeComboTimingPlan)
 	ON_CBN_SELCHANGE(IDC_COMBO1, &CPage_Node_Phase::OnCbnSelchangeCombo1)
 	ON_CBN_SELCHANGE(IDC_COMBO2, &CPage_Node_Phase::OnCbnSelchangeCombo2)
-	ON_BN_CLICKED(IDC_EDIT_MODE2, &CPage_Node_Phase::OnBnClickedEditMode2)
-	ON_BN_CLICKED(IDC_CHECK_MULTIPLE_PHASE_DIAGRAM, &CPage_Node_Phase::OnBnClickedCheckMultiplePhaseDiagram)
-	ON_BN_CLICKED(IDC_CHECK_OPTIMIZATIONMETHOD, &CPage_Node_Phase::OnBnClickedCheckOptimizationmethod)
-	ON_BN_CLICKED(IDC_CHECK_OPTIMIZATION_OBS, &CPage_Node_Phase::OnBnClickedCheckOptimizationObs)
-	ON_CBN_EDITCHANGE(IDC_COMBO_Timing_Plan, &CPage_Node_Phase::OnCbnEditchangeComboTimingPlan)
-	ON_BN_CLICKED(IDC_BUTTONSAVE, &CPage_Node_Phase::OnBnClickedButtonsave)
 END_MESSAGE_MAP()
 
 
 
 BOOL CPage_Node_Phase::OnInitDialog()
 {
-
 	CPropertyPage::OnInitDialog();
-
-	for(int p = 1; p <= 	_max_phase_number; p++)
+	for(int p = 1; p <= _max_phase_number; p++)
 	{
 		m_bAvailablePhaseVector [p] = false; 
 		m_EffectiveGreenTime [p]= 0;
@@ -121,43 +102,8 @@ BOOL CPage_Node_Phase::OnInitDialog()
 	m_CurrentNodeNo =  m_pDoc->m_SelectedNodeNo ;
 	m_CurrentNodeID = m_pDoc->m_NodeNoMap [m_CurrentNodeNo]->m_NodeID ;
 
-
 	// Give better margin to editors
-
-
 	CString str;
-	str.Format("Unknown Control (%d)",m_pDoc->m_ControlType_UnknownControl);
-	m_ControlTypeComboBox.AddString (str);
-	m_ControlTypeVector.push_back(m_pDoc->m_ControlType_UnknownControl);
-
-	str.Format("No Control (%d)",m_pDoc->m_ControlType_NoControl);
-	m_ControlTypeComboBox.AddString (str);
-	m_ControlTypeVector.push_back(m_pDoc->m_ControlType_NoControl);
-
-	str.Format("Yield Sign (%d)",m_pDoc->m_ControlType_YieldSign);
-	m_ControlTypeComboBox.AddString (str);
-	m_ControlTypeVector.push_back(m_pDoc->m_ControlType_NoControl);
-
-	str.Format("2 Way Stop Sign (%d)",m_pDoc->m_ControlType_2wayStopSign);
-	m_ControlTypeComboBox.AddString (str);
-	m_ControlTypeVector.push_back(m_pDoc->m_ControlType_2wayStopSign);
-
-	str.Format("4 Way Stop Sign (%d)",m_pDoc->m_ControlType_4wayStopSign);
-	m_ControlTypeComboBox.AddString (str);
-	m_ControlTypeVector.push_back(m_pDoc->m_ControlType_4wayStopSign);
-
-	str.Format("Pretimed Signal (%d)",m_pDoc->m_ControlType_PretimedSignal);
-	m_ControlTypeComboBox.AddString (str);
-	m_ControlTypeVector.push_back(m_pDoc->m_ControlType_PretimedSignal);
-
-	str.Format("Actuated Signal  (%d)",m_pDoc->m_ControlType_ActuatedSignal);
-	m_ControlTypeComboBox.AddString (str);
-	m_ControlTypeVector.push_back(m_pDoc->m_ControlType_ActuatedSignal);
-
-	str.Format("Roundabout  (%d)",m_pDoc->m_ControlType_Roundabout);
-	m_ControlTypeComboBox.AddString (str);
-	m_ControlTypeVector.push_back(m_pDoc->m_ControlType_Roundabout);
-
 	for (int tp = 1; tp <= _max_timing_plans; tp++)
 	{
 		str.Format("%d", tp);
@@ -169,19 +115,11 @@ BOOL CPage_Node_Phase::OnInitDialog()
 	m_TimingPlanComboBox.SetCurSel(0);
 
 	string timing_plan_name = "1";
-	DTA_Phasing_Data_Matrix element = m_pDoc->GetPhaseData(m_CurrentNodeID ,  timing_plan_name);
 
 
 	UpdateData(0);
 
-	for(unsigned int i=0; i< m_ControlTypeVector.size(); i++)
-	{
-		if(m_pDoc->m_NodeNoMap [m_CurrentNodeNo]->m_ControlType == m_ControlTypeVector[i])
-			m_ControlTypeComboBox.SetCurSel (i);
-	}
-
-	if(m_pDoc->m_NodeNoMap [m_CurrentNodeNo]->m_ControlType != m_pDoc->m_ControlType_PretimedSignal
-		&& m_pDoc->m_NodeNoMap [m_CurrentNodeNo]->m_ControlType != m_pDoc->m_ControlType_ActuatedSignal)
+	if(m_pDoc->m_NodeNoMap [m_CurrentNodeNo]->m_bSignalData == false)
 	{
 
 		return true;
@@ -190,7 +128,6 @@ BOOL CPage_Node_Phase::OnInitDialog()
 
 
 	m_PhasingGrid.SetDoubleBuffering(1);
-
 
 	UpdatePhaseData();
 	UpdateData(0);
@@ -201,7 +138,6 @@ BOOL CPage_Node_Phase::OnInitDialog()
 
 void CPage_Node_Phase::UpdatePhaseData()
 {
-
 
 	DisplayPhasingGrid();
 
@@ -235,106 +171,7 @@ void CPage_Node_Phase::OnPaint()
 	m_PlotRect.right -= 50;
 
 	int GreenTimeDiagramHeight = 25;
-	if(m_bMultiPhaseDisplay == false)
-		DrawMovements(&dc,m_PlotRect,false);
-
-	if(m_bMultiPhaseDisplay == true)
-	{
-		int number_of_rectangles = 8;
-
-		int width = m_PlotRect.Width ()/4;
-		int height = (m_PlotRect.Height  ()- 2*GreenTimeDiagramHeight)/2;
-
-		CRect OriginalPlotRect = m_PlotRect;
-		CRect GreenTimePlotRect = m_PlotRect;
-
-		GreenTimePlotRect.left  +=5;
-		GreenTimePlotRect.right   -=5;
-
-		GreenTimePlotRect.top = m_PlotRect.bottom - 2*GreenTimeDiagramHeight;
-		GreenTimePlotRect.bottom  = m_PlotRect.bottom - 1*GreenTimeDiagramHeight;
-
-		CRect GreenTimePlotRect2 = GreenTimePlotRect;
-
-
-		GreenTimePlotRect2.top = GreenTimePlotRect.bottom +5;
-		GreenTimePlotRect2.bottom  = GreenTimePlotRect2.top+ GreenTimeDiagramHeight;
-
-
-		CBrush  RedBrush(RGB(255,0,0)); 
-
-		dc.SelectObject(&RedBrush);
-
-		dc.Rectangle (GreenTimePlotRect);
-
-
-		for(int p = 1; p <= number_of_rectangles; p++)
-		{
-			int column = (p-1)%4 ;
-			//		int column = p-1;
-			int row  = 0;
-
-			if(p>=5)
-				row  = 1;
-
-			CRect PhaseRect;
-
-			PhaseRect.left = OriginalPlotRect.left + column* width;
-			PhaseRect.right  = OriginalPlotRect.left + (column+1)* width;
-
-			PhaseRect.top = OriginalPlotRect.top + row* height;
-			PhaseRect.bottom   = OriginalPlotRect.top + (row+1)* height;
-
-			m_SelectedPhaseNumber = p;
-
-
-			// update m_PlotRect for drawing links
-			m_PlotRect = PhaseRect;
-
-
-			BOOL bMovementIncluded = false;
-			DTANode* pNode  = m_pDoc->m_NodeNoMap [m_CurrentNodeNo];
-
-
-			for (unsigned int i=0;i< pNode->m_MovementDataMap.m_MovementVector .size();i++)
-			{
-
-				DTANodeMovement movement = pNode->m_MovementDataMap.m_MovementVector[i];
-
-				bMovementIncluded = m_pDoc->IfMovementIncludedInPhase(m_CurrentNodeID , timing_plan_name,m_SelectedPhaseNumber, movement.in_link_from_node_id,movement.out_link_to_node_id );
-
-				if(bMovementIncluded)
-					break;
-			}
-			// draw phase diagram when there is movement
-			if(bMovementIncluded)
-
-			{
-				DrawMovements(&dc,PhaseRect, true);
-				int row = 5;
-				float GreenStartTime = atof(m_PhasingGrid.GetItemText(row,p));
-
-				row = 6;
-				float PhaseEndTime = atof(m_PhasingGrid.GetItemText(row,p));
-
-				if(PhaseEndTime <= GreenStartTime +1)  //skip empty movement
-					continue;
-
-				row = 3;
-				float Yellow = atof(m_PhasingGrid.GetItemText(row,p));
-
-				row =4;
-				float AllRed = atof(m_PhasingGrid.GetItemText(row,p));
-
-
-				DrawPhaseGreenTimeBand(&dc,GreenTimePlotRect,m_CycleLength,GreenStartTime,PhaseEndTime, Yellow, AllRed);
-			}
-
-		}
-
-		m_SelectedPhaseNumber= 0;
-
-	}
+	DrawMovements(&dc,m_PlotRect,false);
 
 }
 
@@ -379,10 +216,6 @@ void CPage_Node_Phase::DrawPhaseGreenTimeBand(CPaintDC* pDC,CRect PlotRect, int 
 void CPage_Node_Phase::DrawMovements(CPaintDC* pDC,CRect PlotRect, bool bPhaseWindow =false)
 {
 	CString str;
-	m_TimingPlanComboBox.GetLBText(m_TimingPlanComboBox.GetCurSel(), str);
-
-	std::string timing_plan_name = m_pDoc->CString2StdString(str);
-
 
 
 	m_MovementBezierVector.clear();
@@ -409,7 +242,6 @@ void CPage_Node_Phase::DrawMovements(CPaintDC* pDC,CRect PlotRect, bool bPhaseWi
 		str.Format("Phase %d",m_SelectedPhaseNumber);
 		pDC->TextOutA(PlotRect.left+10,PlotRect.top +5,str);
 
-
 	}
 
 
@@ -427,16 +259,15 @@ void CPage_Node_Phase::DrawMovements(CPaintDC* pDC,CRect PlotRect, bool bPhaseWi
 
 	str.Format("%d",m_CurrentNodeID);
 
-	if(bPhaseWindow == false || m_SelectedPhaseNumber == 1)
+	if(bPhaseWindow == false)
 		pDC->TextOutA( PlotRect.CenterPoint().x-5, PlotRect.CenterPoint().y-5,str);
 
-	for (unsigned int i=0;i< pNode->m_MovementDataMap.m_MovementVector .size();i++)
+	for (unsigned int i=0;i< pNode->m_MovementVector .size();i++)
 	{
-		DTANodeMovement movement = pNode->m_MovementDataMap.m_MovementVector[i];
+		DTANodeMovement movement = pNode->m_MovementVector[i];
 
 		if( m_pDoc->m_hide_non_specified_movement_on_freeway_and_ramp && movement.bNonspecifiedTurnDirectionOnFreewayAndRamps && i != m_SelectedMovementIndex)
 			continue;
-
 
 
 		DTALink* pInLink  = m_pDoc->m_LinkNoMap [movement.IncomingLinkNo];
@@ -507,7 +338,7 @@ void CPage_Node_Phase::DrawMovements(CPaintDC* pDC,CRect PlotRect, bool bPhaseWi
 
 		CPoint pt_text = NPtoSP(p1_text);
 
-		if(bPhaseWindow == false  || m_SelectedPhaseNumber == 1)
+		if(bPhaseWindow == false)
 		{
 			pDC->SetTextColor(RGB(0,0,255));
 			pDC->TextOutA(pt_text.x-10,pt_text.y,str);
@@ -554,7 +385,7 @@ void CPage_Node_Phase::DrawMovements(CPaintDC* pDC,CRect PlotRect, bool bPhaseWi
 
 			pt_text = NPtoSP(p3_text);
 
-			if(bPhaseWindow == false  || m_SelectedPhaseNumber == 1)
+			if(bPhaseWindow == false )
 				pDC->TextOutA(pt_text.x-10,pt_text.y,str);
 
 		}
@@ -600,24 +431,23 @@ void CPage_Node_Phase::DrawMovements(CPaintDC* pDC,CRect PlotRect, bool bPhaseWi
 
 		m_MovementBezierVector.push_back (element);
 
-		if(m_bHideRightTurnMovement &&( pNode->m_MovementDataMap.m_MovementVector[i].movement_turn == DTA_RightTurn ||  pNode->m_MovementDataMap.m_MovementVector[i].movement_turn == DTA_RightTurn2))
+		if(m_bHideRightTurnMovement &&( pNode->m_MovementVector[i].movement_turn == DTA_RightTurn ||  pNode->m_MovementVector[i].movement_turn == DTA_RightTurn2))
 			continue;
 
 		bool bMovementIncluded = false;
 
 		if(m_SelectedPhaseNumber >=1)
 		{
-			bMovementIncluded = m_pDoc->IfMovementIncludedInPhase(m_CurrentNodeID , timing_plan_name,m_SelectedPhaseNumber, movement.in_link_from_node_id,movement.out_link_to_node_id );
+			bMovementIncluded = m_pDoc->IfMovementIncludedInPhase(m_CurrentNodeID ,m_SelectedPhaseNumber-1, movement.in_link_from_node_id,movement.out_link_to_node_id );
 		}
 
 		if(m_SelectedPhaseNumber <=0 ||  /* all phases*/
-			m_SelectedPhaseNumber>=1 && ( bMovementIncluded == true || m_bPhasingDataEditMode) )  // seleted phase
+			m_SelectedPhaseNumber>=1 && ( bMovementIncluded == true ) )  // seleted phase
 		{
 
+		pDC->SelectObject(&NormalPen);
 
-			pDC->SelectObject(&NormalPen);
-
-			if(m_SelectedPhaseNumber>=1 && m_bPhasingDataEditMode)
+			if(m_SelectedPhaseNumber>=1 )
 			{
 				if(  bMovementIncluded == true)
 					pDC->SelectObject(&NormalPen);
@@ -626,7 +456,7 @@ void CPage_Node_Phase::DrawMovements(CPaintDC* pDC,CRect PlotRect, bool bPhaseWi
 
 			}
 
-			if(i == m_SelectedMovementIndex && m_bPhasingDataEditMode)
+			if(i == m_SelectedMovementIndex )
 			{
 				pDC->SelectObject(&SelectedPen);
 			}
@@ -732,92 +562,15 @@ void CPage_Node_Phase::OnLButtonDown(UINT nFlags, CPoint point)
 void CPage_Node_Phase::SaveData()
 {
 
-	bool bTurnVolumeModified = false;
-	UpdateData(1);
-
-	std::map<int, int> IncomingLinkMap;
-
-	DTANode* pNode  = m_pDoc->m_NodeNoMap [m_CurrentNodeNo];
-
-	pNode->m_ControlType  = m_ControlTypeVector[m_ControlTypeComboBox.GetCurSel ()];
-
-
-
-
-
-	CString str;
-	m_TimingPlanComboBox.GetLBText(m_TimingPlanComboBox.GetCurSel(), str);
-
-	std::string timing_plan_name = m_pDoc->CString2StdString(str);
-
-
-	DTA_Phasing_Data_Matrix element = m_pDoc->GetPhaseData(m_CurrentNodeID ,timing_plan_name);
-
-	// save phasing data
-	if(m_pDoc->m_NodeNoMap [m_CurrentNodeNo]->m_ControlType == m_pDoc->m_ControlType_PretimedSignal
-		|| m_pDoc->m_NodeNoMap [m_CurrentNodeNo]->m_ControlType == m_pDoc->m_ControlType_ActuatedSignal)
-	{
-
-		int row = 1;
-
-		int time = 0;
-
-		int start_time = 0;
-		int end_time = 0;
-
-		for(int p=1; p<=8; p++)
-		{
-			start_time = time;
-
-			row = 1;  // PHASE_GreenDuration
-			m_pDoc->SetupPhaseData(m_CurrentNodeID , timing_plan_name, p, PHASE_GreenDuration,m_PhasingGrid.GetItemText(row,p));
-
-			row = 2;  // maxGreen
-			m_pDoc->SetupPhaseData(m_CurrentNodeID , timing_plan_name, p, PHASE_NextPhaseNo,m_PhasingGrid.GetItemText(row,p));
-
-			int max_green  = atoi( m_PhasingGrid.GetItemText(row,p));
-			row = 3;  // yellow
-			m_pDoc->SetupPhaseData(m_CurrentNodeID , timing_plan_name, p, PHASE_MOVEMENT_VECTOR,m_PhasingGrid.GetItemText(row,p));
-
-			m_pDoc->SaveNodeFile();
-
-
-		}	
-
-
-
-
-	}
-
-	m_pDoc->UpdateMovementGreenStartAndEndTimeFromPhasingData(m_CurrentNodeID, timing_plan_name);
 }
 
 void CPage_Node_Phase::OnOK( )
 {
-	SaveData();
 	CPropertyPage::OnOK();
 }
 
 void CPage_Node_Phase::OnCancel( )
 {
-	//int row = 1;
-	//for(int tp = 0; tp< _max_timing_plans; tp++)
-	//{
-
-	//	std::string timing_plan_name = m_pDoc-> m_TimingPlanVector[tp].timing_plan_name;  // fetch timing_plan (unique) name
-
-	//	if(m_pDoc->m_NodeNoMap [m_CurrentNodeNo]->m_ControlType == m_pDoc->m_ControlType_PretimedSignal
-	//		|| m_pDoc->m_NodeNoMap [m_CurrentNodeNo]->m_ControlType == m_pDoc->m_ControlType_ActuatedSignal)
-
-	//	{
-	//		for(int p=1; p<=8; p++)
-	//		{
-	//			//reset using original string of movement vector
-	//			m_pDoc->SetupPhaseData(m_CurrentNodeID , timing_plan_name, p, PHASE_MOVEMENT_VECTOR,MovementVectorString[p-1]);
-	//		}
-
-	//	}
-	//}
 	CPropertyPage::OnCancel();
 }
 
@@ -841,7 +594,7 @@ void CPage_Node_Phase::OnLbnDblclkList1()
 void CPage_Node_Phase::DisplayPhasingGrid()
 {
 
-	m_PhasingGrid.SetRowCount(5);  // Phase Number, Green Time 
+	m_PhasingGrid.SetRowCount(13);  // Phase Number, Green Time 
 	m_PhasingGrid.SetColumnCount(_max_phase_number+1);  // Title, green time value
 
 	m_PhasingGrid.SetFixedColumnCount(1);
@@ -864,49 +617,49 @@ void CPage_Node_Phase::DisplayPhasingGrid()
 	i=1;  // Green Time
 	p = 0;
 
-	m_TimingPlanComboBox.GetLBText(m_TimingPlanComboBox.GetCurSel(), str);
+	SetItemTextInPhasingGrid(i++, 0, "min green");
+	SetItemTextInPhasingGrid(i++, 0, "max green");
+	SetItemTextInPhasingGrid(i++, 0, "yellow");
 
-	std::string timing_plan_name = m_pDoc->CString2StdString(str);
-	
+	SetItemTextInPhasingGrid(i++,0,"Movement 1");
+	SetItemTextInPhasingGrid(i++, 0, "Movement 2");
+	SetItemTextInPhasingGrid(i++, 0, "Movement 3");
+	SetItemTextInPhasingGrid(i++, 0, "Movement 4");
+	SetItemTextInPhasingGrid(i++, 0, "Movement 5");
+	SetItemTextInPhasingGrid(i++, 0, "Movement 6");
+	SetItemTextInPhasingGrid(i++, 0, "Movement 7");
+	SetItemTextInPhasingGrid(i++, 0, "Movement 8");
+	SetItemTextInPhasingGrid(i++, 0, "Movement 9");
 
-	DTA_Phasing_Data_Matrix element = m_pDoc->GetPhaseData(m_CurrentNodeID ,timing_plan_name);
+	DTANode* pNode = m_pDoc->m_NodeNoMap[m_CurrentNodeNo];
 
-	SetItemTextInPhasingGrid(i,0,"Green Duration");
 
-	for(p = 1; p <= _max_phase_number; p++)
+	for(p = 0; p < min(pNode->m_node_phase_vector.size(), _max_phase_number); p++)
 	{
-		SetItemTextInPhasingGrid(i,p,element.GetString  ( (DTA_SIG_PHASE)(DTA_SIG_PHASE_VALUE+p), PHASE_GreenDuration));
+		i = 1;  // Green Time
+
+		str.Format("%d", pNode->m_node_phase_vector[p].min_green);
+		SetItemTextInPhasingGrid(i, p+1, str);
+		i++;
+
+		str.Format("%d", pNode->m_node_phase_vector[p].max_green);
+		SetItemTextInPhasingGrid(i, p + 1, str);
+		i++;
+
+		str.Format("%d", pNode->m_node_phase_vector[p].amber);
+		SetItemTextInPhasingGrid(i, p+1, str);
+		i++;
+
+		for (int m = 0; m < min(8, pNode->m_node_phase_vector[p ].movement_vector.size()); m++)
+		{
+			SetItemTextInPhasingGrid(i, p+1, pNode->m_node_phase_vector[p].movement_vector[m]);
+			i++;
+
+		}
+
 	}
 
-	i++;
 
-	SetItemTextInPhasingGrid(i,0,"Next Phase");
-
-	for(p = 1; p <= _max_phase_number; p++)
-	{
-		SetItemTextInPhasingGrid(i,p,element.GetString ( (DTA_SIG_PHASE)(DTA_SIG_PHASE_VALUE+p), PHASE_NextPhaseNo));
-	}
-
-	i++;
-
-	SetItemTextInPhasingGrid(i,0,"Movement Str");
-
-	for(p = 1; p <= _max_phase_number; p++)
-	{
-		SetItemTextInPhasingGrid(i,p,element.GetString ( (DTA_SIG_PHASE)(DTA_SIG_PHASE_VALUE+p), PHASE_MOVEMENT_VECTOR));
-	}
-
-	i++;
-
-	SetItemTextInPhasingGrid(i, 0, "Direction Str");
-
-	for (p = 1; p <= _max_phase_number; p++)
-	{
-		SetItemTextInPhasingGrid(i, p, element.GetString((DTA_SIG_PHASE)(DTA_SIG_PHASE_VALUE + p), PHASE_MOVEMENT_DIR_VECTOR));
-
-	}
-
-	i++;
 
 }
 
@@ -914,77 +667,26 @@ void CPage_Node_Phase::DisplayPhasingGrid()
 void CPage_Node_Phase::UpdatePhasingDataInGrid()
 {
 
-	CString str;
-	m_TimingPlanComboBox.GetLBText(m_TimingPlanComboBox.GetCurSel(), str);
-
-	std::string timing_plan_name = m_pDoc->CString2StdString(str);
-
-
-	DTA_Phasing_Data_Matrix element = m_pDoc->GetPhaseData(m_CurrentNodeID ,timing_plan_name);
-
-	m_CycleLength = 0;
-	int time = 0;
-
-	int start_time = 0;
-	int end_time = 0;
-
-	int row = 0;
-	for (int p = 1; p <= 8; p++)
-	{
-		start_time = time;
-
-		row = 2;
-		time += atof(m_PhasingGrid.GetItemText(row, p));
-
-		int max_green = atoi(m_PhasingGrid.GetItemText(row++, p));
-		time += atof(m_PhasingGrid.GetItemText(row++, p));
-		time += atof(m_PhasingGrid.GetItemText(row++, p));
-
-		end_time = time;
-
-
-		CString str;
-		str.Format("%d", start_time);
-
-		SetItemTextInPhasingGrid(5, p, str);
-		str.Format("%d", end_time);
-		SetItemTextInPhasingGrid(6, p, str);
-
-		m_CycleLength = time;
-
-
-
-		UpdateData(0);
-
-	}
 }
 
 void CPage_Node_Phase::OnGridEndSelChange(NMHDR *pNotifyStruct, LRESULT* /*pResult*/)
 {
-	NM_GRIDVIEW* pItem = (NM_GRIDVIEW*) pNotifyStruct;
-	TRACE(_T("End Selection Change on row %d, col %d \n"), 
-		pItem->iRow, pItem->iColumn );
+	NM_GRIDVIEW* pItem = (NM_GRIDVIEW*)pNotifyStruct;
+	TRACE(_T("End Selection Change on row %d, col %d \n"),
+		pItem->iRow, pItem->iColumn);
 
-	//	if(pItem->iRow ==-1) // column selecetd
+	if(pItem->iRow ==0) // column selecetd
 	{
-		SaveData();
 		m_SelectedPhaseNumber = pItem->iColumn;
 
 		m_SelectedMovementIndex = -1;
-	//	UpdatePhasingDataInGrid();
+		UpdatePhasingDataInGrid();
 		Invalidate();
 	}
 
-
 }
 
 
-void CPage_Node_Phase::OnBnClickedEditMode()
-{
-	SaveData();
-	UpdateData(true);
-	Invalidate();
-}
 
 void CPage_Node_Phase::OnContextMenu(CWnd* pWnd, CPoint point)
 {
@@ -993,84 +695,11 @@ void CPage_Node_Phase::OnContextMenu(CWnd* pWnd, CPoint point)
 void CPage_Node_Phase::OnLButtonDblClk(UINT nFlags, CPoint point)
 {
 
-	if(m_bPhasingDataEditMode)
-	{
-		CString str;
-		m_TimingPlanComboBox.GetLBText(m_TimingPlanComboBox.GetCurSel(), str);
-
-		std::string timing_plan_name = m_pDoc->CString2StdString(str);
-
-		m_SelectedMovementIndex =  FindClickedMovement(point);
-
-		if(m_SelectedPhaseNumber>=1 && m_SelectedMovementIndex>=0)
-		{
-			DTANode* pNode  = m_pDoc->m_NodeNoMap [m_CurrentNodeNo];
-
-			//Get Current status
-			BOOL bMovementIncluded = m_pDoc->IfMovementIncludedInPhase(m_CurrentNodeID ,
-				timing_plan_name,m_SelectedPhaseNumber, 
-				pNode->m_MovementDataMap.m_MovementVector[m_SelectedMovementIndex].in_link_from_node_id,
-				pNode->m_MovementDataMap.m_MovementVector[m_SelectedMovementIndex].out_link_to_node_id );
-
-			DTA_Phasing_Data_Matrix element = m_pDoc->GetPhaseData(m_CurrentNodeID ,timing_plan_name);
-
-			CString movement_vector = element.GetString  ( (DTA_SIG_PHASE)(DTA_SIG_PHASE_VALUE+ m_SelectedPhaseNumber), PHASE_MOVEMENT_VECTOR);
-			CString sub_movement_str;
-
-			sub_movement_str.Format(";%d_%d_%s", m_pDoc->m_NodeIDMap[pNode->m_MovementDataMap.m_MovementVector[m_SelectedMovementIndex].in_link_from_node_id]->m_NodeID,
-				m_pDoc->m_NodeIDMap[pNode->m_MovementDataMap.m_MovementVector[m_SelectedMovementIndex].out_link_to_node_id]->m_NodeID,
-				m_pDoc->GetTurnShortString( pNode->m_MovementDataMap.m_MovementVector[m_SelectedMovementIndex].movement_turn));
-
-			CString movement_dir_vector = element.GetString((DTA_SIG_PHASE)(DTA_SIG_PHASE_VALUE + m_SelectedPhaseNumber), PHASE_MOVEMENT_DIR_VECTOR);
-			//update movement vector string
-
-
-			CString sub_movement_dir_str;
-			
-			sub_movement_dir_str += ";";
-			sub_movement_dir_str += m_pDoc->GetTurnDirectionString(pNode->m_MovementDataMap.m_MovementVector[m_SelectedMovementIndex].movement_approach_turn);
-
-
-
-			if(bMovementIncluded)
-			{
-				movement_vector.Replace(sub_movement_str,_T(""));
-				movement_dir_vector.Replace(sub_movement_dir_str, _T(""));
-
-				m_MovementMsg.Format ("Movement %d->%d->%d has been deleted from phase %d.", m_pDoc->m_NodeIDMap[pNode->m_MovementDataMap.m_MovementVector[m_SelectedMovementIndex].in_link_from_node_id]->m_NodeID,
-					m_CurrentNodeID,m_pDoc->m_NodeIDMap[pNode->m_MovementDataMap.m_MovementVector[m_SelectedMovementIndex].out_link_to_node_id]->m_NodeID,
-					m_SelectedPhaseNumber);
-
-			}
-			else
-			{
-				//select
-				movement_vector+= sub_movement_str;
-				movement_dir_vector += sub_movement_dir_str;
-				m_MovementMsg.Format ("Movement %d->%d->%d has been added into phase %d.", m_pDoc->m_NodeNoMap[pNode->m_MovementDataMap.m_MovementVector[m_SelectedMovementIndex].in_link_from_node_id]->m_NodeID,
-					m_CurrentNodeID,m_pDoc->m_NodeNoMap[pNode->m_MovementDataMap.m_MovementVector[m_SelectedMovementIndex].out_link_to_node_id]->m_NodeID,
-					m_SelectedPhaseNumber);
-
-			}
-
-			//update movement vector string
-			m_pDoc->SetupPhaseData(m_CurrentNodeID,timing_plan_name,m_SelectedPhaseNumber, PHASE_MOVEMENT_VECTOR, movement_vector);
-			m_pDoc->SetupPhaseData(m_CurrentNodeID, timing_plan_name, m_SelectedPhaseNumber, PHASE_MOVEMENT_DIR_VECTOR, movement_dir_vector);
-			DisplayPhasingGrid();
-			UpdateData(false);
-			Invalidate();
-
-		}
-	}
 
 	CPropertyPage::OnLButtonDblClk(nFlags, point);
 }
 
-void CPage_Node_Phase::OnCbnSelchangeComboTimingPlan()
-{
-	DisplayPhasingGrid();
-	Invalidate();
-}
+
 
 
 void CPage_Node_Phase::OnCbnSelchangeCombo1()
@@ -1083,52 +712,6 @@ void CPage_Node_Phase::OnCbnSelchangeCombo2()
 	// TODO: Add your control notification handler code here
 }
 
-void CPage_Node_Phase::OnBnClickedEditMode2()
-{
-	UpdateData(1);
-	Invalidate();
-}
-
-void CPage_Node_Phase::OnCbnSelchangeComboPhasemovementdiagram()
-{
-	Invalidate();
-}
-
-void CPage_Node_Phase::OnBnClickedButtonQemView()
-{
-	// TODO: Add your control notification handler code here
-}
-
-void CPage_Node_Phase::OnBnClickedCheckMultiplePhaseDiagram()
-{
-
-	UpdateData(1);
-	Invalidate();
 
 
-}
 
-void CPage_Node_Phase::OnBnClickedCheckOptimizationmethod()
-{
-	UpdateData(1);
-	GetDlgItem(IDC_BUTTON_QEM) ->EnableWindow(m_bOptimizationMethod);
-
-}
-
-void CPage_Node_Phase::OnBnClickedCheckOptimizationObs()
-{
-	// TODO: Add your control notification handler code here
-}
-
-
-void CPage_Node_Phase::OnCbnEditchangeComboTimingPlan()
-{
-	// TODO: Add your control notification handler code here
-}
-
-
-void CPage_Node_Phase::OnBnClickedButtonsave()
-{
-	SaveData();
-	m_pDoc->SaveTimingData();
-}

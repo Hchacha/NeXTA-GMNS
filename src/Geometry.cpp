@@ -16,10 +16,11 @@ CGeometry::CGeometry(string s)
 	if(start_idx==std::string::npos || end_idx==std::string::npos )
 		return;
 
-	string type_str = tmp.substr(start_idx + 1,end_idx - start_idx -1);
+	string type_str = tmp.substr(0, start_idx);
+	type_str.erase(type_str.find_last_not_of(" ") + 1);		// works for 'LINESTRING (....' and 'LINESTRING(....'
 	
-	string start_tag = "";
-	string end_tag = "";
+	string start_tag = "(";
+	string end_tag = ")";
 	
 	start_idx = tmp.find(start_tag);
 	start_idx += start_tag.length();
@@ -89,7 +90,7 @@ bool CGeometry::ReadLineStringCoordinates(string s)
 		return false;
 	}
 
-	while(std::getline(ss,sub_str, ' '))
+	while(std::getline(ss,sub_str, ','))
 	{
 
 

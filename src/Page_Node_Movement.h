@@ -86,7 +86,6 @@ public:
 	CGridListCtrlEx m_ListCtrl;
 	int m_SelectedMovementIndex;
 	int m_CurrentNodeNo;
-	int m_CurrentNodeID;
 
 
 
@@ -161,7 +160,7 @@ public:
 		for(unsigned int i = 0; i< m_MovementBezierVector.size(); i++)
 		{
 		
-			if(m_bHideRightTurnMovement &&( pNode->m_MovementDataMap.m_MovementVector[i].movement_turn == DTA_RightTurn ||  pNode->m_MovementDataMap.m_MovementVector[i].movement_turn == DTA_RightTurn2))
+			if(m_bHideRightTurnMovement &&( pNode->m_MovementVector[i].movement_turn == DTA_RightTurn ||  pNode->m_MovementVector[i].movement_turn == DTA_RightTurn2))
 			continue;
 
 			float distance  = m_MovementBezierVector[i].GetMinDistance(pt) ;

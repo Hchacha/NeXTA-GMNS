@@ -1073,9 +1073,9 @@ bool CTLiteDoc::ReadSynchroLaneFile(LPCTSTR lpszFileName)
 
 						DTANodeMovement element;
 
-						element.in_link_from_node_id = m_NodeIDtoNodeNoMap[from_node_id];		
-						element.in_link_to_node_id = m_NodeIDtoNodeNoMap[to_node_id];						
-						element.out_link_to_node_id = m_NodeIDtoNodeNoMap[dest_node_id];	
+						element.in_link_from_node_id = from_node_id;		
+						element.in_link_to_node_id = to_node_id;						
+						element.out_link_to_node_id = dest_node_id;	
 
 						DTALink* pIncomingLink =  FindLinkWithNodeNo(m_NodeIDtoNodeNoMap[from_node_id],m_NodeIDtoNodeNoMap[to_node_id]);
 
@@ -1147,7 +1147,7 @@ bool CTLiteDoc::ReadSynchroLaneFile(LPCTSTR lpszFileName)
 						std::string timing_plan_name = "1";
 						if(pOutcomingLink!=NULL)
 						{ 
-						DTA_Phasing_Data_Matrix phasing_element = GetPhaseData(to_node_id, timing_plan_name);
+						DTA_Phasing_Data_Matrix phasing_element = GetPhaseData(to_node_id);
 
 						int SelectedPhaseNumber = LaneDataMap[lane_Column_name_str[m]].Phase1;
 
@@ -1161,13 +1161,13 @@ bool CTLiteDoc::ReadSynchroLaneFile(LPCTSTR lpszFileName)
 
 						movement_vector += sub_movement_str;
 						//update movement vector string
-						SetupPhaseData(to_node_id, timing_plan_name, SelectedPhaseNumber, PHASE_MOVEMENT_VECTOR, movement_vector);
+						SetupPhaseData(to_node_id, SelectedPhaseNumber, PHASE_MOVEMENT_VECTOR, movement_vector);
 
 						CString movement_dir_vector = phasing_element.GetString((DTA_SIG_PHASE)(DTA_SIG_PHASE_VALUE + SelectedPhaseNumber), PHASE_MOVEMENT_DIR_VECTOR);
 						movement_dir_vector += GetTurnDirectionString(element.movement_approach_turn);
 						//update movement vector string
 						movement_dir_vector += ";";
-						SetupPhaseData(to_node_id, timing_plan_name, SelectedPhaseNumber, PHASE_MOVEMENT_DIR_VECTOR, movement_dir_vector);
+						SetupPhaseData(to_node_id, SelectedPhaseNumber, PHASE_MOVEMENT_DIR_VECTOR, movement_dir_vector);
 
 						}
 						int SelectedPhaseNumber2 = LaneDataMap[lane_Column_name_str[m]].PermPhase1;
@@ -1182,13 +1182,13 @@ bool CTLiteDoc::ReadSynchroLaneFile(LPCTSTR lpszFileName)
 
 							movement_vector += sub_movement_str;
 							//update movement vector string
-							SetupPhaseData(to_node_id, timing_plan_name, SelectedPhaseNumber2, PHASE_MOVEMENT_VECTOR, movement_vector);
+							SetupPhaseData(to_node_id, SelectedPhaseNumber2, PHASE_MOVEMENT_VECTOR, movement_vector);
 
 							CString movement_dir_vector = phasing_element.GetString((DTA_SIG_PHASE)(DTA_SIG_PHASE_VALUE + SelectedPhaseNumber2), PHASE_MOVEMENT_DIR_VECTOR);
 							movement_dir_vector += GetTurnDirectionString(element.movement_approach_turn);
 							//update movement vector string
 							movement_dir_vector += ";";
-							SetupPhaseData(to_node_id, timing_plan_name, SelectedPhaseNumber2, PHASE_MOVEMENT_DIR_VECTOR, movement_dir_vector);
+							SetupPhaseData(to_node_id, SelectedPhaseNumber2, PHASE_MOVEMENT_DIR_VECTOR, movement_dir_vector);
 
 
 						}
@@ -1196,7 +1196,7 @@ bool CTLiteDoc::ReadSynchroLaneFile(LPCTSTR lpszFileName)
 					// educated guess about the associatd phase, as a movement can be associated with multiple phases 
 						//element.phase_index = max(,LaneDataMap[lane_Column_name_str[m]].PermPhase1);
 
-						pNode->m_MovementDataMap.m_MovementVector.push_back(element);
+						pNode->m_MovementVector.push_back(element);
 
 					}  // per major approach
 
@@ -1209,10 +1209,7 @@ bool CTLiteDoc::ReadSynchroLaneFile(LPCTSTR lpszFileName)
 		}
 	}
 
-		for(int tp = 0; tp< m_TimingPlanVector.size(); tp++)  // first loop for each timing plan
-		{
-
-
+	
 			std::list<DTANode*>::iterator iNode;
 			for (iNode = m_NodeSet.begin(); iNode != m_NodeSet.end(); iNode++)
 			{
@@ -1220,7 +1217,7 @@ bool CTLiteDoc::ReadSynchroLaneFile(LPCTSTR lpszFileName)
 				(*iNode)->SortMovementVector();
 
 			}
-		}
+	
 	ConstructMovementVector();
 //		GenerateOffsetLinkBand();
 	return 1;
@@ -1265,7 +1262,7 @@ bool CTLiteDoc::ReadSynchroPhasingFile(LPCTSTR lpszFileName)
 					{
 						std::string timing_plan_name = "1";
 						long to_node_id = m_NodeIDtoNodeNoMap[INTID];
-						DTA_Phasing_Data_Matrix phasing_element = GetPhaseData(to_node_id, timing_plan_name);
+						DTA_Phasing_Data_Matrix phasing_element = GetPhaseData(to_node_id);
 
 						int SelectedPhaseNumber = m + 1;
 
@@ -1275,7 +1272,7 @@ bool CTLiteDoc::ReadSynchroPhasingFile(LPCTSTR lpszFileName)
 						actgreen_str.Format("%d", ActGreen);
 
 						//update movement vector string
-						SetupPhaseData(INTID, timing_plan_name, SelectedPhaseNumber, PHASE_GreenDuration, actgreen_str);
+						SetupPhaseData(INTID, SelectedPhaseNumber, PHASE_GreenDuration, actgreen_str);
 
 
 					}
@@ -1480,17 +1477,17 @@ void CTLiteDoc::MapSignalDataAcrossProjects()
 
 							int ReferenceNodeNo = pReferenceDoc->m_NodeIDtoNodeNoMap[reference_node_id];
 
-							for(unsigned int m = 0; m< (*iNode)->m_MovementDataMap.m_MovementVector .size(); m++)
+							for(unsigned int m = 0; m< (*iNode)->m_MovementVector .size(); m++)
 							{
 
-								DTANodeMovement baseline_movement = (*iNode)->m_MovementDataMap.m_MovementVector[m];
+								DTANodeMovement baseline_movement = (*iNode)->m_MovementVector[m];
 
 								int MovementIndex = pReferenceDoc->m_NodeNoMap [ReferenceNodeNo] ->FindMovementIndexFromDirecion(baseline_movement.movement_approach_turn );
 
 								if(baseline_movement.movement_approach_turn >=0 && MovementIndex>=0)
 								{
-									DTANodeMovement* pThisMovement  = &((*iNode)->m_MovementDataMap.m_MovementVector[m]);
-									DTANodeMovement reference_movement  =   pReferenceDoc->m_NodeNoMap [ReferenceNodeNo] ->m_MovementDataMap.m_MovementVector[MovementIndex];
+									DTANodeMovement* pThisMovement  = &((*iNode)->m_MovementVector[m]);
+									DTANodeMovement reference_movement  =   pReferenceDoc->m_NodeNoMap [ReferenceNodeNo] ->m_MovementVector[MovementIndex];
 									pThisMovement->QEM_TurnVolume = reference_movement.QEM_TurnVolume;
 
 
@@ -1531,10 +1528,10 @@ void CTLiteDoc::MapSignalDataAcrossProjects()
 								{
 									fprintf(st,"Baseline,Node,%d,Up Node,%d,Dest Node,%d,%s,%s,does not find reference movement.\n",  
 										baseline_node_id, 
-										m_NodeIDMap[(*iNode)->m_MovementDataMap.m_MovementVector[m]. in_link_from_node_id]->m_NodeID,
-										m_NodeIDMap[(*iNode)->m_MovementDataMap.m_MovementVector[m]. out_link_to_node_id]->m_NodeID,
-										GetTurnDirectionString((*iNode)->m_MovementDataMap.m_MovementVector[m]. movement_approach_turn),
-										GetTurnString((*iNode)->m_MovementDataMap.m_MovementVector[m].movement_turn));
+										m_NodeIDMap[(*iNode)->m_MovementVector[m]. in_link_from_node_id]->m_NodeID,
+										m_NodeIDMap[(*iNode)->m_MovementVector[m]. out_link_to_node_id]->m_NodeID,
+										GetTurnDirectionString((*iNode)->m_MovementVector[m]. movement_approach_turn),
+										GetTurnString((*iNode)->m_MovementVector[m].movement_turn));
 
 								}
 

@@ -226,6 +226,7 @@
     <ClCompile Include="BaseDialog.cpp" />
     <ClCompile Include="ChildFrm.cpp" />
     <ClCompile Include="CSVParser.cpp" />
+    <ClCompile Include="Data-Interface\DYNASMART-interface.cpp" />
     <ClCompile Include="Dlg_BackgroundImageLocation.cpp" />
     <ClCompile Include="Dlg_DisplayConfiguration.cpp" />
     <ClCompile Include="Dlg_Find_Vehicle.cpp" />
@@ -299,6 +300,7 @@
     <ClInclude Include="CGridListCtrlEx\CGridRowTraitText.h" />
     <ClInclude Include="CGridListCtrlEx\CGridRowTraitVisitor.h" />
     <ClInclude Include="CGridListCtrlEx\CGridRowTraitXP.h" />
+    <ClInclude Include="Data-Interface\DYNASMART-interface.h" />
     <ClInclude Include="LinePlot\memdc.h" />
     <ClInclude Include="BaseDialog.h" />
     <ClInclude Include="ChildFrm.h" />
@@ -419,6 +421,9 @@
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="TLite.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="gdal_i.lib" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
