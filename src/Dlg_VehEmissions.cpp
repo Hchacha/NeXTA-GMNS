@@ -789,7 +789,7 @@ void CDlg_VehPathAnalysis::ShowAgents()
 
 			}
 
-			AgentInfoString.Format ("No. %d, %d, @%3.1f min, %3.1f min",pAgent->m_AgentID , pAgent->m_AgentType, pAgent->m_DepartureTime, pAgent->m_ArrivalTime-pAgent->m_DepartureTime);
+			AgentInfoString.Format ("No. %d, %s, @%3.1f min, %3.1f min",pAgent->m_AgentID , pAgent->m_AgentType.c_str(), pAgent->m_DepartureTime, pAgent->m_ArrivalTime-pAgent->m_DepartureTime);
 	
 			if(m_AgentList.GetCount () <= 20000)
 			{

@@ -1,0 +1,5 @@
+section,field,value
+assignment,number_of_iterations,300
+assignment,assignment_mode,2
+assignment,column_updating_iterations,300
+assignment,relative_gap_convergency_criterion,0.01

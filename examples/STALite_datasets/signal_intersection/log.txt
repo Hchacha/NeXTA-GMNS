@@ -1,0 +1,945 @@
+Logging Time: 2020/8/5_12:30:51:881---------------------------------------
+Info_ID: 0| Info_Type: MSG 	| Info: Step 1: Reading file demand_period.csv...
+Info_ID: 1| Info_Type: MSG 	| Info: --Number of Nodes = 104
+Info_ID: 2| Info_Type: MSG 	| Info: --Number of Links = 140
+Info_ID: 3| Info_Type: MSG 	| Info: +++++++++++++++Start Signal Node ID 1:
+Info_ID: 4| Info_Type: MSG 	| Info: Step 2: Perform QEM
+Info_ID: 5| Info_Type: MSG 	| Info: --Step 2.1: Set Left Turn Treatments
+Info_ID: 6| Info_Type: OUT 	| Info: ----Left Turn Treatment of Movement_EBL: Protected
+Info_ID: 7| Info_Type: OUT 	| Info: ----Left Turn Treatment of Movement_WBL: Protected
+Info_ID: 8| Info_Type: OUT 	| Info: ----Left Turn Treatment of Movement_NBL: Protected
+Info_ID: 9| Info_Type: OUT 	| Info: ----Left Turn Treatment of Movement_SBL: Protected
+Info_ID: 10| Info_Type: MSG 	| Info: --Step 2.2: Set StageNos
+Info_ID: 11| Info_Type: OUT 	| Info: ----Number of Stages: 4
+Info_ID: 12| Info_Type: MSG 	| Info: ----Main Approaches: E & W
+Info_ID: 13| Info_Type: OUT 	| Info: ------StageNo of Movement_EBL: Stage_1
+Info_ID: 14| Info_Type: OUT 	| Info: ------StageNo of Movement_EBT: Stage_2
+Info_ID: 15| Info_Type: OUT 	| Info: ------StageNo of Movement_EBR: Stage_2
+Info_ID: 16| Info_Type: OUT 	| Info: ------StageNo of Movement_WBL: Stage_1
+Info_ID: 17| Info_Type: OUT 	| Info: ------StageNo of Movement_WBT: Stage_2
+Info_ID: 18| Info_Type: OUT 	| Info: ------StageNo of Movement_WBR: Stage_2
+Info_ID: 19| Info_Type: OUT 	| Info: ------StageNo of Movement_NBL: Stage_3
+Info_ID: 20| Info_Type: OUT 	| Info: ------StageNo of Movement_NBT: Stage_4
+Info_ID: 21| Info_Type: OUT 	| Info: ------StageNo of Movement_NBR: Stage_4
+Info_ID: 22| Info_Type: OUT 	| Info: ------StageNo of Movement_SBL: Stage_3
+Info_ID: 23| Info_Type: OUT 	| Info: ------StageNo of Movement_SBT: Stage_4
+Info_ID: 24| Info_Type: OUT 	| Info: ------StageNo of Movement_SBR: Stage_4
+Info_ID: 25| Info_Type: MSG 	| Info: --Step 2.3: Set Saturation Flow Rate Matrix
+Info_ID: 26| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_EBL and Stage_1: 1530.000000
+Info_ID: 27| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_EBT and Stage_2: 1530.000000
+Info_ID: 28| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_EBR and Stage_2: 1530.000000
+Info_ID: 29| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_WBL and Stage_1: 1530.000000
+Info_ID: 30| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_WBT and Stage_2: 1530.000000
+Info_ID: 31| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_WBR and Stage_2: 1530.000000
+Info_ID: 32| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_NBL and Stage_3: 1530.000000
+Info_ID: 33| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_NBT and Stage_4: 3060.000000
+Info_ID: 34| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_NBR and Stage_4: 1530.000000
+Info_ID: 35| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_SBL and Stage_3: 1530.000000
+Info_ID: 36| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_SBT and Stage_4: 1530.000000
+Info_ID: 37| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_SBR and Stage_4: 1530.000000
+Info_ID: 38| Info_Type: MSG 	| Info: --Step 2.4: Calculate Flow Ratio
+Info_ID: 39| Info_Type: OUT 	| Info: ----Max y Value: 1.568627
+Info_ID: 40| Info_Type: MSG 	| Info: --Step 2.5: Calculate Total Cycle Lost Time
+Info_ID: 41| Info_Type: OUT 	| Info: ----Total Cycle Lost Time: 16.000000
+Info_ID: 42| Info_Type: MSG 	| Info: --Step 2.6: Calculate the Minimum and Optimal Cycle Length
+Info_ID: 43| Info_Type: OUT 	| Info: ----Min Cycle Length: 60.000000
+Info_ID: 44| Info_Type: OUT 	| Info: ----Optimal Cycle Length: 60.000000
+Info_ID: 45| Info_Type: MSG 	| Info: --Step 2.7: Recalculate xc
+Info_ID: 46| Info_Type: OUT 	| Info: ----Recalculated xc: 2.139037
+Info_ID: 47| Info_Type: MSG 	| Info: --Step 2.8: Timing for Stages
+Info_ID: 48| Info_Type: OUT 	| Info: ----Green Time of Stage 1: 10.000000
+Info_ID: 49| Info_Type: OUT 	| Info: ------Start Green Time of Stage 1: 0.000000
+Info_ID: 50| Info_Type: OUT 	| Info: ------End Green Time of Stage 1: 10.000000
+Info_ID: 51| Info_Type: OUT 	| Info: ----Green Time of Stage 2: 20.000000
+Info_ID: 52| Info_Type: OUT 	| Info: ------Start Green Time of Stage 2: 10.000000
+Info_ID: 53| Info_Type: OUT 	| Info: ------End Green Time of Stage 2: 30.000000
+Info_ID: 54| Info_Type: OUT 	| Info: ----Green Time of Stage 3: 10.000000
+Info_ID: 55| Info_Type: OUT 	| Info: ------Start Green Time of Stage 3: 30.000000
+Info_ID: 56| Info_Type: OUT 	| Info: ------End Green Time of Stage 3: 40.000000
+Info_ID: 57| Info_Type: OUT 	| Info: ----Green Time of Stage 4: 20.000000
+Info_ID: 58| Info_Type: OUT 	| Info: ------Start Green Time of Stage 4: 40.000000
+Info_ID: 59| Info_Type: OUT 	| Info: ------End Green Time of Stage 4: 60.000000
+Info_ID: 60| Info_Type: OUT 	| Info: ----Effective Green Time of Stage 1: 12.000000
+Info_ID: 61| Info_Type: OUT 	| Info: ------Start Effective Green Time of Stage 1: 0.000000
+Info_ID: 62| Info_Type: OUT 	| Info: ------End Effective Green Time of Stage 1: 12.000000
+Info_ID: 63| Info_Type: OUT 	| Info: ----Effective Green Time of Stage 2: 22.000000
+Info_ID: 64| Info_Type: OUT 	| Info: ------Start Effective Green Time of Stage 2: 12.000000
+Info_ID: 65| Info_Type: OUT 	| Info: ------End Effective Green Time of Stage 2: 34.000000
+Info_ID: 66| Info_Type: OUT 	| Info: ----Effective Green Time of Stage 3: 12.000000
+Info_ID: 67| Info_Type: OUT 	| Info: ------Start Effective Green Time of Stage 3: 34.000000
+Info_ID: 68| Info_Type: OUT 	| Info: ------End Effective Green Time of Stage 3: 46.000000
+Info_ID: 69| Info_Type: OUT 	| Info: ----Effective Green Time of Stage 4: 22.000000
+Info_ID: 70| Info_Type: OUT 	| Info: ------Start Effective Green Time of Stage 4: 46.000000
+Info_ID: 71| Info_Type: OUT 	| Info: ------End Effective Green Time of Stage 4: 68.000000
+Info_ID: 72| Info_Type: MSG 	| Info: --Step 2.9: Calculate capacity and ratio V/C
+Info_ID: 73| Info_Type: OUT 	| Info: ----a. Capacity of Stage_1 and Movement_EBL: 306.000000
+Info_ID: 74| Info_Type: OUT 	| Info: ----b. V/C of Stage_1 and Movement_EBL: 1.307190
+Info_ID: 75| Info_Type: OUT 	| Info: ----a. Capacity of Stage_1 and Movement_WBL: 306.000000
+Info_ID: 76| Info_Type: OUT 	| Info: ----b. V/C of Stage_1 and Movement_WBL: 1.307190
+Info_ID: 77| Info_Type: OUT 	| Info: ----a. Capacity of Stage_2 and Movement_EBT: 561.000000
+Info_ID: 78| Info_Type: OUT 	| Info: ----b. V/C of Stage_2 and Movement_EBT: 0.713012
+Info_ID: 79| Info_Type: OUT 	| Info: ----a. Capacity of Stage_2 and Movement_EBR: 561.000000
+Info_ID: 80| Info_Type: OUT 	| Info: ----b. V/C of Stage_2 and Movement_EBR: 0.713012
+Info_ID: 81| Info_Type: OUT 	| Info: ----a. Capacity of Stage_2 and Movement_WBT: 561.000000
+Info_ID: 82| Info_Type: OUT 	| Info: ----b. V/C of Stage_2 and Movement_WBT: 0.713012
+Info_ID: 83| Info_Type: OUT 	| Info: ----a. Capacity of Stage_2 and Movement_WBR: 561.000000
+Info_ID: 84| Info_Type: OUT 	| Info: ----b. V/C of Stage_2 and Movement_WBR: 0.713012
+Info_ID: 85| Info_Type: OUT 	| Info: ----a. Capacity of Stage_3 and Movement_NBL: 306.000000
+Info_ID: 86| Info_Type: OUT 	| Info: ----b. V/C of Stage_3 and Movement_NBL: 1.307190
+Info_ID: 87| Info_Type: OUT 	| Info: ----a. Capacity of Stage_3 and Movement_SBL: 306.000000
+Info_ID: 88| Info_Type: OUT 	| Info: ----b. V/C of Stage_3 and Movement_SBL: 1.307190
+Info_ID: 89| Info_Type: OUT 	| Info: ----a. Capacity of Stage_4 and Movement_NBT: 1122.000000
+Info_ID: 90| Info_Type: OUT 	| Info: ----b. V/C of Stage_4 and Movement_NBT: 0.356506
+Info_ID: 91| Info_Type: OUT 	| Info: ----a. Capacity of Stage_4 and Movement_NBR: 561.000000
+Info_ID: 92| Info_Type: OUT 	| Info: ----b. V/C of Stage_4 and Movement_NBR: 0.713012
+Info_ID: 93| Info_Type: OUT 	| Info: ----a. Capacity of Stage_4 and Movement_SBT: 561.000000
+Info_ID: 94| Info_Type: OUT 	| Info: ----b. V/C of Stage_4 and Movement_SBT: 0.713012
+Info_ID: 95| Info_Type: OUT 	| Info: ----a. Capacity of Stage_4 and Movement_SBR: 561.000000
+Info_ID: 96| Info_Type: OUT 	| Info: ----b. V/C of Stage_4 and Movement_SBR: 0.713012
+Info_ID: 97| Info_Type: MSG 	| Info: --Step 2.10: Calculate Signal Delay
+Info_ID: 98| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_1 and Movement_EBL: 132.581947
+Info_ID: 99| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_1 and Movement_WBL: 132.581947
+Info_ID: 100| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_2 and Movement_EBT: 152.338805
+Info_ID: 101| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_2 and Movement_EBR: 152.338805
+Info_ID: 102| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_2 and Movement_WBT: 152.338805
+Info_ID: 103| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_2 and Movement_WBR: 152.338805
+Info_ID: 104| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_3 and Movement_NBL: 132.581947
+Info_ID: 105| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_3 and Movement_SBL: 132.581947
+Info_ID: 106| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_4 and Movement_NBT: 258.861429
+Info_ID: 107| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_4 and Movement_NBR: 152.338805
+Info_ID: 108| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_4 and Movement_SBT: 152.338805
+Info_ID: 109| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_4 and Movement_SBR: 152.338805
+Info_ID: 110| Info_Type: OUT 	| Info: ----Average Delay of Approach_E: 145.753186
+Info_ID: 111| Info_Type: OUT 	| Info: ----Average Delay of Approach_W: 145.753186
+Info_ID: 112| Info_Type: OUT 	| Info: ----Average Delay of Approach_N: 181.260727
+Info_ID: 113| Info_Type: OUT 	| Info: ----Average Delay of Approach_S: 145.753186
+Info_ID: 114| Info_Type: OUT 	| Info: ----Total Delay of Intersection_NodeID_1: 742224.341340
+Info_ID: 115| Info_Type: OUT 	| Info: ----Average Delay of Intersection_NodeID_1: 154.630071
+Info_ID: 116| Info_Type: MSG 	| Info: --Step 2.11: Judge LOS
+Info_ID: 117| Info_Type: OUT 	| Info: ----LOS of Intersection_NodeID_1: F
+Info_ID: 118| Info_Type: MSG 	| Info: +++++++++++++++End Signal Node ID 1:
+Info_ID: 119| Info_Type: MSG 	| Info: +++++++++++++++Start Signal Node ID 2:
+Info_ID: 120| Info_Type: MSG 	| Info: Step 2: Perform QEM
+Info_ID: 121| Info_Type: MSG 	| Info: --Step 2.1: Set Left Turn Treatments
+Info_ID: 122| Info_Type: OUT 	| Info: ----Left Turn Treatment of Movement_EBL: Protected
+Info_ID: 123| Info_Type: OUT 	| Info: ----Left Turn Treatment of Movement_WBL: Protected
+Info_ID: 124| Info_Type: OUT 	| Info: ----Left Turn Treatment of Movement_NBL: Protected
+Info_ID: 125| Info_Type: OUT 	| Info: ----Left Turn Treatment of Movement_SBL: Protected
+Info_ID: 126| Info_Type: MSG 	| Info: --Step 2.2: Set StageNos
+Info_ID: 127| Info_Type: OUT 	| Info: ----Number of Stages: 4
+Info_ID: 128| Info_Type: MSG 	| Info: ----Main Approaches: E & W
+Info_ID: 129| Info_Type: OUT 	| Info: ------StageNo of Movement_EBL: Stage_1
+Info_ID: 130| Info_Type: OUT 	| Info: ------StageNo of Movement_EBT: Stage_2
+Info_ID: 131| Info_Type: OUT 	| Info: ------StageNo of Movement_EBR: Stage_2
+Info_ID: 132| Info_Type: OUT 	| Info: ------StageNo of Movement_WBL: Stage_1
+Info_ID: 133| Info_Type: OUT 	| Info: ------StageNo of Movement_WBT: Stage_2
+Info_ID: 134| Info_Type: OUT 	| Info: ------StageNo of Movement_WBR: Stage_2
+Info_ID: 135| Info_Type: OUT 	| Info: ------StageNo of Movement_NBL: Stage_3
+Info_ID: 136| Info_Type: OUT 	| Info: ------StageNo of Movement_NBT: Stage_4
+Info_ID: 137| Info_Type: OUT 	| Info: ------StageNo of Movement_NBR: Stage_4
+Info_ID: 138| Info_Type: OUT 	| Info: ------StageNo of Movement_SBL: Stage_3
+Info_ID: 139| Info_Type: OUT 	| Info: ------StageNo of Movement_SBT: Stage_4
+Info_ID: 140| Info_Type: OUT 	| Info: ------StageNo of Movement_SBR: Stage_4
+Info_ID: 141| Info_Type: MSG 	| Info: --Step 2.3: Set Saturation Flow Rate Matrix
+Info_ID: 142| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_EBL and Stage_1: 1530.000000
+Info_ID: 143| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_EBT and Stage_2: 1530.000000
+Info_ID: 144| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_EBR and Stage_2: 1530.000000
+Info_ID: 145| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_WBL and Stage_1: 1530.000000
+Info_ID: 146| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_WBT and Stage_2: 1530.000000
+Info_ID: 147| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_WBR and Stage_2: 1530.000000
+Info_ID: 148| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_NBL and Stage_3: 1530.000000
+Info_ID: 149| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_NBT and Stage_4: 1530.000000
+Info_ID: 150| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_NBR and Stage_4: 1530.000000
+Info_ID: 151| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_SBL and Stage_3: 1530.000000
+Info_ID: 152| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_SBT and Stage_4: 1530.000000
+Info_ID: 153| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_SBR and Stage_4: 1530.000000
+Info_ID: 154| Info_Type: MSG 	| Info: --Step 2.4: Calculate Flow Ratio
+Info_ID: 155| Info_Type: OUT 	| Info: ----Max y Value: 1.568627
+Info_ID: 156| Info_Type: MSG 	| Info: --Step 2.5: Calculate Total Cycle Lost Time
+Info_ID: 157| Info_Type: OUT 	| Info: ----Total Cycle Lost Time: 16.000000
+Info_ID: 158| Info_Type: MSG 	| Info: --Step 2.6: Calculate the Minimum and Optimal Cycle Length
+Info_ID: 159| Info_Type: OUT 	| Info: ----Min Cycle Length: 60.000000
+Info_ID: 160| Info_Type: OUT 	| Info: ----Optimal Cycle Length: 60.000000
+Info_ID: 161| Info_Type: MSG 	| Info: --Step 2.7: Recalculate xc
+Info_ID: 162| Info_Type: OUT 	| Info: ----Recalculated xc: 2.139037
+Info_ID: 163| Info_Type: MSG 	| Info: --Step 2.8: Timing for Stages
+Info_ID: 164| Info_Type: OUT 	| Info: ----Green Time of Stage 1: 10.000000
+Info_ID: 165| Info_Type: OUT 	| Info: ------Start Green Time of Stage 1: 0.000000
+Info_ID: 166| Info_Type: OUT 	| Info: ------End Green Time of Stage 1: 10.000000
+Info_ID: 167| Info_Type: OUT 	| Info: ----Green Time of Stage 2: 20.000000
+Info_ID: 168| Info_Type: OUT 	| Info: ------Start Green Time of Stage 2: 10.000000
+Info_ID: 169| Info_Type: OUT 	| Info: ------End Green Time of Stage 2: 30.000000
+Info_ID: 170| Info_Type: OUT 	| Info: ----Green Time of Stage 3: 10.000000
+Info_ID: 171| Info_Type: OUT 	| Info: ------Start Green Time of Stage 3: 30.000000
+Info_ID: 172| Info_Type: OUT 	| Info: ------End Green Time of Stage 3: 40.000000
+Info_ID: 173| Info_Type: OUT 	| Info: ----Green Time of Stage 4: 20.000000
+Info_ID: 174| Info_Type: OUT 	| Info: ------Start Green Time of Stage 4: 40.000000
+Info_ID: 175| Info_Type: OUT 	| Info: ------End Green Time of Stage 4: 60.000000
+Info_ID: 176| Info_Type: OUT 	| Info: ----Effective Green Time of Stage 1: 12.000000
+Info_ID: 177| Info_Type: OUT 	| Info: ------Start Effective Green Time of Stage 1: 0.000000
+Info_ID: 178| Info_Type: OUT 	| Info: ------End Effective Green Time of Stage 1: 12.000000
+Info_ID: 179| Info_Type: OUT 	| Info: ----Effective Green Time of Stage 2: 22.000000
+Info_ID: 180| Info_Type: OUT 	| Info: ------Start Effective Green Time of Stage 2: 12.000000
+Info_ID: 181| Info_Type: OUT 	| Info: ------End Effective Green Time of Stage 2: 34.000000
+Info_ID: 182| Info_Type: OUT 	| Info: ----Effective Green Time of Stage 3: 12.000000
+Info_ID: 183| Info_Type: OUT 	| Info: ------Start Effective Green Time of Stage 3: 34.000000
+Info_ID: 184| Info_Type: OUT 	| Info: ------End Effective Green Time of Stage 3: 46.000000
+Info_ID: 185| Info_Type: OUT 	| Info: ----Effective Green Time of Stage 4: 22.000000
+Info_ID: 186| Info_Type: OUT 	| Info: ------Start Effective Green Time of Stage 4: 46.000000
+Info_ID: 187| Info_Type: OUT 	| Info: ------End Effective Green Time of Stage 4: 68.000000
+Info_ID: 188| Info_Type: MSG 	| Info: --Step 2.9: Calculate capacity and ratio V/C
+Info_ID: 189| Info_Type: OUT 	| Info: ----a. Capacity of Stage_1 and Movement_EBL: 306.000000
+Info_ID: 190| Info_Type: OUT 	| Info: ----b. V/C of Stage_1 and Movement_EBL: 1.307190
+Info_ID: 191| Info_Type: OUT 	| Info: ----a. Capacity of Stage_1 and Movement_WBL: 306.000000
+Info_ID: 192| Info_Type: OUT 	| Info: ----b. V/C of Stage_1 and Movement_WBL: 1.307190
+Info_ID: 193| Info_Type: OUT 	| Info: ----a. Capacity of Stage_2 and Movement_EBT: 561.000000
+Info_ID: 194| Info_Type: OUT 	| Info: ----b. V/C of Stage_2 and Movement_EBT: 0.713012
+Info_ID: 195| Info_Type: OUT 	| Info: ----a. Capacity of Stage_2 and Movement_EBR: 561.000000
+Info_ID: 196| Info_Type: OUT 	| Info: ----b. V/C of Stage_2 and Movement_EBR: 0.713012
+Info_ID: 197| Info_Type: OUT 	| Info: ----a. Capacity of Stage_2 and Movement_WBT: 561.000000
+Info_ID: 198| Info_Type: OUT 	| Info: ----b. V/C of Stage_2 and Movement_WBT: 0.713012
+Info_ID: 199| Info_Type: OUT 	| Info: ----a. Capacity of Stage_2 and Movement_WBR: 561.000000
+Info_ID: 200| Info_Type: OUT 	| Info: ----b. V/C of Stage_2 and Movement_WBR: 0.713012
+Info_ID: 201| Info_Type: OUT 	| Info: ----a. Capacity of Stage_3 and Movement_NBL: 306.000000
+Info_ID: 202| Info_Type: OUT 	| Info: ----b. V/C of Stage_3 and Movement_NBL: 1.307190
+Info_ID: 203| Info_Type: OUT 	| Info: ----a. Capacity of Stage_3 and Movement_SBL: 306.000000
+Info_ID: 204| Info_Type: OUT 	| Info: ----b. V/C of Stage_3 and Movement_SBL: 1.307190
+Info_ID: 205| Info_Type: OUT 	| Info: ----a. Capacity of Stage_4 and Movement_NBT: 561.000000
+Info_ID: 206| Info_Type: OUT 	| Info: ----b. V/C of Stage_4 and Movement_NBT: 0.713012
+Info_ID: 207| Info_Type: OUT 	| Info: ----a. Capacity of Stage_4 and Movement_NBR: 561.000000
+Info_ID: 208| Info_Type: OUT 	| Info: ----b. V/C of Stage_4 and Movement_NBR: 0.713012
+Info_ID: 209| Info_Type: OUT 	| Info: ----a. Capacity of Stage_4 and Movement_SBT: 561.000000
+Info_ID: 210| Info_Type: OUT 	| Info: ----b. V/C of Stage_4 and Movement_SBT: 0.713012
+Info_ID: 211| Info_Type: OUT 	| Info: ----a. Capacity of Stage_4 and Movement_SBR: 561.000000
+Info_ID: 212| Info_Type: OUT 	| Info: ----b. V/C of Stage_4 and Movement_SBR: 0.713012
+Info_ID: 213| Info_Type: MSG 	| Info: --Step 2.10: Calculate Signal Delay
+Info_ID: 214| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_1 and Movement_EBL: 132.581947
+Info_ID: 215| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_1 and Movement_WBL: 132.581947
+Info_ID: 216| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_2 and Movement_EBT: 152.338805
+Info_ID: 217| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_2 and Movement_EBR: 152.338805
+Info_ID: 218| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_2 and Movement_WBT: 152.338805
+Info_ID: 219| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_2 and Movement_WBR: 152.338805
+Info_ID: 220| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_3 and Movement_NBL: 132.581947
+Info_ID: 221| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_3 and Movement_SBL: 132.581947
+Info_ID: 222| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_4 and Movement_NBT: 152.338805
+Info_ID: 223| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_4 and Movement_NBR: 152.338805
+Info_ID: 224| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_4 and Movement_SBT: 152.338805
+Info_ID: 225| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_4 and Movement_SBR: 152.338805
+Info_ID: 226| Info_Type: OUT 	| Info: ----Average Delay of Approach_E: 145.753186
+Info_ID: 227| Info_Type: OUT 	| Info: ----Average Delay of Approach_W: 145.753186
+Info_ID: 228| Info_Type: OUT 	| Info: ----Average Delay of Approach_N: 145.753186
+Info_ID: 229| Info_Type: OUT 	| Info: ----Average Delay of Approach_S: 145.753186
+Info_ID: 230| Info_Type: OUT 	| Info: ----Total Delay of Intersection_NodeID_2: 699615.292035
+Info_ID: 231| Info_Type: OUT 	| Info: ----Average Delay of Intersection_NodeID_2: 145.753186
+Info_ID: 232| Info_Type: MSG 	| Info: --Step 2.11: Judge LOS
+Info_ID: 233| Info_Type: OUT 	| Info: ----LOS of Intersection_NodeID_2: F
+Info_ID: 234| Info_Type: MSG 	| Info: +++++++++++++++End Signal Node ID 2:
+Logging Time: 2020/8/6_14:36:30:901---------------------------------------
+Info_ID: 0| Info_Type: MSG 	| Info: Step 1: Reading file demand_period.csv...
+Info_ID: 1| Info_Type: MSG 	| Info: --Number of Nodes = 104
+Info_ID: 2| Info_Type: MSG 	| Info: --Number of Links = 140
+Info_ID: 3| Info_Type: MSG 	| Info: +++++++++++++++Start Signal Node ID 1:
+Info_ID: 4| Info_Type: MSG 	| Info: Step 2: Perform QEM
+Info_ID: 5| Info_Type: MSG 	| Info: --Step 2.1: Set Left Turn Treatments
+Info_ID: 6| Info_Type: OUT 	| Info: ----Left Turn Treatment of Movement_EBL: Protected
+Info_ID: 7| Info_Type: OUT 	| Info: ----Left Turn Treatment of Movement_WBL: Protected
+Info_ID: 8| Info_Type: OUT 	| Info: ----Left Turn Treatment of Movement_NBL: Protected
+Info_ID: 9| Info_Type: OUT 	| Info: ----Left Turn Treatment of Movement_SBL: Protected
+Info_ID: 10| Info_Type: MSG 	| Info: --Step 2.2: Set StageNos
+Info_ID: 11| Info_Type: OUT 	| Info: ----Number of Stages: 4
+Info_ID: 12| Info_Type: MSG 	| Info: ----Main Approaches: E & W
+Info_ID: 13| Info_Type: OUT 	| Info: ------StageNo of Movement_EBL: Stage_1
+Info_ID: 14| Info_Type: OUT 	| Info: ------StageNo of Movement_EBT: Stage_2
+Info_ID: 15| Info_Type: OUT 	| Info: ------StageNo of Movement_EBR: Stage_2
+Info_ID: 16| Info_Type: OUT 	| Info: ------StageNo of Movement_WBL: Stage_1
+Info_ID: 17| Info_Type: OUT 	| Info: ------StageNo of Movement_WBT: Stage_2
+Info_ID: 18| Info_Type: OUT 	| Info: ------StageNo of Movement_WBR: Stage_2
+Info_ID: 19| Info_Type: OUT 	| Info: ------StageNo of Movement_NBL: Stage_3
+Info_ID: 20| Info_Type: OUT 	| Info: ------StageNo of Movement_NBT: Stage_4
+Info_ID: 21| Info_Type: OUT 	| Info: ------StageNo of Movement_NBR: Stage_4
+Info_ID: 22| Info_Type: OUT 	| Info: ------StageNo of Movement_SBL: Stage_3
+Info_ID: 23| Info_Type: OUT 	| Info: ------StageNo of Movement_SBT: Stage_4
+Info_ID: 24| Info_Type: OUT 	| Info: ------StageNo of Movement_SBR: Stage_4
+Info_ID: 25| Info_Type: MSG 	| Info: --Step 2.3: Set Saturation Flow Rate Matrix
+Info_ID: 26| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_EBL and Stage_1: 1530.000000
+Info_ID: 27| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_EBT and Stage_2: 1530.000000
+Info_ID: 28| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_EBR and Stage_2: 1530.000000
+Info_ID: 29| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_WBL and Stage_1: 1530.000000
+Info_ID: 30| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_WBT and Stage_2: 1530.000000
+Info_ID: 31| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_WBR and Stage_2: 1530.000000
+Info_ID: 32| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_NBL and Stage_3: 1530.000000
+Info_ID: 33| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_NBT and Stage_4: 3060.000000
+Info_ID: 34| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_NBR and Stage_4: 1530.000000
+Info_ID: 35| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_SBL and Stage_3: 1530.000000
+Info_ID: 36| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_SBT and Stage_4: 1530.000000
+Info_ID: 37| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_SBR and Stage_4: 1530.000000
+Info_ID: 38| Info_Type: MSG 	| Info: --Step 2.4: Calculate Flow Ratio
+Info_ID: 39| Info_Type: OUT 	| Info: ----Max y Value: 1.568627
+Info_ID: 40| Info_Type: MSG 	| Info: --Step 2.5: Calculate Total Cycle Lost Time
+Info_ID: 41| Info_Type: OUT 	| Info: ----Total Cycle Lost Time: 16.000000
+Info_ID: 42| Info_Type: MSG 	| Info: --Step 2.6: Calculate the Minimum and Optimal Cycle Length
+Info_ID: 43| Info_Type: OUT 	| Info: ----Min Cycle Length: 60.000000
+Info_ID: 44| Info_Type: OUT 	| Info: ----Optimal Cycle Length: 60.000000
+Info_ID: 45| Info_Type: MSG 	| Info: --Step 2.7: Recalculate xc
+Info_ID: 46| Info_Type: OUT 	| Info: ----Recalculated xc: 2.139037
+Info_ID: 47| Info_Type: MSG 	| Info: --Step 2.8: Timing for Stages
+Info_ID: 48| Info_Type: OUT 	| Info: ----Green Time of Stage 1: 10.000000
+Info_ID: 49| Info_Type: OUT 	| Info: ------Start Green Time of Stage 1: 0.000000
+Info_ID: 50| Info_Type: OUT 	| Info: ------End Green Time of Stage 1: 10.000000
+Info_ID: 51| Info_Type: OUT 	| Info: ----Green Time of Stage 2: 20.000000
+Info_ID: 52| Info_Type: OUT 	| Info: ------Start Green Time of Stage 2: 10.000000
+Info_ID: 53| Info_Type: OUT 	| Info: ------End Green Time of Stage 2: 30.000000
+Info_ID: 54| Info_Type: OUT 	| Info: ----Green Time of Stage 3: 10.000000
+Info_ID: 55| Info_Type: OUT 	| Info: ------Start Green Time of Stage 3: 30.000000
+Info_ID: 56| Info_Type: OUT 	| Info: ------End Green Time of Stage 3: 40.000000
+Info_ID: 57| Info_Type: OUT 	| Info: ----Green Time of Stage 4: 20.000000
+Info_ID: 58| Info_Type: OUT 	| Info: ------Start Green Time of Stage 4: 40.000000
+Info_ID: 59| Info_Type: OUT 	| Info: ------End Green Time of Stage 4: 60.000000
+Info_ID: 60| Info_Type: OUT 	| Info: ----Effective Green Time of Stage 1: 12.000000
+Info_ID: 61| Info_Type: OUT 	| Info: ------Start Effective Green Time of Stage 1: 0.000000
+Info_ID: 62| Info_Type: OUT 	| Info: ------End Effective Green Time of Stage 1: 12.000000
+Info_ID: 63| Info_Type: OUT 	| Info: ----Effective Green Time of Stage 2: 22.000000
+Info_ID: 64| Info_Type: OUT 	| Info: ------Start Effective Green Time of Stage 2: 12.000000
+Info_ID: 65| Info_Type: OUT 	| Info: ------End Effective Green Time of Stage 2: 34.000000
+Info_ID: 66| Info_Type: OUT 	| Info: ----Effective Green Time of Stage 3: 12.000000
+Info_ID: 67| Info_Type: OUT 	| Info: ------Start Effective Green Time of Stage 3: 34.000000
+Info_ID: 68| Info_Type: OUT 	| Info: ------End Effective Green Time of Stage 3: 46.000000
+Info_ID: 69| Info_Type: OUT 	| Info: ----Effective Green Time of Stage 4: 22.000000
+Info_ID: 70| Info_Type: OUT 	| Info: ------Start Effective Green Time of Stage 4: 46.000000
+Info_ID: 71| Info_Type: OUT 	| Info: ------End Effective Green Time of Stage 4: 68.000000
+Info_ID: 72| Info_Type: MSG 	| Info: --Step 2.9: Calculate capacity and ratio V/C
+Info_ID: 73| Info_Type: OUT 	| Info: ----a. Capacity of Stage_1 and Movement_EBL: 306.000000
+Info_ID: 74| Info_Type: OUT 	| Info: ----b. V/C of Stage_1 and Movement_EBL: 1.307190
+Info_ID: 75| Info_Type: OUT 	| Info: ----a. Capacity of Stage_1 and Movement_WBL: 306.000000
+Info_ID: 76| Info_Type: OUT 	| Info: ----b. V/C of Stage_1 and Movement_WBL: 1.307190
+Info_ID: 77| Info_Type: OUT 	| Info: ----a. Capacity of Stage_2 and Movement_EBT: 561.000000
+Info_ID: 78| Info_Type: OUT 	| Info: ----b. V/C of Stage_2 and Movement_EBT: 0.713012
+Info_ID: 79| Info_Type: OUT 	| Info: ----a. Capacity of Stage_2 and Movement_EBR: 561.000000
+Info_ID: 80| Info_Type: OUT 	| Info: ----b. V/C of Stage_2 and Movement_EBR: 0.713012
+Info_ID: 81| Info_Type: OUT 	| Info: ----a. Capacity of Stage_2 and Movement_WBT: 561.000000
+Info_ID: 82| Info_Type: OUT 	| Info: ----b. V/C of Stage_2 and Movement_WBT: 0.713012
+Info_ID: 83| Info_Type: OUT 	| Info: ----a. Capacity of Stage_2 and Movement_WBR: 561.000000
+Info_ID: 84| Info_Type: OUT 	| Info: ----b. V/C of Stage_2 and Movement_WBR: 0.713012
+Info_ID: 85| Info_Type: OUT 	| Info: ----a. Capacity of Stage_3 and Movement_NBL: 306.000000
+Info_ID: 86| Info_Type: OUT 	| Info: ----b. V/C of Stage_3 and Movement_NBL: 1.307190
+Info_ID: 87| Info_Type: OUT 	| Info: ----a. Capacity of Stage_3 and Movement_SBL: 306.000000
+Info_ID: 88| Info_Type: OUT 	| Info: ----b. V/C of Stage_3 and Movement_SBL: 1.307190
+Info_ID: 89| Info_Type: OUT 	| Info: ----a. Capacity of Stage_4 and Movement_NBT: 1122.000000
+Info_ID: 90| Info_Type: OUT 	| Info: ----b. V/C of Stage_4 and Movement_NBT: 0.356506
+Info_ID: 91| Info_Type: OUT 	| Info: ----a. Capacity of Stage_4 and Movement_NBR: 561.000000
+Info_ID: 92| Info_Type: OUT 	| Info: ----b. V/C of Stage_4 and Movement_NBR: 0.713012
+Info_ID: 93| Info_Type: OUT 	| Info: ----a. Capacity of Stage_4 and Movement_SBT: 561.000000
+Info_ID: 94| Info_Type: OUT 	| Info: ----b. V/C of Stage_4 and Movement_SBT: 0.713012
+Info_ID: 95| Info_Type: OUT 	| Info: ----a. Capacity of Stage_4 and Movement_SBR: 561.000000
+Info_ID: 96| Info_Type: OUT 	| Info: ----b. V/C of Stage_4 and Movement_SBR: 0.713012
+Info_ID: 97| Info_Type: MSG 	| Info: --Step 2.10: Calculate Signal Delay
+Info_ID: 98| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_1 and Movement_EBL: 132.581947
+Info_ID: 99| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_1 and Movement_WBL: 132.581947
+Info_ID: 100| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_2 and Movement_EBT: 152.338805
+Info_ID: 101| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_2 and Movement_EBR: 152.338805
+Info_ID: 102| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_2 and Movement_WBT: 152.338805
+Info_ID: 103| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_2 and Movement_WBR: 152.338805
+Info_ID: 104| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_3 and Movement_NBL: 132.581947
+Info_ID: 105| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_3 and Movement_SBL: 132.581947
+Info_ID: 106| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_4 and Movement_NBT: 258.861429
+Info_ID: 107| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_4 and Movement_NBR: 152.338805
+Info_ID: 108| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_4 and Movement_SBT: 152.338805
+Info_ID: 109| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_4 and Movement_SBR: 152.338805
+Info_ID: 110| Info_Type: OUT 	| Info: ----Average Delay of Approach_E: 145.753186
+Info_ID: 111| Info_Type: OUT 	| Info: ----Average Delay of Approach_W: 145.753186
+Info_ID: 112| Info_Type: OUT 	| Info: ----Average Delay of Approach_N: 181.260727
+Info_ID: 113| Info_Type: OUT 	| Info: ----Average Delay of Approach_S: 145.753186
+Info_ID: 114| Info_Type: OUT 	| Info: ----Total Delay of Intersection_NodeID_1: 742224.341340
+Info_ID: 115| Info_Type: OUT 	| Info: ----Average Delay of Intersection_NodeID_1: 154.630071
+Info_ID: 116| Info_Type: MSG 	| Info: --Step 2.11: Judge LOS
+Info_ID: 117| Info_Type: OUT 	| Info: ----LOS of Intersection_NodeID_1: F
+Info_ID: 118| Info_Type: MSG 	| Info: +++++++++++++++End Signal Node ID 1:
+Info_ID: 119| Info_Type: MSG 	| Info: +++++++++++++++Start Signal Node ID 2:
+Info_ID: 120| Info_Type: MSG 	| Info: Step 2: Perform QEM
+Info_ID: 121| Info_Type: MSG 	| Info: --Step 2.1: Set Left Turn Treatments
+Info_ID: 122| Info_Type: OUT 	| Info: ----Left Turn Treatment of Movement_EBL: Protected
+Info_ID: 123| Info_Type: OUT 	| Info: ----Left Turn Treatment of Movement_WBL: Protected
+Info_ID: 124| Info_Type: OUT 	| Info: ----Left Turn Treatment of Movement_NBL: Protected
+Info_ID: 125| Info_Type: OUT 	| Info: ----Left Turn Treatment of Movement_SBL: Protected
+Info_ID: 126| Info_Type: MSG 	| Info: --Step 2.2: Set StageNos
+Info_ID: 127| Info_Type: OUT 	| Info: ----Number of Stages: 4
+Info_ID: 128| Info_Type: MSG 	| Info: ----Main Approaches: E & W
+Info_ID: 129| Info_Type: OUT 	| Info: ------StageNo of Movement_EBL: Stage_1
+Info_ID: 130| Info_Type: OUT 	| Info: ------StageNo of Movement_EBT: Stage_2
+Info_ID: 131| Info_Type: OUT 	| Info: ------StageNo of Movement_EBR: Stage_2
+Info_ID: 132| Info_Type: OUT 	| Info: ------StageNo of Movement_WBL: Stage_1
+Info_ID: 133| Info_Type: OUT 	| Info: ------StageNo of Movement_WBT: Stage_2
+Info_ID: 134| Info_Type: OUT 	| Info: ------StageNo of Movement_WBR: Stage_2
+Info_ID: 135| Info_Type: OUT 	| Info: ------StageNo of Movement_NBL: Stage_3
+Info_ID: 136| Info_Type: OUT 	| Info: ------StageNo of Movement_NBT: Stage_4
+Info_ID: 137| Info_Type: OUT 	| Info: ------StageNo of Movement_NBR: Stage_4
+Info_ID: 138| Info_Type: OUT 	| Info: ------StageNo of Movement_SBL: Stage_3
+Info_ID: 139| Info_Type: OUT 	| Info: ------StageNo of Movement_SBT: Stage_4
+Info_ID: 140| Info_Type: OUT 	| Info: ------StageNo of Movement_SBR: Stage_4
+Info_ID: 141| Info_Type: MSG 	| Info: --Step 2.3: Set Saturation Flow Rate Matrix
+Info_ID: 142| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_EBL and Stage_1: 1530.000000
+Info_ID: 143| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_EBT and Stage_2: 1530.000000
+Info_ID: 144| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_EBR and Stage_2: 1530.000000
+Info_ID: 145| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_WBL and Stage_1: 1530.000000
+Info_ID: 146| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_WBT and Stage_2: 1530.000000
+Info_ID: 147| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_WBR and Stage_2: 1530.000000
+Info_ID: 148| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_NBL and Stage_3: 1530.000000
+Info_ID: 149| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_NBT and Stage_4: 1530.000000
+Info_ID: 150| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_NBR and Stage_4: 1530.000000
+Info_ID: 151| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_SBL and Stage_3: 1530.000000
+Info_ID: 152| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_SBT and Stage_4: 1530.000000
+Info_ID: 153| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_SBR and Stage_4: 1530.000000
+Info_ID: 154| Info_Type: MSG 	| Info: --Step 2.4: Calculate Flow Ratio
+Info_ID: 155| Info_Type: OUT 	| Info: ----Max y Value: 1.568627
+Info_ID: 156| Info_Type: MSG 	| Info: --Step 2.5: Calculate Total Cycle Lost Time
+Info_ID: 157| Info_Type: OUT 	| Info: ----Total Cycle Lost Time: 16.000000
+Info_ID: 158| Info_Type: MSG 	| Info: --Step 2.6: Calculate the Minimum and Optimal Cycle Length
+Info_ID: 159| Info_Type: OUT 	| Info: ----Min Cycle Length: 60.000000
+Info_ID: 160| Info_Type: OUT 	| Info: ----Optimal Cycle Length: 60.000000
+Info_ID: 161| Info_Type: MSG 	| Info: --Step 2.7: Recalculate xc
+Info_ID: 162| Info_Type: OUT 	| Info: ----Recalculated xc: 2.139037
+Info_ID: 163| Info_Type: MSG 	| Info: --Step 2.8: Timing for Stages
+Info_ID: 164| Info_Type: OUT 	| Info: ----Green Time of Stage 1: 10.000000
+Info_ID: 165| Info_Type: OUT 	| Info: ------Start Green Time of Stage 1: 0.000000
+Info_ID: 166| Info_Type: OUT 	| Info: ------End Green Time of Stage 1: 10.000000
+Info_ID: 167| Info_Type: OUT 	| Info: ----Green Time of Stage 2: 20.000000
+Info_ID: 168| Info_Type: OUT 	| Info: ------Start Green Time of Stage 2: 10.000000
+Info_ID: 169| Info_Type: OUT 	| Info: ------End Green Time of Stage 2: 30.000000
+Info_ID: 170| Info_Type: OUT 	| Info: ----Green Time of Stage 3: 10.000000
+Info_ID: 171| Info_Type: OUT 	| Info: ------Start Green Time of Stage 3: 30.000000
+Info_ID: 172| Info_Type: OUT 	| Info: ------End Green Time of Stage 3: 40.000000
+Info_ID: 173| Info_Type: OUT 	| Info: ----Green Time of Stage 4: 20.000000
+Info_ID: 174| Info_Type: OUT 	| Info: ------Start Green Time of Stage 4: 40.000000
+Info_ID: 175| Info_Type: OUT 	| Info: ------End Green Time of Stage 4: 60.000000
+Info_ID: 176| Info_Type: OUT 	| Info: ----Effective Green Time of Stage 1: 12.000000
+Info_ID: 177| Info_Type: OUT 	| Info: ------Start Effective Green Time of Stage 1: 0.000000
+Info_ID: 178| Info_Type: OUT 	| Info: ------End Effective Green Time of Stage 1: 12.000000
+Info_ID: 179| Info_Type: OUT 	| Info: ----Effective Green Time of Stage 2: 22.000000
+Info_ID: 180| Info_Type: OUT 	| Info: ------Start Effective Green Time of Stage 2: 12.000000
+Info_ID: 181| Info_Type: OUT 	| Info: ------End Effective Green Time of Stage 2: 34.000000
+Info_ID: 182| Info_Type: OUT 	| Info: ----Effective Green Time of Stage 3: 12.000000
+Info_ID: 183| Info_Type: OUT 	| Info: ------Start Effective Green Time of Stage 3: 34.000000
+Info_ID: 184| Info_Type: OUT 	| Info: ------End Effective Green Time of Stage 3: 46.000000
+Info_ID: 185| Info_Type: OUT 	| Info: ----Effective Green Time of Stage 4: 22.000000
+Info_ID: 186| Info_Type: OUT 	| Info: ------Start Effective Green Time of Stage 4: 46.000000
+Info_ID: 187| Info_Type: OUT 	| Info: ------End Effective Green Time of Stage 4: 68.000000
+Info_ID: 188| Info_Type: MSG 	| Info: --Step 2.9: Calculate capacity and ratio V/C
+Info_ID: 189| Info_Type: OUT 	| Info: ----a. Capacity of Stage_1 and Movement_EBL: 306.000000
+Info_ID: 190| Info_Type: OUT 	| Info: ----b. V/C of Stage_1 and Movement_EBL: 1.307190
+Info_ID: 191| Info_Type: OUT 	| Info: ----a. Capacity of Stage_1 and Movement_WBL: 306.000000
+Info_ID: 192| Info_Type: OUT 	| Info: ----b. V/C of Stage_1 and Movement_WBL: 1.307190
+Info_ID: 193| Info_Type: OUT 	| Info: ----a. Capacity of Stage_2 and Movement_EBT: 561.000000
+Info_ID: 194| Info_Type: OUT 	| Info: ----b. V/C of Stage_2 and Movement_EBT: 0.713012
+Info_ID: 195| Info_Type: OUT 	| Info: ----a. Capacity of Stage_2 and Movement_EBR: 561.000000
+Info_ID: 196| Info_Type: OUT 	| Info: ----b. V/C of Stage_2 and Movement_EBR: 0.713012
+Info_ID: 197| Info_Type: OUT 	| Info: ----a. Capacity of Stage_2 and Movement_WBT: 561.000000
+Info_ID: 198| Info_Type: OUT 	| Info: ----b. V/C of Stage_2 and Movement_WBT: 0.713012
+Info_ID: 199| Info_Type: OUT 	| Info: ----a. Capacity of Stage_2 and Movement_WBR: 561.000000
+Info_ID: 200| Info_Type: OUT 	| Info: ----b. V/C of Stage_2 and Movement_WBR: 0.713012
+Info_ID: 201| Info_Type: OUT 	| Info: ----a. Capacity of Stage_3 and Movement_NBL: 306.000000
+Info_ID: 202| Info_Type: OUT 	| Info: ----b. V/C of Stage_3 and Movement_NBL: 1.307190
+Info_ID: 203| Info_Type: OUT 	| Info: ----a. Capacity of Stage_3 and Movement_SBL: 306.000000
+Info_ID: 204| Info_Type: OUT 	| Info: ----b. V/C of Stage_3 and Movement_SBL: 1.307190
+Info_ID: 205| Info_Type: OUT 	| Info: ----a. Capacity of Stage_4 and Movement_NBT: 561.000000
+Info_ID: 206| Info_Type: OUT 	| Info: ----b. V/C of Stage_4 and Movement_NBT: 0.713012
+Info_ID: 207| Info_Type: OUT 	| Info: ----a. Capacity of Stage_4 and Movement_NBR: 561.000000
+Info_ID: 208| Info_Type: OUT 	| Info: ----b. V/C of Stage_4 and Movement_NBR: 0.713012
+Info_ID: 209| Info_Type: OUT 	| Info: ----a. Capacity of Stage_4 and Movement_SBT: 561.000000
+Info_ID: 210| Info_Type: OUT 	| Info: ----b. V/C of Stage_4 and Movement_SBT: 0.713012
+Info_ID: 211| Info_Type: OUT 	| Info: ----a. Capacity of Stage_4 and Movement_SBR: 561.000000
+Info_ID: 212| Info_Type: OUT 	| Info: ----b. V/C of Stage_4 and Movement_SBR: 0.713012
+Info_ID: 213| Info_Type: MSG 	| Info: --Step 2.10: Calculate Signal Delay
+Info_ID: 214| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_1 and Movement_EBL: 132.581947
+Info_ID: 215| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_1 and Movement_WBL: 132.581947
+Info_ID: 216| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_2 and Movement_EBT: 152.338805
+Info_ID: 217| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_2 and Movement_EBR: 152.338805
+Info_ID: 218| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_2 and Movement_WBT: 152.338805
+Info_ID: 219| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_2 and Movement_WBR: 152.338805
+Info_ID: 220| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_3 and Movement_NBL: 132.581947
+Info_ID: 221| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_3 and Movement_SBL: 132.581947
+Info_ID: 222| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_4 and Movement_NBT: 152.338805
+Info_ID: 223| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_4 and Movement_NBR: 152.338805
+Info_ID: 224| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_4 and Movement_SBT: 152.338805
+Info_ID: 225| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_4 and Movement_SBR: 152.338805
+Info_ID: 226| Info_Type: OUT 	| Info: ----Average Delay of Approach_E: 145.753186
+Info_ID: 227| Info_Type: OUT 	| Info: ----Average Delay of Approach_W: 145.753186
+Info_ID: 228| Info_Type: OUT 	| Info: ----Average Delay of Approach_N: 145.753186
+Info_ID: 229| Info_Type: OUT 	| Info: ----Average Delay of Approach_S: 145.753186
+Info_ID: 230| Info_Type: OUT 	| Info: ----Total Delay of Intersection_NodeID_2: 699615.292035
+Info_ID: 231| Info_Type: OUT 	| Info: ----Average Delay of Intersection_NodeID_2: 145.753186
+Info_ID: 232| Info_Type: MSG 	| Info: --Step 2.11: Judge LOS
+Info_ID: 233| Info_Type: OUT 	| Info: ----LOS of Intersection_NodeID_2: F
+Info_ID: 234| Info_Type: MSG 	| Info: +++++++++++++++End Signal Node ID 2:
+Info_ID: 235| Info_Type: WAR 	| Info: Program stops. Press any key to terminate. Thanks!
+Logging Time: 2020/8/6_14:37:54:263---------------------------------------
+Info_ID: 0| Info_Type: MSG 	| Info: Step 1: Reading file demand_period.csv...
+Info_ID: 1| Info_Type: MSG 	| Info: --Number of Nodes = 104
+Info_ID: 2| Info_Type: MSG 	| Info: --Number of Links = 140
+Info_ID: 3| Info_Type: MSG 	| Info: +++++++++++++++Start Signal Node ID 1:
+Info_ID: 4| Info_Type: MSG 	| Info: Step 2: Perform QEM
+Info_ID: 5| Info_Type: MSG 	| Info: --Step 2.1: Set Left Turn Treatments
+Info_ID: 6| Info_Type: OUT 	| Info: ----Left Turn Treatment of Movement_EBL: Protected
+Info_ID: 7| Info_Type: OUT 	| Info: ----Left Turn Treatment of Movement_WBL: Protected
+Info_ID: 8| Info_Type: OUT 	| Info: ----Left Turn Treatment of Movement_NBL: Protected
+Info_ID: 9| Info_Type: OUT 	| Info: ----Left Turn Treatment of Movement_SBL: Protected
+Info_ID: 10| Info_Type: MSG 	| Info: --Step 2.2: Set StageNos
+Info_ID: 11| Info_Type: OUT 	| Info: ----Number of Stages: 4
+Info_ID: 12| Info_Type: MSG 	| Info: ----Main Approaches: E & W
+Info_ID: 13| Info_Type: OUT 	| Info: ------StageNo of Movement_EBL: Stage_1
+Info_ID: 14| Info_Type: OUT 	| Info: ------StageNo of Movement_EBT: Stage_2
+Info_ID: 15| Info_Type: OUT 	| Info: ------StageNo of Movement_EBR: Stage_2
+Info_ID: 16| Info_Type: OUT 	| Info: ------StageNo of Movement_WBL: Stage_1
+Info_ID: 17| Info_Type: OUT 	| Info: ------StageNo of Movement_WBT: Stage_2
+Info_ID: 18| Info_Type: OUT 	| Info: ------StageNo of Movement_WBR: Stage_2
+Info_ID: 19| Info_Type: OUT 	| Info: ------StageNo of Movement_NBL: Stage_3
+Info_ID: 20| Info_Type: OUT 	| Info: ------StageNo of Movement_NBT: Stage_4
+Info_ID: 21| Info_Type: OUT 	| Info: ------StageNo of Movement_NBR: Stage_4
+Info_ID: 22| Info_Type: OUT 	| Info: ------StageNo of Movement_SBL: Stage_3
+Info_ID: 23| Info_Type: OUT 	| Info: ------StageNo of Movement_SBT: Stage_4
+Info_ID: 24| Info_Type: OUT 	| Info: ------StageNo of Movement_SBR: Stage_4
+Info_ID: 25| Info_Type: MSG 	| Info: --Step 2.3: Set Saturation Flow Rate Matrix
+Info_ID: 26| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_EBL and Stage_1: 1530.000000
+Info_ID: 27| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_EBT and Stage_2: 1530.000000
+Info_ID: 28| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_EBR and Stage_2: 1530.000000
+Info_ID: 29| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_WBL and Stage_1: 1530.000000
+Info_ID: 30| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_WBT and Stage_2: 1530.000000
+Info_ID: 31| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_WBR and Stage_2: 1530.000000
+Info_ID: 32| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_NBL and Stage_3: 1530.000000
+Info_ID: 33| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_NBT and Stage_4: 3060.000000
+Info_ID: 34| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_NBR and Stage_4: 1530.000000
+Info_ID: 35| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_SBL and Stage_3: 1530.000000
+Info_ID: 36| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_SBT and Stage_4: 1530.000000
+Info_ID: 37| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_SBR and Stage_4: 1530.000000
+Info_ID: 38| Info_Type: MSG 	| Info: --Step 2.4: Calculate Flow Ratio
+Info_ID: 39| Info_Type: OUT 	| Info: ----Max y Value: 1.568627
+Info_ID: 40| Info_Type: MSG 	| Info: --Step 2.5: Calculate Total Cycle Lost Time
+Info_ID: 41| Info_Type: OUT 	| Info: ----Total Cycle Lost Time: 16.000000
+Info_ID: 42| Info_Type: MSG 	| Info: --Step 2.6: Calculate the Minimum and Optimal Cycle Length
+Info_ID: 43| Info_Type: OUT 	| Info: ----Min Cycle Length: 60.000000
+Info_ID: 44| Info_Type: OUT 	| Info: ----Optimal Cycle Length: 60.000000
+Info_ID: 45| Info_Type: MSG 	| Info: --Step 2.7: Recalculate xc
+Info_ID: 46| Info_Type: OUT 	| Info: ----Recalculated xc: 2.139037
+Info_ID: 47| Info_Type: MSG 	| Info: --Step 2.8: Timing for Stages
+Info_ID: 48| Info_Type: OUT 	| Info: ----Green Time of Stage 1: 10.000000
+Info_ID: 49| Info_Type: OUT 	| Info: ------Start Green Time of Stage 1: 0.000000
+Info_ID: 50| Info_Type: OUT 	| Info: ------End Green Time of Stage 1: 10.000000
+Info_ID: 51| Info_Type: OUT 	| Info: ----Green Time of Stage 2: 20.000000
+Info_ID: 52| Info_Type: OUT 	| Info: ------Start Green Time of Stage 2: 10.000000
+Info_ID: 53| Info_Type: OUT 	| Info: ------End Green Time of Stage 2: 30.000000
+Info_ID: 54| Info_Type: OUT 	| Info: ----Green Time of Stage 3: 10.000000
+Info_ID: 55| Info_Type: OUT 	| Info: ------Start Green Time of Stage 3: 30.000000
+Info_ID: 56| Info_Type: OUT 	| Info: ------End Green Time of Stage 3: 40.000000
+Info_ID: 57| Info_Type: OUT 	| Info: ----Green Time of Stage 4: 20.000000
+Info_ID: 58| Info_Type: OUT 	| Info: ------Start Green Time of Stage 4: 40.000000
+Info_ID: 59| Info_Type: OUT 	| Info: ------End Green Time of Stage 4: 60.000000
+Info_ID: 60| Info_Type: OUT 	| Info: ----Effective Green Time of Stage 1: 12.000000
+Info_ID: 61| Info_Type: OUT 	| Info: ------Start Effective Green Time of Stage 1: 0.000000
+Info_ID: 62| Info_Type: OUT 	| Info: ------End Effective Green Time of Stage 1: 12.000000
+Info_ID: 63| Info_Type: OUT 	| Info: ----Effective Green Time of Stage 2: 22.000000
+Info_ID: 64| Info_Type: OUT 	| Info: ------Start Effective Green Time of Stage 2: 12.000000
+Info_ID: 65| Info_Type: OUT 	| Info: ------End Effective Green Time of Stage 2: 34.000000
+Info_ID: 66| Info_Type: OUT 	| Info: ----Effective Green Time of Stage 3: 12.000000
+Info_ID: 67| Info_Type: OUT 	| Info: ------Start Effective Green Time of Stage 3: 34.000000
+Info_ID: 68| Info_Type: OUT 	| Info: ------End Effective Green Time of Stage 3: 46.000000
+Info_ID: 69| Info_Type: OUT 	| Info: ----Effective Green Time of Stage 4: 22.000000
+Info_ID: 70| Info_Type: OUT 	| Info: ------Start Effective Green Time of Stage 4: 46.000000
+Info_ID: 71| Info_Type: OUT 	| Info: ------End Effective Green Time of Stage 4: 68.000000
+Info_ID: 72| Info_Type: MSG 	| Info: --Step 2.9: Calculate capacity and ratio V/C
+Info_ID: 73| Info_Type: OUT 	| Info: ----a. Capacity of Stage_1 and Movement_EBL: 306.000000
+Info_ID: 74| Info_Type: OUT 	| Info: ----b. V/C of Stage_1 and Movement_EBL: 1.307190
+Info_ID: 75| Info_Type: OUT 	| Info: ----a. Capacity of Stage_1 and Movement_WBL: 306.000000
+Info_ID: 76| Info_Type: OUT 	| Info: ----b. V/C of Stage_1 and Movement_WBL: 1.307190
+Info_ID: 77| Info_Type: OUT 	| Info: ----a. Capacity of Stage_2 and Movement_EBT: 561.000000
+Info_ID: 78| Info_Type: OUT 	| Info: ----b. V/C of Stage_2 and Movement_EBT: 0.713012
+Info_ID: 79| Info_Type: OUT 	| Info: ----a. Capacity of Stage_2 and Movement_EBR: 561.000000
+Info_ID: 80| Info_Type: OUT 	| Info: ----b. V/C of Stage_2 and Movement_EBR: 0.713012
+Info_ID: 81| Info_Type: OUT 	| Info: ----a. Capacity of Stage_2 and Movement_WBT: 561.000000
+Info_ID: 82| Info_Type: OUT 	| Info: ----b. V/C of Stage_2 and Movement_WBT: 0.713012
+Info_ID: 83| Info_Type: OUT 	| Info: ----a. Capacity of Stage_2 and Movement_WBR: 561.000000
+Info_ID: 84| Info_Type: OUT 	| Info: ----b. V/C of Stage_2 and Movement_WBR: 0.713012
+Info_ID: 85| Info_Type: OUT 	| Info: ----a. Capacity of Stage_3 and Movement_NBL: 306.000000
+Info_ID: 86| Info_Type: OUT 	| Info: ----b. V/C of Stage_3 and Movement_NBL: 1.307190
+Info_ID: 87| Info_Type: OUT 	| Info: ----a. Capacity of Stage_3 and Movement_SBL: 306.000000
+Info_ID: 88| Info_Type: OUT 	| Info: ----b. V/C of Stage_3 and Movement_SBL: 1.307190
+Info_ID: 89| Info_Type: OUT 	| Info: ----a. Capacity of Stage_4 and Movement_NBT: 1122.000000
+Info_ID: 90| Info_Type: OUT 	| Info: ----b. V/C of Stage_4 and Movement_NBT: 0.356506
+Info_ID: 91| Info_Type: OUT 	| Info: ----a. Capacity of Stage_4 and Movement_NBR: 561.000000
+Info_ID: 92| Info_Type: OUT 	| Info: ----b. V/C of Stage_4 and Movement_NBR: 0.713012
+Info_ID: 93| Info_Type: OUT 	| Info: ----a. Capacity of Stage_4 and Movement_SBT: 561.000000
+Info_ID: 94| Info_Type: OUT 	| Info: ----b. V/C of Stage_4 and Movement_SBT: 0.713012
+Info_ID: 95| Info_Type: OUT 	| Info: ----a. Capacity of Stage_4 and Movement_SBR: 561.000000
+Info_ID: 96| Info_Type: OUT 	| Info: ----b. V/C of Stage_4 and Movement_SBR: 0.713012
+Info_ID: 97| Info_Type: MSG 	| Info: --Step 2.10: Calculate Signal Delay
+Info_ID: 98| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_1 and Movement_EBL: 132.581947
+Info_ID: 99| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_1 and Movement_WBL: 132.581947
+Info_ID: 100| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_2 and Movement_EBT: 152.338805
+Info_ID: 101| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_2 and Movement_EBR: 152.338805
+Info_ID: 102| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_2 and Movement_WBT: 152.338805
+Info_ID: 103| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_2 and Movement_WBR: 152.338805
+Info_ID: 104| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_3 and Movement_NBL: 132.581947
+Info_ID: 105| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_3 and Movement_SBL: 132.581947
+Info_ID: 106| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_4 and Movement_NBT: 258.861429
+Info_ID: 107| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_4 and Movement_NBR: 152.338805
+Info_ID: 108| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_4 and Movement_SBT: 152.338805
+Info_ID: 109| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_4 and Movement_SBR: 152.338805
+Info_ID: 110| Info_Type: OUT 	| Info: ----Average Delay of Approach_E: 145.753186
+Info_ID: 111| Info_Type: OUT 	| Info: ----Average Delay of Approach_W: 145.753186
+Info_ID: 112| Info_Type: OUT 	| Info: ----Average Delay of Approach_N: 181.260727
+Info_ID: 113| Info_Type: OUT 	| Info: ----Average Delay of Approach_S: 145.753186
+Info_ID: 114| Info_Type: OUT 	| Info: ----Total Delay of Intersection_NodeID_1: 742224.341340
+Info_ID: 115| Info_Type: OUT 	| Info: ----Average Delay of Intersection_NodeID_1: 154.630071
+Info_ID: 116| Info_Type: MSG 	| Info: --Step 2.11: Judge LOS
+Info_ID: 117| Info_Type: OUT 	| Info: ----LOS of Intersection_NodeID_1: F
+Info_ID: 118| Info_Type: MSG 	| Info: +++++++++++++++End Signal Node ID 1:
+Info_ID: 119| Info_Type: MSG 	| Info: +++++++++++++++Start Signal Node ID 2:
+Info_ID: 120| Info_Type: MSG 	| Info: Step 2: Perform QEM
+Info_ID: 121| Info_Type: MSG 	| Info: --Step 2.1: Set Left Turn Treatments
+Info_ID: 122| Info_Type: OUT 	| Info: ----Left Turn Treatment of Movement_EBL: Protected
+Info_ID: 123| Info_Type: OUT 	| Info: ----Left Turn Treatment of Movement_WBL: Protected
+Info_ID: 124| Info_Type: OUT 	| Info: ----Left Turn Treatment of Movement_NBL: Protected
+Info_ID: 125| Info_Type: OUT 	| Info: ----Left Turn Treatment of Movement_SBL: Protected
+Info_ID: 126| Info_Type: MSG 	| Info: --Step 2.2: Set StageNos
+Info_ID: 127| Info_Type: OUT 	| Info: ----Number of Stages: 4
+Info_ID: 128| Info_Type: MSG 	| Info: ----Main Approaches: E & W
+Info_ID: 129| Info_Type: OUT 	| Info: ------StageNo of Movement_EBL: Stage_1
+Info_ID: 130| Info_Type: OUT 	| Info: ------StageNo of Movement_EBT: Stage_2
+Info_ID: 131| Info_Type: OUT 	| Info: ------StageNo of Movement_EBR: Stage_2
+Info_ID: 132| Info_Type: OUT 	| Info: ------StageNo of Movement_WBL: Stage_1
+Info_ID: 133| Info_Type: OUT 	| Info: ------StageNo of Movement_WBT: Stage_2
+Info_ID: 134| Info_Type: OUT 	| Info: ------StageNo of Movement_WBR: Stage_2
+Info_ID: 135| Info_Type: OUT 	| Info: ------StageNo of Movement_NBL: Stage_3
+Info_ID: 136| Info_Type: OUT 	| Info: ------StageNo of Movement_NBT: Stage_4
+Info_ID: 137| Info_Type: OUT 	| Info: ------StageNo of Movement_NBR: Stage_4
+Info_ID: 138| Info_Type: OUT 	| Info: ------StageNo of Movement_SBL: Stage_3
+Info_ID: 139| Info_Type: OUT 	| Info: ------StageNo of Movement_SBT: Stage_4
+Info_ID: 140| Info_Type: OUT 	| Info: ------StageNo of Movement_SBR: Stage_4
+Info_ID: 141| Info_Type: MSG 	| Info: --Step 2.3: Set Saturation Flow Rate Matrix
+Info_ID: 142| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_EBL and Stage_1: 1530.000000
+Info_ID: 143| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_EBT and Stage_2: 1530.000000
+Info_ID: 144| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_EBR and Stage_2: 1530.000000
+Info_ID: 145| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_WBL and Stage_1: 1530.000000
+Info_ID: 146| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_WBT and Stage_2: 1530.000000
+Info_ID: 147| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_WBR and Stage_2: 1530.000000
+Info_ID: 148| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_NBL and Stage_3: 1530.000000
+Info_ID: 149| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_NBT and Stage_4: 1530.000000
+Info_ID: 150| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_NBR and Stage_4: 1530.000000
+Info_ID: 151| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_SBL and Stage_3: 1530.000000
+Info_ID: 152| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_SBT and Stage_4: 1530.000000
+Info_ID: 153| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_SBR and Stage_4: 1530.000000
+Info_ID: 154| Info_Type: MSG 	| Info: --Step 2.4: Calculate Flow Ratio
+Info_ID: 155| Info_Type: OUT 	| Info: ----Max y Value: 1.568627
+Info_ID: 156| Info_Type: MSG 	| Info: --Step 2.5: Calculate Total Cycle Lost Time
+Info_ID: 157| Info_Type: OUT 	| Info: ----Total Cycle Lost Time: 16.000000
+Info_ID: 158| Info_Type: MSG 	| Info: --Step 2.6: Calculate the Minimum and Optimal Cycle Length
+Info_ID: 159| Info_Type: OUT 	| Info: ----Min Cycle Length: 60.000000
+Info_ID: 160| Info_Type: OUT 	| Info: ----Optimal Cycle Length: 60.000000
+Info_ID: 161| Info_Type: MSG 	| Info: --Step 2.7: Recalculate xc
+Info_ID: 162| Info_Type: OUT 	| Info: ----Recalculated xc: 2.139037
+Info_ID: 163| Info_Type: MSG 	| Info: --Step 2.8: Timing for Stages
+Info_ID: 164| Info_Type: OUT 	| Info: ----Green Time of Stage 1: 10.000000
+Info_ID: 165| Info_Type: OUT 	| Info: ------Start Green Time of Stage 1: 0.000000
+Info_ID: 166| Info_Type: OUT 	| Info: ------End Green Time of Stage 1: 10.000000
+Info_ID: 167| Info_Type: OUT 	| Info: ----Green Time of Stage 2: 20.000000
+Info_ID: 168| Info_Type: OUT 	| Info: ------Start Green Time of Stage 2: 10.000000
+Info_ID: 169| Info_Type: OUT 	| Info: ------End Green Time of Stage 2: 30.000000
+Info_ID: 170| Info_Type: OUT 	| Info: ----Green Time of Stage 3: 10.000000
+Info_ID: 171| Info_Type: OUT 	| Info: ------Start Green Time of Stage 3: 30.000000
+Info_ID: 172| Info_Type: OUT 	| Info: ------End Green Time of Stage 3: 40.000000
+Info_ID: 173| Info_Type: OUT 	| Info: ----Green Time of Stage 4: 20.000000
+Info_ID: 174| Info_Type: OUT 	| Info: ------Start Green Time of Stage 4: 40.000000
+Info_ID: 175| Info_Type: OUT 	| Info: ------End Green Time of Stage 4: 60.000000
+Info_ID: 176| Info_Type: OUT 	| Info: ----Effective Green Time of Stage 1: 12.000000
+Info_ID: 177| Info_Type: OUT 	| Info: ------Start Effective Green Time of Stage 1: 0.000000
+Info_ID: 178| Info_Type: OUT 	| Info: ------End Effective Green Time of Stage 1: 12.000000
+Info_ID: 179| Info_Type: OUT 	| Info: ----Effective Green Time of Stage 2: 22.000000
+Info_ID: 180| Info_Type: OUT 	| Info: ------Start Effective Green Time of Stage 2: 12.000000
+Info_ID: 181| Info_Type: OUT 	| Info: ------End Effective Green Time of Stage 2: 34.000000
+Info_ID: 182| Info_Type: OUT 	| Info: ----Effective Green Time of Stage 3: 12.000000
+Info_ID: 183| Info_Type: OUT 	| Info: ------Start Effective Green Time of Stage 3: 34.000000
+Info_ID: 184| Info_Type: OUT 	| Info: ------End Effective Green Time of Stage 3: 46.000000
+Info_ID: 185| Info_Type: OUT 	| Info: ----Effective Green Time of Stage 4: 22.000000
+Info_ID: 186| Info_Type: OUT 	| Info: ------Start Effective Green Time of Stage 4: 46.000000
+Info_ID: 187| Info_Type: OUT 	| Info: ------End Effective Green Time of Stage 4: 68.000000
+Info_ID: 188| Info_Type: MSG 	| Info: --Step 2.9: Calculate capacity and ratio V/C
+Info_ID: 189| Info_Type: OUT 	| Info: ----a. Capacity of Stage_1 and Movement_EBL: 306.000000
+Info_ID: 190| Info_Type: OUT 	| Info: ----b. V/C of Stage_1 and Movement_EBL: 1.307190
+Info_ID: 191| Info_Type: OUT 	| Info: ----a. Capacity of Stage_1 and Movement_WBL: 306.000000
+Info_ID: 192| Info_Type: OUT 	| Info: ----b. V/C of Stage_1 and Movement_WBL: 1.307190
+Info_ID: 193| Info_Type: OUT 	| Info: ----a. Capacity of Stage_2 and Movement_EBT: 561.000000
+Info_ID: 194| Info_Type: OUT 	| Info: ----b. V/C of Stage_2 and Movement_EBT: 0.713012
+Info_ID: 195| Info_Type: OUT 	| Info: ----a. Capacity of Stage_2 and Movement_EBR: 561.000000
+Info_ID: 196| Info_Type: OUT 	| Info: ----b. V/C of Stage_2 and Movement_EBR: 0.713012
+Info_ID: 197| Info_Type: OUT 	| Info: ----a. Capacity of Stage_2 and Movement_WBT: 561.000000
+Info_ID: 198| Info_Type: OUT 	| Info: ----b. V/C of Stage_2 and Movement_WBT: 0.713012
+Info_ID: 199| Info_Type: OUT 	| Info: ----a. Capacity of Stage_2 and Movement_WBR: 561.000000
+Info_ID: 200| Info_Type: OUT 	| Info: ----b. V/C of Stage_2 and Movement_WBR: 0.713012
+Info_ID: 201| Info_Type: OUT 	| Info: ----a. Capacity of Stage_3 and Movement_NBL: 306.000000
+Info_ID: 202| Info_Type: OUT 	| Info: ----b. V/C of Stage_3 and Movement_NBL: 1.307190
+Info_ID: 203| Info_Type: OUT 	| Info: ----a. Capacity of Stage_3 and Movement_SBL: 306.000000
+Info_ID: 204| Info_Type: OUT 	| Info: ----b. V/C of Stage_3 and Movement_SBL: 1.307190
+Info_ID: 205| Info_Type: OUT 	| Info: ----a. Capacity of Stage_4 and Movement_NBT: 561.000000
+Info_ID: 206| Info_Type: OUT 	| Info: ----b. V/C of Stage_4 and Movement_NBT: 0.713012
+Info_ID: 207| Info_Type: OUT 	| Info: ----a. Capacity of Stage_4 and Movement_NBR: 561.000000
+Info_ID: 208| Info_Type: OUT 	| Info: ----b. V/C of Stage_4 and Movement_NBR: 0.713012
+Info_ID: 209| Info_Type: OUT 	| Info: ----a. Capacity of Stage_4 and Movement_SBT: 561.000000
+Info_ID: 210| Info_Type: OUT 	| Info: ----b. V/C of Stage_4 and Movement_SBT: 0.713012
+Info_ID: 211| Info_Type: OUT 	| Info: ----a. Capacity of Stage_4 and Movement_SBR: 561.000000
+Info_ID: 212| Info_Type: OUT 	| Info: ----b. V/C of Stage_4 and Movement_SBR: 0.713012
+Info_ID: 213| Info_Type: MSG 	| Info: --Step 2.10: Calculate Signal Delay
+Info_ID: 214| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_1 and Movement_EBL: 132.581947
+Info_ID: 215| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_1 and Movement_WBL: 132.581947
+Info_ID: 216| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_2 and Movement_EBT: 152.338805
+Info_ID: 217| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_2 and Movement_EBR: 152.338805
+Info_ID: 218| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_2 and Movement_WBT: 152.338805
+Info_ID: 219| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_2 and Movement_WBR: 152.338805
+Info_ID: 220| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_3 and Movement_NBL: 132.581947
+Info_ID: 221| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_3 and Movement_SBL: 132.581947
+Info_ID: 222| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_4 and Movement_NBT: 152.338805
+Info_ID: 223| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_4 and Movement_NBR: 152.338805
+Info_ID: 224| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_4 and Movement_SBT: 152.338805
+Info_ID: 225| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_4 and Movement_SBR: 152.338805
+Info_ID: 226| Info_Type: OUT 	| Info: ----Average Delay of Approach_E: 145.753186
+Info_ID: 227| Info_Type: OUT 	| Info: ----Average Delay of Approach_W: 145.753186
+Info_ID: 228| Info_Type: OUT 	| Info: ----Average Delay of Approach_N: 145.753186
+Info_ID: 229| Info_Type: OUT 	| Info: ----Average Delay of Approach_S: 145.753186
+Info_ID: 230| Info_Type: OUT 	| Info: ----Total Delay of Intersection_NodeID_2: 699615.292035
+Info_ID: 231| Info_Type: OUT 	| Info: ----Average Delay of Intersection_NodeID_2: 145.753186
+Info_ID: 232| Info_Type: MSG 	| Info: --Step 2.11: Judge LOS
+Info_ID: 233| Info_Type: OUT 	| Info: ----LOS of Intersection_NodeID_2: F
+Info_ID: 234| Info_Type: MSG 	| Info: +++++++++++++++End Signal Node ID 2:
+Logging Time: 2020/8/6_14:38:22:254---------------------------------------
+Info_ID: 0| Info_Type: MSG 	| Info: Step 1: Reading file demand_period.csv...
+Info_ID: 1| Info_Type: MSG 	| Info: --Number of Nodes = 104
+Info_ID: 2| Info_Type: MSG 	| Info: --Number of Links = 140
+Info_ID: 3| Info_Type: MSG 	| Info: +++++++++++++++Start Signal Node ID 1:
+Info_ID: 4| Info_Type: MSG 	| Info: Step 2: Perform QEM
+Info_ID: 5| Info_Type: MSG 	| Info: --Step 2.1: Set Left Turn Treatments
+Info_ID: 6| Info_Type: OUT 	| Info: ----Left Turn Treatment of Movement_EBL: Protected
+Info_ID: 7| Info_Type: OUT 	| Info: ----Left Turn Treatment of Movement_WBL: Protected
+Info_ID: 8| Info_Type: OUT 	| Info: ----Left Turn Treatment of Movement_NBL: Protected
+Info_ID: 9| Info_Type: OUT 	| Info: ----Left Turn Treatment of Movement_SBL: Protected
+Info_ID: 10| Info_Type: MSG 	| Info: --Step 2.2: Set StageNos
+Info_ID: 11| Info_Type: OUT 	| Info: ----Number of Stages: 4
+Info_ID: 12| Info_Type: MSG 	| Info: ----Main Approaches: E & W
+Info_ID: 13| Info_Type: OUT 	| Info: ------StageNo of Movement_EBL: Stage_1
+Info_ID: 14| Info_Type: OUT 	| Info: ------StageNo of Movement_EBT: Stage_2
+Info_ID: 15| Info_Type: OUT 	| Info: ------StageNo of Movement_EBR: Stage_2
+Info_ID: 16| Info_Type: OUT 	| Info: ------StageNo of Movement_WBL: Stage_1
+Info_ID: 17| Info_Type: OUT 	| Info: ------StageNo of Movement_WBT: Stage_2
+Info_ID: 18| Info_Type: OUT 	| Info: ------StageNo of Movement_WBR: Stage_2
+Info_ID: 19| Info_Type: OUT 	| Info: ------StageNo of Movement_NBL: Stage_3
+Info_ID: 20| Info_Type: OUT 	| Info: ------StageNo of Movement_NBT: Stage_4
+Info_ID: 21| Info_Type: OUT 	| Info: ------StageNo of Movement_NBR: Stage_4
+Info_ID: 22| Info_Type: OUT 	| Info: ------StageNo of Movement_SBL: Stage_3
+Info_ID: 23| Info_Type: OUT 	| Info: ------StageNo of Movement_SBT: Stage_4
+Info_ID: 24| Info_Type: OUT 	| Info: ------StageNo of Movement_SBR: Stage_4
+Info_ID: 25| Info_Type: MSG 	| Info: --Step 2.3: Set Saturation Flow Rate Matrix
+Info_ID: 26| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_EBL and Stage_1: 1530.000000
+Info_ID: 27| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_EBT and Stage_2: 1530.000000
+Info_ID: 28| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_EBR and Stage_2: 1530.000000
+Info_ID: 29| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_WBL and Stage_1: 1530.000000
+Info_ID: 30| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_WBT and Stage_2: 1530.000000
+Info_ID: 31| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_WBR and Stage_2: 1530.000000
+Info_ID: 32| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_NBL and Stage_3: 1530.000000
+Info_ID: 33| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_NBT and Stage_4: 3060.000000
+Info_ID: 34| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_NBR and Stage_4: 1530.000000
+Info_ID: 35| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_SBL and Stage_3: 1530.000000
+Info_ID: 36| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_SBT and Stage_4: 1530.000000
+Info_ID: 37| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_SBR and Stage_4: 1530.000000
+Info_ID: 38| Info_Type: MSG 	| Info: --Step 2.4: Calculate Flow Ratio
+Info_ID: 39| Info_Type: OUT 	| Info: ----Max y Value: 1.568627
+Info_ID: 40| Info_Type: MSG 	| Info: --Step 2.5: Calculate Total Cycle Lost Time
+Info_ID: 41| Info_Type: OUT 	| Info: ----Total Cycle Lost Time: 16.000000
+Info_ID: 42| Info_Type: MSG 	| Info: --Step 2.6: Calculate the Minimum and Optimal Cycle Length
+Info_ID: 43| Info_Type: OUT 	| Info: ----Min Cycle Length: 60.000000
+Info_ID: 44| Info_Type: OUT 	| Info: ----Optimal Cycle Length: 60.000000
+Info_ID: 45| Info_Type: MSG 	| Info: --Step 2.7: Recalculate xc
+Info_ID: 46| Info_Type: OUT 	| Info: ----Recalculated xc: 2.139037
+Info_ID: 47| Info_Type: MSG 	| Info: --Step 2.8: Timing for Stages
+Info_ID: 48| Info_Type: OUT 	| Info: ----Green Time of Stage 1: 10.000000
+Info_ID: 49| Info_Type: OUT 	| Info: ------Start Green Time of Stage 1: 0.000000
+Info_ID: 50| Info_Type: OUT 	| Info: ------End Green Time of Stage 1: 10.000000
+Info_ID: 51| Info_Type: OUT 	| Info: ----Green Time of Stage 2: 20.000000
+Info_ID: 52| Info_Type: OUT 	| Info: ------Start Green Time of Stage 2: 10.000000
+Info_ID: 53| Info_Type: OUT 	| Info: ------End Green Time of Stage 2: 30.000000
+Info_ID: 54| Info_Type: OUT 	| Info: ----Green Time of Stage 3: 10.000000
+Info_ID: 55| Info_Type: OUT 	| Info: ------Start Green Time of Stage 3: 30.000000
+Info_ID: 56| Info_Type: OUT 	| Info: ------End Green Time of Stage 3: 40.000000
+Info_ID: 57| Info_Type: OUT 	| Info: ----Green Time of Stage 4: 20.000000
+Info_ID: 58| Info_Type: OUT 	| Info: ------Start Green Time of Stage 4: 40.000000
+Info_ID: 59| Info_Type: OUT 	| Info: ------End Green Time of Stage 4: 60.000000
+Info_ID: 60| Info_Type: OUT 	| Info: ----Effective Green Time of Stage 1: 12.000000
+Info_ID: 61| Info_Type: OUT 	| Info: ------Start Effective Green Time of Stage 1: 0.000000
+Info_ID: 62| Info_Type: OUT 	| Info: ------End Effective Green Time of Stage 1: 12.000000
+Info_ID: 63| Info_Type: OUT 	| Info: ----Effective Green Time of Stage 2: 22.000000
+Info_ID: 64| Info_Type: OUT 	| Info: ------Start Effective Green Time of Stage 2: 12.000000
+Info_ID: 65| Info_Type: OUT 	| Info: ------End Effective Green Time of Stage 2: 34.000000
+Info_ID: 66| Info_Type: OUT 	| Info: ----Effective Green Time of Stage 3: 12.000000
+Info_ID: 67| Info_Type: OUT 	| Info: ------Start Effective Green Time of Stage 3: 34.000000
+Info_ID: 68| Info_Type: OUT 	| Info: ------End Effective Green Time of Stage 3: 46.000000
+Info_ID: 69| Info_Type: OUT 	| Info: ----Effective Green Time of Stage 4: 22.000000
+Info_ID: 70| Info_Type: OUT 	| Info: ------Start Effective Green Time of Stage 4: 46.000000
+Info_ID: 71| Info_Type: OUT 	| Info: ------End Effective Green Time of Stage 4: 68.000000
+Info_ID: 72| Info_Type: MSG 	| Info: --Step 2.9: Calculate capacity and ratio V/C
+Info_ID: 73| Info_Type: OUT 	| Info: ----a. Capacity of Stage_1 and Movement_EBL: 306.000000
+Info_ID: 74| Info_Type: OUT 	| Info: ----b. V/C of Stage_1 and Movement_EBL: 1.307190
+Info_ID: 75| Info_Type: OUT 	| Info: ----a. Capacity of Stage_1 and Movement_WBL: 306.000000
+Info_ID: 76| Info_Type: OUT 	| Info: ----b. V/C of Stage_1 and Movement_WBL: 1.307190
+Info_ID: 77| Info_Type: OUT 	| Info: ----a. Capacity of Stage_2 and Movement_EBT: 561.000000
+Info_ID: 78| Info_Type: OUT 	| Info: ----b. V/C of Stage_2 and Movement_EBT: 0.713012
+Info_ID: 79| Info_Type: OUT 	| Info: ----a. Capacity of Stage_2 and Movement_EBR: 561.000000
+Info_ID: 80| Info_Type: OUT 	| Info: ----b. V/C of Stage_2 and Movement_EBR: 0.713012
+Info_ID: 81| Info_Type: OUT 	| Info: ----a. Capacity of Stage_2 and Movement_WBT: 561.000000
+Info_ID: 82| Info_Type: OUT 	| Info: ----b. V/C of Stage_2 and Movement_WBT: 0.713012
+Info_ID: 83| Info_Type: OUT 	| Info: ----a. Capacity of Stage_2 and Movement_WBR: 561.000000
+Info_ID: 84| Info_Type: OUT 	| Info: ----b. V/C of Stage_2 and Movement_WBR: 0.713012
+Info_ID: 85| Info_Type: OUT 	| Info: ----a. Capacity of Stage_3 and Movement_NBL: 306.000000
+Info_ID: 86| Info_Type: OUT 	| Info: ----b. V/C of Stage_3 and Movement_NBL: 1.307190
+Info_ID: 87| Info_Type: OUT 	| Info: ----a. Capacity of Stage_3 and Movement_SBL: 306.000000
+Info_ID: 88| Info_Type: OUT 	| Info: ----b. V/C of Stage_3 and Movement_SBL: 1.307190
+Info_ID: 89| Info_Type: OUT 	| Info: ----a. Capacity of Stage_4 and Movement_NBT: 1122.000000
+Info_ID: 90| Info_Type: OUT 	| Info: ----b. V/C of Stage_4 and Movement_NBT: 0.356506
+Info_ID: 91| Info_Type: OUT 	| Info: ----a. Capacity of Stage_4 and Movement_NBR: 561.000000
+Info_ID: 92| Info_Type: OUT 	| Info: ----b. V/C of Stage_4 and Movement_NBR: 0.713012
+Info_ID: 93| Info_Type: OUT 	| Info: ----a. Capacity of Stage_4 and Movement_SBT: 561.000000
+Info_ID: 94| Info_Type: OUT 	| Info: ----b. V/C of Stage_4 and Movement_SBT: 0.713012
+Info_ID: 95| Info_Type: OUT 	| Info: ----a. Capacity of Stage_4 and Movement_SBR: 561.000000
+Info_ID: 96| Info_Type: OUT 	| Info: ----b. V/C of Stage_4 and Movement_SBR: 0.713012
+Info_ID: 97| Info_Type: MSG 	| Info: --Step 2.10: Calculate Signal Delay
+Info_ID: 98| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_1 and Movement_EBL: 132.581947
+Info_ID: 99| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_1 and Movement_WBL: 132.581947
+Info_ID: 100| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_2 and Movement_EBT: 152.338805
+Info_ID: 101| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_2 and Movement_EBR: 152.338805
+Info_ID: 102| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_2 and Movement_WBT: 152.338805
+Info_ID: 103| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_2 and Movement_WBR: 152.338805
+Info_ID: 104| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_3 and Movement_NBL: 132.581947
+Info_ID: 105| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_3 and Movement_SBL: 132.581947
+Info_ID: 106| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_4 and Movement_NBT: 258.861429
+Info_ID: 107| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_4 and Movement_NBR: 152.338805
+Info_ID: 108| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_4 and Movement_SBT: 152.338805
+Info_ID: 109| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_4 and Movement_SBR: 152.338805
+Info_ID: 110| Info_Type: OUT 	| Info: ----Average Delay of Approach_E: 145.753186
+Info_ID: 111| Info_Type: OUT 	| Info: ----Average Delay of Approach_W: 145.753186
+Info_ID: 112| Info_Type: OUT 	| Info: ----Average Delay of Approach_N: 181.260727
+Info_ID: 113| Info_Type: OUT 	| Info: ----Average Delay of Approach_S: 145.753186
+Info_ID: 114| Info_Type: OUT 	| Info: ----Total Delay of Intersection_NodeID_1: 742224.341340
+Info_ID: 115| Info_Type: OUT 	| Info: ----Average Delay of Intersection_NodeID_1: 154.630071
+Info_ID: 116| Info_Type: MSG 	| Info: --Step 2.11: Judge LOS
+Info_ID: 117| Info_Type: OUT 	| Info: ----LOS of Intersection_NodeID_1: F
+Info_ID: 118| Info_Type: MSG 	| Info: +++++++++++++++End Signal Node ID 1:
+Info_ID: 119| Info_Type: MSG 	| Info: +++++++++++++++Start Signal Node ID 2:
+Info_ID: 120| Info_Type: MSG 	| Info: Step 2: Perform QEM
+Info_ID: 121| Info_Type: MSG 	| Info: --Step 2.1: Set Left Turn Treatments
+Info_ID: 122| Info_Type: OUT 	| Info: ----Left Turn Treatment of Movement_EBL: Protected
+Info_ID: 123| Info_Type: OUT 	| Info: ----Left Turn Treatment of Movement_WBL: Protected
+Info_ID: 124| Info_Type: OUT 	| Info: ----Left Turn Treatment of Movement_NBL: Protected
+Info_ID: 125| Info_Type: OUT 	| Info: ----Left Turn Treatment of Movement_SBL: Protected
+Info_ID: 126| Info_Type: MSG 	| Info: --Step 2.2: Set StageNos
+Info_ID: 127| Info_Type: OUT 	| Info: ----Number of Stages: 4
+Info_ID: 128| Info_Type: MSG 	| Info: ----Main Approaches: E & W
+Info_ID: 129| Info_Type: OUT 	| Info: ------StageNo of Movement_EBL: Stage_1
+Info_ID: 130| Info_Type: OUT 	| Info: ------StageNo of Movement_EBT: Stage_2
+Info_ID: 131| Info_Type: OUT 	| Info: ------StageNo of Movement_EBR: Stage_2
+Info_ID: 132| Info_Type: OUT 	| Info: ------StageNo of Movement_WBL: Stage_1
+Info_ID: 133| Info_Type: OUT 	| Info: ------StageNo of Movement_WBT: Stage_2
+Info_ID: 134| Info_Type: OUT 	| Info: ------StageNo of Movement_WBR: Stage_2
+Info_ID: 135| Info_Type: OUT 	| Info: ------StageNo of Movement_NBL: Stage_3
+Info_ID: 136| Info_Type: OUT 	| Info: ------StageNo of Movement_NBT: Stage_4
+Info_ID: 137| Info_Type: OUT 	| Info: ------StageNo of Movement_NBR: Stage_4
+Info_ID: 138| Info_Type: OUT 	| Info: ------StageNo of Movement_SBL: Stage_3
+Info_ID: 139| Info_Type: OUT 	| Info: ------StageNo of Movement_SBT: Stage_4
+Info_ID: 140| Info_Type: OUT 	| Info: ------StageNo of Movement_SBR: Stage_4
+Info_ID: 141| Info_Type: MSG 	| Info: --Step 2.3: Set Saturation Flow Rate Matrix
+Info_ID: 142| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_EBL and Stage_1: 1530.000000
+Info_ID: 143| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_EBT and Stage_2: 1530.000000
+Info_ID: 144| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_EBR and Stage_2: 1530.000000
+Info_ID: 145| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_WBL and Stage_1: 1530.000000
+Info_ID: 146| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_WBT and Stage_2: 1530.000000
+Info_ID: 147| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_WBR and Stage_2: 1530.000000
+Info_ID: 148| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_NBL and Stage_3: 1530.000000
+Info_ID: 149| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_NBT and Stage_4: 1530.000000
+Info_ID: 150| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_NBR and Stage_4: 1530.000000
+Info_ID: 151| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_SBL and Stage_3: 1530.000000
+Info_ID: 152| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_SBT and Stage_4: 1530.000000
+Info_ID: 153| Info_Type: OUT 	| Info: ----Saturation Flow Rate of Movement_SBR and Stage_4: 1530.000000
+Info_ID: 154| Info_Type: MSG 	| Info: --Step 2.4: Calculate Flow Ratio
+Info_ID: 155| Info_Type: OUT 	| Info: ----Max y Value: 1.568627
+Info_ID: 156| Info_Type: MSG 	| Info: --Step 2.5: Calculate Total Cycle Lost Time
+Info_ID: 157| Info_Type: OUT 	| Info: ----Total Cycle Lost Time: 16.000000
+Info_ID: 158| Info_Type: MSG 	| Info: --Step 2.6: Calculate the Minimum and Optimal Cycle Length
+Info_ID: 159| Info_Type: OUT 	| Info: ----Min Cycle Length: 60.000000
+Info_ID: 160| Info_Type: OUT 	| Info: ----Optimal Cycle Length: 60.000000
+Info_ID: 161| Info_Type: MSG 	| Info: --Step 2.7: Recalculate xc
+Info_ID: 162| Info_Type: OUT 	| Info: ----Recalculated xc: 2.139037
+Info_ID: 163| Info_Type: MSG 	| Info: --Step 2.8: Timing for Stages
+Info_ID: 164| Info_Type: OUT 	| Info: ----Green Time of Stage 1: 10.000000
+Info_ID: 165| Info_Type: OUT 	| Info: ------Start Green Time of Stage 1: 0.000000
+Info_ID: 166| Info_Type: OUT 	| Info: ------End Green Time of Stage 1: 10.000000
+Info_ID: 167| Info_Type: OUT 	| Info: ----Green Time of Stage 2: 20.000000
+Info_ID: 168| Info_Type: OUT 	| Info: ------Start Green Time of Stage 2: 10.000000
+Info_ID: 169| Info_Type: OUT 	| Info: ------End Green Time of Stage 2: 30.000000
+Info_ID: 170| Info_Type: OUT 	| Info: ----Green Time of Stage 3: 10.000000
+Info_ID: 171| Info_Type: OUT 	| Info: ------Start Green Time of Stage 3: 30.000000
+Info_ID: 172| Info_Type: OUT 	| Info: ------End Green Time of Stage 3: 40.000000
+Info_ID: 173| Info_Type: OUT 	| Info: ----Green Time of Stage 4: 20.000000
+Info_ID: 174| Info_Type: OUT 	| Info: ------Start Green Time of Stage 4: 40.000000
+Info_ID: 175| Info_Type: OUT 	| Info: ------End Green Time of Stage 4: 60.000000
+Info_ID: 176| Info_Type: OUT 	| Info: ----Effective Green Time of Stage 1: 12.000000
+Info_ID: 177| Info_Type: OUT 	| Info: ------Start Effective Green Time of Stage 1: 0.000000
+Info_ID: 178| Info_Type: OUT 	| Info: ------End Effective Green Time of Stage 1: 12.000000
+Info_ID: 179| Info_Type: OUT 	| Info: ----Effective Green Time of Stage 2: 22.000000
+Info_ID: 180| Info_Type: OUT 	| Info: ------Start Effective Green Time of Stage 2: 12.000000
+Info_ID: 181| Info_Type: OUT 	| Info: ------End Effective Green Time of Stage 2: 34.000000
+Info_ID: 182| Info_Type: OUT 	| Info: ----Effective Green Time of Stage 3: 12.000000
+Info_ID: 183| Info_Type: OUT 	| Info: ------Start Effective Green Time of Stage 3: 34.000000
+Info_ID: 184| Info_Type: OUT 	| Info: ------End Effective Green Time of Stage 3: 46.000000
+Info_ID: 185| Info_Type: OUT 	| Info: ----Effective Green Time of Stage 4: 22.000000
+Info_ID: 186| Info_Type: OUT 	| Info: ------Start Effective Green Time of Stage 4: 46.000000
+Info_ID: 187| Info_Type: OUT 	| Info: ------End Effective Green Time of Stage 4: 68.000000
+Info_ID: 188| Info_Type: MSG 	| Info: --Step 2.9: Calculate capacity and ratio V/C
+Info_ID: 189| Info_Type: OUT 	| Info: ----a. Capacity of Stage_1 and Movement_EBL: 306.000000
+Info_ID: 190| Info_Type: OUT 	| Info: ----b. V/C of Stage_1 and Movement_EBL: 1.307190
+Info_ID: 191| Info_Type: OUT 	| Info: ----a. Capacity of Stage_1 and Movement_WBL: 306.000000
+Info_ID: 192| Info_Type: OUT 	| Info: ----b. V/C of Stage_1 and Movement_WBL: 1.307190
+Info_ID: 193| Info_Type: OUT 	| Info: ----a. Capacity of Stage_2 and Movement_EBT: 561.000000
+Info_ID: 194| Info_Type: OUT 	| Info: ----b. V/C of Stage_2 and Movement_EBT: 0.713012
+Info_ID: 195| Info_Type: OUT 	| Info: ----a. Capacity of Stage_2 and Movement_EBR: 561.000000
+Info_ID: 196| Info_Type: OUT 	| Info: ----b. V/C of Stage_2 and Movement_EBR: 0.713012
+Info_ID: 197| Info_Type: OUT 	| Info: ----a. Capacity of Stage_2 and Movement_WBT: 561.000000
+Info_ID: 198| Info_Type: OUT 	| Info: ----b. V/C of Stage_2 and Movement_WBT: 0.713012
+Info_ID: 199| Info_Type: OUT 	| Info: ----a. Capacity of Stage_2 and Movement_WBR: 561.000000
+Info_ID: 200| Info_Type: OUT 	| Info: ----b. V/C of Stage_2 and Movement_WBR: 0.713012
+Info_ID: 201| Info_Type: OUT 	| Info: ----a. Capacity of Stage_3 and Movement_NBL: 306.000000
+Info_ID: 202| Info_Type: OUT 	| Info: ----b. V/C of Stage_3 and Movement_NBL: 1.307190
+Info_ID: 203| Info_Type: OUT 	| Info: ----a. Capacity of Stage_3 and Movement_SBL: 306.000000
+Info_ID: 204| Info_Type: OUT 	| Info: ----b. V/C of Stage_3 and Movement_SBL: 1.307190
+Info_ID: 205| Info_Type: OUT 	| Info: ----a. Capacity of Stage_4 and Movement_NBT: 561.000000
+Info_ID: 206| Info_Type: OUT 	| Info: ----b. V/C of Stage_4 and Movement_NBT: 0.713012
+Info_ID: 207| Info_Type: OUT 	| Info: ----a. Capacity of Stage_4 and Movement_NBR: 561.000000
+Info_ID: 208| Info_Type: OUT 	| Info: ----b. V/C of Stage_4 and Movement_NBR: 0.713012
+Info_ID: 209| Info_Type: OUT 	| Info: ----a. Capacity of Stage_4 and Movement_SBT: 561.000000
+Info_ID: 210| Info_Type: OUT 	| Info: ----b. V/C of Stage_4 and Movement_SBT: 0.713012
+Info_ID: 211| Info_Type: OUT 	| Info: ----a. Capacity of Stage_4 and Movement_SBR: 561.000000
+Info_ID: 212| Info_Type: OUT 	| Info: ----b. V/C of Stage_4 and Movement_SBR: 0.713012
+Info_ID: 213| Info_Type: MSG 	| Info: --Step 2.10: Calculate Signal Delay
+Info_ID: 214| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_1 and Movement_EBL: 132.581947
+Info_ID: 215| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_1 and Movement_WBL: 132.581947
+Info_ID: 216| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_2 and Movement_EBT: 152.338805
+Info_ID: 217| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_2 and Movement_EBR: 152.338805
+Info_ID: 218| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_2 and Movement_WBT: 152.338805
+Info_ID: 219| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_2 and Movement_WBR: 152.338805
+Info_ID: 220| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_3 and Movement_NBL: 132.581947
+Info_ID: 221| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_3 and Movement_SBL: 132.581947
+Info_ID: 222| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_4 and Movement_NBT: 152.338805
+Info_ID: 223| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_4 and Movement_NBR: 152.338805
+Info_ID: 224| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_4 and Movement_SBT: 152.338805
+Info_ID: 225| Info_Type: OUT 	| Info: ----Average Uniform Delay of Stage_4 and Movement_SBR: 152.338805
+Info_ID: 226| Info_Type: OUT 	| Info: ----Average Delay of Approach_E: 145.753186
+Info_ID: 227| Info_Type: OUT 	| Info: ----Average Delay of Approach_W: 145.753186
+Info_ID: 228| Info_Type: OUT 	| Info: ----Average Delay of Approach_N: 145.753186
+Info_ID: 229| Info_Type: OUT 	| Info: ----Average Delay of Approach_S: 145.753186
+Info_ID: 230| Info_Type: OUT 	| Info: ----Total Delay of Intersection_NodeID_2: 699615.292035
+Info_ID: 231| Info_Type: OUT 	| Info: ----Average Delay of Intersection_NodeID_2: 145.753186
+Info_ID: 232| Info_Type: MSG 	| Info: --Step 2.11: Judge LOS
+Info_ID: 233| Info_Type: OUT 	| Info: ----LOS of Intersection_NodeID_2: F
+Info_ID: 234| Info_Type: MSG 	| Info: +++++++++++++++End Signal Node ID 2:

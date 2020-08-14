@@ -2408,7 +2408,7 @@ void AdjustLinkEndpointsWithSetBack()
 
 
 			//ratio between 0 and 1
-			m_LinkMOEAry[t].QueueLength = min(1.0,number_of_Agents_on_the_link/(max(0.0001, m_Length * m_NumberOfLanes * m_Kjam )));
+			m_LinkMOEAry[t].QueueLength = min(1.0,number_of_Agents_on_the_link/(max(0.0001, m_Length * m_NumberOfLanes * m_Kjam )))*100;
 		}
 
 	}
@@ -2542,7 +2542,7 @@ void AdjustLinkEndpointsWithSetBack()
 		if(t < m_LinkMOEArySize)
 		{
 
-			total_value +=max(0, m_LinkMOEAry[t].QueueLength*100);
+			total_value +=max(0, m_LinkMOEAry[t].QueueLength);
 
 			total_count++;
 			}

@@ -998,8 +998,8 @@ bool CTLiteDoc::ReadSimulationLinkMOEData_Parser(LPCTSTR lpszFileName)
 						parser.GetValueByFieldName("volume", link_volume);
 						parser.GetValueByFieldName("density", density);
 						parser.GetValueByFieldName("speed", speed);
-						//parser.GetValueByFieldName("queue_length", queue_length_percentage);
-						//parser.GetValueByFieldName("number_of_queued_agents", number_of_queued_agents);
+						parser.GetValueByFieldName("queue_percentage", queue_length_percentage);
+						parser.GetValueByFieldName("queue", number_of_queued_agents);
 
 						if (travel_time_in_min < 0.01 && speed>0.1)  // travel time data invalid, but with speed data
 						{
@@ -1031,8 +1031,7 @@ bool CTLiteDoc::ReadSimulationLinkMOEData_Parser(LPCTSTR lpszFileName)
 								pLink->m_LinkMOEAry[tt].LinkFlow = link_volume/ time_duration_per_hour;
 								pLink->m_LinkMOEAry[tt].Density = density;
 								pLink->m_LinkMOEAry[tt].Speed = speed;
-								//pLink->m_LinkMOEAry[tt].QueueLength = queue_length_percentage;
-								//pLink->m_LinkMOEAry[tt].number_of_queued_Agents = number_of_queued_agents;
+								pLink->m_LinkMOEAry[tt].QueueLength = queue_length_percentage;
 
 							}
 						}
@@ -3171,7 +3170,7 @@ bool CTLiteDoc::WriteSelectAgentDataToCSVFile(LPCTSTR lpszFileName, std::vector<
 		AgentDataFile.width(12);
 		AgentDataFile.precision(4) ;
 		AgentDataFile.setf(ios::fixed);
-		AgentDataFile << "Agent_id,o_zone_id,d_zone_id,departure_time, trip_time, complete_flag, agent_type,pricing_type,Agent_type, information_class,value_of_time, toll_dollar_cost,emissions,distance_in_mile, number_of_nodes, <node id;node arrival time>" << endl;
+		AgentDataFile << "agent_id,o_zone_id,d_zone_id,departure_time,trip_time,complete_flag, agent_type,pricing_type,Agent_type, information_class,value_of_time, toll_dollar_cost,emissions,distance_in_mile, number_of_nodes, <node id;node arrival time>" << endl;
 
 		for(int v = 0; v < AgentVector.size(); v++)
 		{
@@ -3311,18 +3310,6 @@ void CTLiteDoc::ReadAgentCSVFile_Parser(LPCTSTR lpszFileName)
 
 			string time_period;
 			vector<float> timestamp_vector;
-			parser.GetValueByFieldName("time_period", time_period);
-
-			timestamp_vector = g_time_parser(time_period);
-				
-			if(timestamp_vector.size() >=1)
-				pAgent->m_DepartureTime = timestamp_vector[0];
-
-			if (timestamp_vector.size() == 2)
-				pAgent->m_ArrivalTime = timestamp_vector[1];
-
-			if(g_Simulation_Time_Horizon < pAgent->m_ArrivalTime)
-				g_Simulation_Time_Horizon = pAgent->m_ArrivalTime;
 
 			parser.GetValueByFieldName("travel_time",pAgent->m_TripTime );
 
@@ -3343,7 +3330,7 @@ void CTLiteDoc::ReadAgentCSVFile_Parser(LPCTSTR lpszFileName)
 
 			std::string path_node_sequence, path_time_sequence, path_state_sequence;
 			parser.GetValueByFieldName("node_sequence",path_node_sequence );
-			parser.GetValueByFieldName("time_sequence",path_time_sequence );
+			parser.GetValueByFieldName("time_decimal_sequence",path_time_sequence );
 
 			std::vector<int> node_sequence;
 			std::vector<float> time_sequence;
@@ -3398,6 +3385,12 @@ void CTLiteDoc::ReadAgentCSVFile_Parser(LPCTSTR lpszFileName)
 						pAgent->m_NodeAry[i].ArrivalTimeOnDSN = time_sequence[i] + random_value;
 					}
 				}
+
+				pAgent->m_DepartureTime = pAgent->m_NodeAry[0].ArrivalTimeOnDSN;
+
+				pAgent->m_ArrivalTime = pAgent->m_NodeAry[pAgent->m_NodeSize-1].ArrivalTimeOnDSN;
+
+
 
 			}
 				m_AgentSet.push_back (pAgent);
@@ -4478,7 +4471,7 @@ void CTLiteDoc::LoadSimulationOutput()
 
 	CString DTASettingsPath = m_ProjectDirectory + "DTASettings.txt";
 	g_Simulation_Time_Horizon = 1440;
-	SetStatusText("Loading output link time-dependent data");
+	SetStatusText("Loading output link_performance data");
 
 	CCSVParser parser;
 
@@ -7702,17 +7695,17 @@ bool CTLiteDoc::ReadModelAgentTrajectory(LPCTSTR lpszFileName)
 
 			AgentLocationRecord element;
 			
-			if(parser.GetValueByFieldName("time_stamp_in_second",element.time_stamp_in_second) == false)
+			if(parser.GetValueByFieldName("timestamp_in_second",element.time_stamp_in_second) == false)
 				continue;
 
 			if(parser.GetValueByFieldName("agent_id",element.agent_id) == false)
 				continue;
 
 
-			if(parser.GetValueByFieldName("x",element.x, false) == false)
+			if(parser.GetValueByFieldName("x_coord",element.x, false) == false)
 				continue;
 
-			if(parser.GetValueByFieldName("y",element.y, false) == false)
+			if(parser.GetValueByFieldName("y_coord",element.y, false) == false)
 				continue;
 
 
