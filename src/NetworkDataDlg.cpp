@@ -35,7 +35,7 @@ using std::string;
 
 
 static LPTSTR NetworkData_Element[MAX_NUM_OF_NETWORK_DATA_FILES] = {"Node", "Link", "Movement","Agent"};
-static LPTSTR NetworkData_FileName[MAX_NUM_OF_NETWORK_DATA_FILES] = {"node","road_link", "movement","agent" };
+static LPTSTR NetworkData_FileName[MAX_NUM_OF_NETWORK_DATA_FILES] = {"node","link", "movement","agent" };
 
 // CNetworkDataSettingDlg dialog
 

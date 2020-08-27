@@ -46,7 +46,7 @@
 
 
 enum _GIS_DATA_TYPE {GIS_Point_Type=0,GIS_Line_Type, GIS_Polygon_Type}; 
-enum eSEARCHMODE { efind_node = 0, efind_link, efind_road_link_id, efind_path, efind_Agent, efind_path_node_sequence };
+enum eSEARCHMODE { efind_node = 0, efind_link, efind_link_id, efind_path, efind_Agent, efind_path_node_sequence };
 enum layer_mode
 { 
 	layer_node = 0,

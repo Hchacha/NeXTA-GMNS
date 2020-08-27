@@ -1376,7 +1376,7 @@ void CTLiteView::DrawObjects(CDC* pDC)
 
 				if(m_ShowLinkTextMode == link_display_street_name)
 				{
-					if((*iLink)->m_Name.length () > 0 && (*iLink)->m_Name!="(null)"  && screen_distance > 5 )
+					if((*iLink)->m_Name.length () > 0 && (*iLink)->m_Name!="(null)"  && screen_distance > 50 )
 					{
 						str_text = (*iLink)->m_Name.c_str ();
 						with_text = true;
@@ -1748,7 +1748,7 @@ void CTLiteView::DrawObjects(CDC* pDC)
 			pDC->SelectObject(&pen_node);
 			pDC->SetBkColor(RGB(0,0,0));
 
-			if((*iNode)->m_NodeID == pDoc->m_SelectedNodeNo)
+			if((*iNode)->m_NodeNo == pDoc->m_SelectedNodeNo)
 			{
 				pDC->SelectObject(&g_PenSelectColor);
 
@@ -1882,7 +1882,7 @@ void CTLiteView::DrawObjects(CDC* pDC)
 
 					feet_size = pDoc->m_UnitDistance*m_Resolution;
 
-					if((*iNode)->m_NodeID == pDoc->m_SelectedNodeNo)
+					if((*iNode)->m_NodeNo == pDoc->m_SelectedNodeNo)
 					{
 						feet_size = max(50,min(100,feet_size*3));  // 
 
@@ -3929,7 +3929,7 @@ void CTLiteView::OnLButtonDblClk(UINT nFlags, CPoint point)
 	double distance = pow((size.cx*size.cx + size.cy*size.cy),0.5);
 	if( distance < Min_distance)
 	{
-	m_SelectedNodeNo = (*iNode)->m_NodeID ;
+	m_SelectedNodeNo = (*iNode)->m_NodeNo ;
 	Min_distance = distance;
 	return;
 	}
@@ -4018,7 +4018,7 @@ void CTLiteView::OnSearchFindlink()
 
 			}
 		}
-		if (dlg.m_SearchMode == efind_road_link_id)
+		if (dlg.m_SearchMode == efind_link_id)
 		{
 			std::string str_link_id = pDoc->CString2StdString(dlg.m_LinkID);
 
@@ -4044,7 +4044,7 @@ void CTLiteView::OnSearchFindlink()
 			if(pNode !=NULL)
 			{
 				pDoc->m_SelectedLinkNo = -1;
-				pDoc->m_SelectedNodeNo = pNode->m_NodeID ;
+				pDoc->m_SelectedNodeNo = pNode->m_NodeNo ;
 
 				m_Origin = pNode->pt ;
 

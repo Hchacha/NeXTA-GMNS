@@ -385,29 +385,29 @@ void CDlgPathList::OnPathDataExportCSV()
 			}  // for each time
 
 
-			if(path_element.m_bWithSensorTravelTime  == true);
-			{
-				fprintf(st,"\n,,observed travel time,");
+			//if(path_element.m_bWithSensorTravelTime  == true);
+			//{
+			//	fprintf(st,"\n,,observed travel time,");
 
-				for(int t = m_TimeLeft ; t< m_TimeRight; t+= time_step)  // for each starting time
-				{
-					fprintf(st,"%.2f,", path_element.m_SensorTimeDependentTravelTime[t]);
-				}
+			//	for(int t = m_TimeLeft ; t< m_TimeRight; t+= time_step)  // for each starting time
+			//	{
+			//		fprintf(st,"%.2f,", path_element.m_SensorTimeDependentTravelTime[t]);
+			//	}
 
-				//fprintf(st,"\nRelative Difference,,",p+1,path_element.m_path_name .c_str ());
+			//	//fprintf(st,"\nRelative Difference,,",p+1,path_element.m_path_name .c_str ());
 
-				//	for(int t = m_TimeLeft ; t< m_TimeRight; t+= time_step)  // for each starting time
-				//	{
-				//		if(path_element.m_SensorTimeDependentTravelTime[t] >0.001f)
-				//							fprintf(st,"%.2f,", path_element.m_TimeDependentTravelTime[t]/max(0.001,path_element.m_SensorTimeDependentTravelTime[t]));
-				//		else //no data
-				//							fprintf(st,",");
+			//	//	for(int t = m_TimeLeft ; t< m_TimeRight; t+= time_step)  // for each starting time
+			//	//	{
+			//	//		if(path_element.m_SensorTimeDependentTravelTime[t] >0.001f)
+			//	//							fprintf(st,"%.2f,", path_element.m_TimeDependentTravelTime[t]/max(0.001,path_element.m_SensorTimeDependentTravelTime[t]));
+			//	//		else //no data
+			//	//							fprintf(st,",");
 
-				//	}
+			//	//	}
 
-				fprintf(st,"\n");
+			//	fprintf(st,"\n");
 
-			}
+			//}
 
 
 		}

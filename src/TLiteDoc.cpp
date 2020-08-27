@@ -965,11 +965,11 @@ bool CTLiteDoc::ReadSimulationLinkMOEData_Parser(LPCTSTR lpszFileName)
 		while(parser.ReadRecord())
 		{
 
-			string road_link_id;
-			if(parser.GetValueByFieldName("road_link_id", road_link_id) == false)
+			string link_id;
+			if(parser.GetValueByFieldName("link_id", link_id) == false)
 				break;
 
-			DTALink* pLink = FindLinkWithLinkID(road_link_id);
+			DTALink* pLink = FindLinkWithLinkID(link_id);
 
 			if(pLink!=NULL)
 			{
@@ -1045,7 +1045,7 @@ bool CTLiteDoc::ReadSimulationLinkMOEData_Parser(LPCTSTR lpszFileName)
 				if(error_count<=4)
 				{ 
 				CString msg;
-				msg.Format ("Please check if link_id %s at link_performance.csv is defined in road_link.csv.", road_link_id.c_str());  // +2 for the first field name line
+				msg.Format ("Please check if link_id %s at link_performance.csv is defined in link.csv.", link_id.c_str());  // +2 for the first field name line
 				AfxMessageBox(msg);
 				}
 				continue;
@@ -1149,7 +1149,7 @@ BOOL CTLiteDoc::OnOpenTrafficNetworkDocument(CString ProjectFileName, bool bNetw
 	if (ReadNodeCSVFile(directory + "node.csv") || m_BackgroundBitmapLoaded == true)
 	{
 	
-		ReadLinkCSVFile(directory + "road_link.csv", false, false);
+		ReadLinkCSVFile(directory + "link.csv", false, false);
 
 	}
 
@@ -2050,7 +2050,7 @@ bool CTLiteDoc::ReadLinkCSVFile(LPCTSTR lpszFileName, bool bCreateNewNodeFlag = 
 		bool bNodeNonExistError = false;
 		while (parser.ReadRecord())
 		{
-			string road_link_id;
+			string link_id;
 			long from_node_id = 0;
 			long to_node_id = 0;
 			int direction = 0;
@@ -2066,7 +2066,7 @@ bool CTLiteDoc::ReadLinkCSVFile(LPCTSTR lpszFileName, bool bCreateNewNodeFlag = 
 
 			float grade = 0;
 
-			if (!parser.GetValueByFieldName("road_link_id", road_link_id))  // no value
+			if (!parser.GetValueByFieldName("link_id", link_id))  // no value
 			{
 				// mark it as 0 first, and we then find a new unique link id after reading all links
 			}
@@ -2130,7 +2130,7 @@ bool CTLiteDoc::ReadLinkCSVFile(LPCTSTR lpszFileName, bool bCreateNewNodeFlag = 
 					}
 					else
 					{
-						AfxMessageBox("Field geometry cannot be found inroad_ink.csv. Please check.");
+						AfxMessageBox("Field geometry cannot be found in link.csv. Please check.");
 						return false;
 					}
 
@@ -2178,7 +2178,7 @@ bool CTLiteDoc::ReadLinkCSVFile(LPCTSTR lpszFileName, bool bCreateNewNodeFlag = 
 					}
 					else
 					{
-						AfxMessageBox("Field geometry cannot be found inroad_ink.csv. Please check.");
+						AfxMessageBox("Field geometry cannot be found in link.csv. Please check.");
 						return false;
 					}
 
@@ -2340,7 +2340,7 @@ bool CTLiteDoc::ReadLinkCSVFile(LPCTSTR lpszFileName, bool bCreateNewNodeFlag = 
 				pLink->m_LinkNo = i;
 				pLink->m_Name = name;
 				pLink->m_OrgDir = direction;
-				pLink->m_LinkID = road_link_id;
+				pLink->m_LinkID = link_id;
 				pLink->m_LinkKey = link_key.c_str();
 
 				m_LinkKeyMap[pLink->m_LinkKey] = pLink;
@@ -2470,7 +2470,7 @@ bool CTLiteDoc::ReadLinkCSVFile(LPCTSTR lpszFileName, bool bCreateNewNodeFlag = 
 				__int64  LinkKey2 = GetLink64Key(pLink->m_FromNodeID, pLink->m_ToNodeID);
 				m_NodeIDtoLinkMap[LinkKey2] = pLink;
 
-				m_LinkIDtoLinkMap[road_link_id] = pLink;
+				m_LinkIDtoLinkMap[link_id] = pLink;
 
 
 				pLink->m_FromPoint = m_NodeNoMap[pLink->m_FromNodeNo]->pt;
@@ -2514,7 +2514,7 @@ bool CTLiteDoc::ReadLinkCSVFile(LPCTSTR lpszFileName, bool bCreateNewNodeFlag = 
 
 			m_WarningLogFile.close();
 
-			AfxMessageBox("Some nodes inroad_ink.csv have not been defined in node.csv. Please check file NeXTA.log.");
+			AfxMessageBox("Some nodes in link.csv have not been defined in node.csv. Please check file NeXTA.log.");
 		}
 
 		m_UnitDistance = 1.0f;
@@ -2754,7 +2754,7 @@ BOOL CTLiteDoc::SaveLinkData(LPCTSTR lpszPathName,bool bExport_Link_MOE_in_input
 	if(st!=NULL)
 	{
 		std::list<DTALink*>::iterator iLink;
-		fprintf(st,"road_link_id,name,from_node_id,to_node_id,facility_type,link_type,dir_flag,length,lanes,free_speed,capacity,agent_type_code,geometry,");
+		fprintf(st,"link_id,name,from_node_id,to_node_id,facility_type,link_type,dir_flag,length,lanes,free_speed,capacity,agent_type_code,geometry,");
 		fprintf(st,"\n");	
 
 		for (iLink = m_LinkSet.begin(); iLink != m_LinkSet.end(); iLink++)
@@ -2775,8 +2775,8 @@ BOOL CTLiteDoc::SaveLinkData(LPCTSTR lpszPathName,bool bExport_Link_MOE_in_input
 
 				std::replace( (*iLink)->m_Name.begin(), (*iLink)->m_Name.end(), ',', ' '); 
 
-				fprintf(st, "%d,%s,%d,%d,%s,%d,%d,",
-					(*iLink)->m_LinkID,
+				fprintf(st, "%s,%s,%d,%d,%s,%d,%d,",
+					(*iLink)->m_LinkID.c_str(),
 					(*iLink)->m_Name.c_str(),
 					(*iLink)->m_FromNodeID,
 					(*iLink)->m_ToNodeID,
@@ -2889,7 +2889,7 @@ BOOL CTLiteDoc::SaveProject(LPCTSTR lpszPathName, int SelectedLayNo)
 
 	SaveNodeFile();
 
-	SaveLinkData(directory+"road_link.csv",true,SelectedLayNo);
+	SaveLinkData(directory+"link.csv",true,SelectedLayNo);
 
 	//	SaveInputLanesFile(directory+"input_lanes.csv");
 
@@ -5292,7 +5292,7 @@ void CTLiteDoc::AdjustCoordinateUnitToMile()
 	//adjust XY coordinates if the corrdinate system is not consistenty
 	if(fabs(m_UnitDistance-1.00)>0.10)  // ask users if we need to adjust the XY coordinates
 	{
-		if(AfxMessageBox("The link length information inroad_ink.csv is not consistent with the X/Y coordinates in node.csv.\n Do you want to adjust the the X/Y coordinate unit to mile in node.csv?", MB_YESNO) == IDYES)
+		if(AfxMessageBox("The link length information in link.csv is not consistent with the X/Y coordinates in node.csv.\n Do you want to adjust the the X/Y coordinate unit to mile in node.csv?", MB_YESNO) == IDYES)
 
 			for (iNode = m_NodeSet.begin(); iNode != m_NodeSet.end(); iNode++)
 			{
@@ -5441,6 +5441,7 @@ void CTLiteDoc::OnImportNgsimFile()
 void CTLiteDoc::OpenCSVFileInExcel(CString filename)
 {
 
+	HINSTANCE result = ShellExecute(NULL, _T("open"), filename, NULL, NULL, SW_SHOW);
 
 }
 
@@ -6749,7 +6750,7 @@ void CTLiteDoc::ZoomToSelectedNode(int SelectedNodeID)
 		DTANode* pNode= m_NodeIDMap[SelectedNodeID];
 		m_Origin = pNode->pt;
 		m_SelectedLinkNo = -1;
-		m_SelectedNodeNo = pNode->m_NodeID ;
+		m_SelectedNodeNo = pNode->m_NodeNo ;
 
 		CTLiteView* pView = 0;
 		POSITION pos = GetFirstViewPosition();
@@ -7072,7 +7073,7 @@ void CTLiteDoc::OnToolsGeneratephysicalzonecentroidsonroadnetwork()
 	{
 
 		DTALink * pLink = (*iLink);
-		if(m_LinkTypeMap[pLink->m_link_type ].IsConnector()== false)  // not a connector, so the ajacent node number will still appear inroad_ink.csv file after generating physical links 
+		if(m_LinkTypeMap[pLink->m_link_type ].IsConnector()== false)  // not a connector, so the ajacent node number will still appear in link.csv file after generating physical links 
 		{
 
 			m_NodeNoMap [pLink->m_FromNodeNo ] -> m_CentroidUpdateFlag = 0; // no change
@@ -8045,7 +8046,7 @@ bool CTLiteDoc::FindObject(eSEARCHMODE SearchMode, int value1, int value2)
 		if(pNode !=NULL)
 		{
 			m_SelectedLinkNo = -1;
-			m_SelectedNodeNo = pNode->m_NodeID ;
+			m_SelectedNodeNo = pNode->m_NodeNo ;
 
 			ZoomToSelectedNode(value1);
 
