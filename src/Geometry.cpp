@@ -92,7 +92,7 @@ bool CGeometry::ReadLineStringCoordinates(string s)
 
 	while(std::getline(ss,sub_str, ','))
 	{
-
+		sub_str = sub_str.substr(sub_str.find_first_not_of(' '));
 
 		CCoordinate coordinate;
 		istringstream sub_ss(sub_str);
