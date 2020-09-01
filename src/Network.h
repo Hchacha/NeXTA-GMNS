@@ -467,7 +467,7 @@ extern double g_GetPoint2Point_Distance(GDPoint p1, GDPoint p2);
 
 extern DTA_Turn g_RelativeAngle_to_Turn(int RelativeAngle);
 
-extern double g_GetPoint2LineDistance(GDPoint pt, GDPoint FromPt, GDPoint ToPt, double UnitFeet = 1, bool no_intersection_requirement = false);
+extern double g_GetPoint2LineDistance(GDPoint pt, GDPoint FromPt, GDPoint ToPt, double UnitFeet = 1, bool no_intersection_requirement = true);
 extern double g_CalculateP2PDistanceInMileFromLatitudeLongitude(GDPoint p1, GDPoint p2);
 extern bool g_get_line_intersection(float p0_x, float p0_y, float p1_x, float p1_y,float p2_x, float p2_y, float p3_x, float p3_y, float *i_x, float *i_y) ;
 

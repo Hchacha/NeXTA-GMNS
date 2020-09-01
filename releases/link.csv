@@ -1,4 +1,4 @@
-name,roadlink_id,from_node_id,to_node_id,facility_type,link_type,direction,length,lanes,free_speed,capacity,demand_type_code,geometry,
+name,link_id,from_node_id,to_node_id,facility_type,link_type,direction,length,lanes,free_speed,capacity,demand_type_code,geometry,
 ,1,1,100002,HOT,1,1,277.00000,1,25.0,1800.0,"","LINESTRING (1523373.000000 1003235.000000 ,1523448.678000 1002967.757000 )"
 ,1,1,101990,HOT,1,1,239.00000,1,25.0,1800.0,"","LINESTRING (1523373.000000 1003235.000000 ,1523365.110000 1003474.169000 )"
 ,1,1,101997,HOT,1,1,293.00000,1,25.0,1800.0,"","LINESTRING (1523373.000000 1003235.000000 ,1523666.177000 1003224.848000 )"

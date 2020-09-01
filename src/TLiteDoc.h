@@ -1126,7 +1126,6 @@ public:
 	int m_PathNodeVectorSP[MAX_NODE_SIZE_IN_A_PATH];
 	long m_NodeSizeSP;
 
-	std::map<long, long> m_NodeIDtoNumberMap;
 	std::map<long, long> m_NodeIDtoNodeNoMap;
 	std::map<long, long> m_NodeIDtoZoneNameMap;
 
@@ -1201,12 +1200,16 @@ public:
 			 
 	}
 
-		DTALink* AddNewLink(int FromNodeNo, int ToNodeNo, bool bOffset = false, bool bLongLatFlag = false)
+		DTALink* AddNewLink(int FromNodeID, int ToNodeID, bool bOffset = false, bool bLongLatFlag = false)
 	{
 
 
 		Modify();
 		DTALink* pLink = 0;
+
+		int FromNodeNo = m_NodeIDtoNodeNoMap[FromNodeID];
+		int ToNodeNo= m_NodeIDtoNodeNoMap[ToNodeID];
+
 
 		pLink = FindLinkWithNodeNo(FromNodeNo,ToNodeNo);
 
@@ -1215,8 +1218,8 @@ public:
 
 		pLink = new DTALink(1);
 		pLink->m_LinkNo = (int)(m_LinkSet.size());
-		pLink->m_FromNodeID = m_NodeIDtoNumberMap[FromNodeNo];
-		pLink->m_ToNodeID = m_NodeIDtoNumberMap[ToNodeNo];
+		pLink->m_FromNodeID = FromNodeID;
+		pLink->m_ToNodeID = ToNodeID;
 		pLink->m_FromNodeNo = FromNodeNo;
 		pLink->m_ToNodeNo= ToNodeNo;
 
@@ -1322,18 +1325,20 @@ public:
 	}
 
 	
-	void SplitLinksForOverlappingNodeOnLinks(int ThisNodeNo, bool bOffset = false, bool bLongLatFlag = false)
+	void SplitLinksForOverlappingNodeOnLinks(int ThisNodeID, bool bOffset = false, bool bLongLatFlag = false)
 	{
 		std::vector<DTALink*> OverlappingLinks;
 
-		if(m_NodeNoMap.find(ThisNodeNo)== m_NodeNoMap.end())
+		if(m_NodeIDMap[ThisNodeID]->m_Connections >=1)
 			return;
 
-		GDPoint p0 = m_NodeNoMap[ThisNodeNo]->pt ;
+		int ThisNodeNo = m_NodeIDMap[ThisNodeID]->m_NodeNo;
+		GDPoint p0 = m_NodeIDMap[ThisNodeID]->pt ;
 
 		// step 1: find overlapping links
 
 		double threshold_in_pixels = 3;
+
 		for (std::list<DTALink*>::iterator iLink = m_LinkSet.begin(); iLink != m_LinkSet.end(); iLink++)
 	{
 
@@ -1344,12 +1349,14 @@ public:
 			pfrom = (*iLink)->m_ShapePoints[si];
 			pto =  (*iLink)->m_ShapePoints[si+1];
 
+			float distance_network_coord = g_GetPoint2LineDistance(p0, pfrom, pto, m_UnitDistance,false);
 
-			float distance_in_screen_unit =  g_GetPoint2LineDistance(p0, pfrom, pto,m_UnitDistance)*m_Doc_Resolution;
+			float distance_in_screen_unit =  distance_network_coord*m_Doc_Resolution;
 
-			if(distance_in_screen_unit<= 3) 
+			if(distance_in_screen_unit<= 10) 
 			{
 			OverlappingLinks.push_back((*iLink));
+			break;
 			}
 
 		}
@@ -1389,8 +1396,8 @@ public:
 
 		pLink = new DTALink(1);
 		pLink->m_LinkNo = (int)(m_LinkSet.size());
-		pLink->m_FromNodeID = m_NodeIDtoNumberMap[FromNodeNo];
-		pLink->m_ToNodeID = m_NodeIDtoNumberMap[ToNodeNo];
+		pLink->m_FromNodeID = m_NodeNoMap[FromNodeNo]->m_NodeID;
+		pLink->m_ToNodeID = m_NodeNoMap[ToNodeNo]->m_NodeID; 
 		pLink->m_FromNodeNo = FromNodeNo;
 		pLink->m_ToNodeNo= ToNodeNo;
 
@@ -1512,7 +1519,7 @@ public:
 		pNode->pt = newpt;
 		pNode->m_LayerNo = LayerNo;
 		pNode->m_NodeID = GetUnusedNodeNo();
-
+		pNode->m_NodeNo = m_NodeSet.size();
 		TRACE("Adding Node ID: %d\n", pNode->m_NodeID );
 
 		if(pNode->m_NodeID ==31)
@@ -1535,8 +1542,7 @@ public:
 		m_NodeSet.push_back(pNode);
 		m_NodeNoMap[pNode->m_NodeNo] = pNode;
 		m_NodeIDMap[pNode->m_NodeID] = pNode;
-		m_NodeIDtoNumberMap[pNode->m_NodeID ] = pNode->m_NodeID;
-		m_NodeIDtoNodeNoMap[pNode->m_NodeID] = pNode->m_NodeID;
+		m_NodeIDtoNodeNoMap[pNode->m_NodeID] = pNode->m_NodeNo;
 
 		if(bSplitLink)
 		{
@@ -1934,31 +1940,6 @@ public:
 	{
 		return FindLinkWithNodeIDs(FromNodeID, ToNodeID);
 	}
-	//DTALink* FindLinkWithNodeIDs(int FromNodeID, int ToNodeID, CString FileName = "", bool bWarmingFlag = false)
-	//{
-	//	int FromNodeNo = m_NodeIDtoNodeNoMap[FromNodeID];
-	//	int ToNodeNo = m_NodeIDtoNodeNoMap[ToNodeID];
-
-	//	unsigned long LinkKey = GetLinkKey( FromNodeNo, ToNodeNo);
-
-	//	map <unsigned long, DTALink*> :: const_iterator m_Iter = m_NodeIDtoLinkMap.find(LinkKey);
-
-	//	if(m_Iter == m_NodeIDtoLinkMap.end( ) && bWarmingFlag)
-	//	{
-	//		CString msg;
-
-	//		if(FileName.GetLength() == 0)
-	//		{
-	//			msg.Format ("Link %d-> %d cannot be found.", FromNodeID, ToNodeID);
-	//		}else
-	//		{
-	//			msg.Format ("Link %d-> %d cannot be found in file %s.", FromNodeID, ToNodeID,FileName);
-	//		}
-	//		AfxMessageBox(msg);
-	//		return NULL;
-	//	}
-	//	return m_NodeIDtoLinkMap[LinkKey];
-	//}
 
 	void ClearNetworkData();
 

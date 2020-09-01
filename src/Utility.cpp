@@ -340,7 +340,7 @@ float *X, float *Y)
   return true; 
 }
 
-double g_GetPoint2LineDistance(GDPoint pt, GDPoint FromPt, GDPoint ToPt, double UnitMile, bool no_intersection_requirement)
+double g_GetPoint2LineDistance(GDPoint pt, GDPoint FromPt, GDPoint ToPt, double UnitMile, bool requirement_for_non_intersection)
 {
     float U;
     GDPoint Intersection;
@@ -349,7 +349,7 @@ double g_GetPoint2LineDistance(GDPoint pt, GDPoint FromPt, GDPoint ToPt, double 
  
     U = (  (pt.x - ToPt.x) * (FromPt.x - ToPt.x ) + ( pt.y - ToPt.y ) * ( FromPt.y - ToPt.y ) ) /(LineLength * LineLength );
  
-	if (no_intersection_requirement == false)
+	if (requirement_for_non_intersection == false)
 	{
 
 		if (U < 0.0f || U > 1.0f)
@@ -362,7 +362,7 @@ double g_GetPoint2LineDistance(GDPoint pt, GDPoint FromPt, GDPoint ToPt, double 
 	float distance_0 = g_GetPoint2Point_Distance( pt, FromPt );
 	float distance_2 = g_GetPoint2Point_Distance( pt, ToPt );
 
-	if (no_intersection_requirement)
+	if (requirement_for_non_intersection)
 	{
 		return min(min(distance_1, distance_0), distance_2) / max(0.000001,UnitMile);
 	}

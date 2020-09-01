@@ -3467,7 +3467,7 @@ void CTLiteView::OnLButtonUp(UINT nFlags, CPoint point)
 		int ToNodeNo = FindClosestNode(m_TempLinkEndPoint, min_selection_distance);
 		if(ToNodeNo ==-1)
 		{
-			pToNode = pDoc->AddNewNode(SPtoNP(m_TempLinkEndPoint),0,0,false,true);
+			pToNode = pDoc->AddNewNode(SPtoNP(m_TempLinkEndPoint),0,0,false, flag_split_link);
 		}else
 		{
 			pToNode = pDoc-> m_NodeNoMap[ToNodeNo];
@@ -3752,7 +3752,7 @@ void CTLiteView::OnNodeDestination()
 	m_ShowAllPaths = true;
 	if(pDoc->Routing(false)==0)
 	{
-		AfxMessageBox("The selected OD pair does not have a connected path. Please checkroad_ink.csv for details.");
+		AfxMessageBox("The selected OD pair does not have a connected path. Please checklink.csv for details.");
 
 	}
 

@@ -2077,12 +2077,12 @@ bool CTLiteDoc::ReadLinkCSVFile(LPCTSTR lpszFileName, bool bCreateNewNodeFlag = 
 
 			if (!parser.GetValueByFieldName("from_node_id", from_node_id))
 			{
-				AfxMessageBox("Field from_node_id does not exist in road_ink.csv. Please check.");
+				AfxMessageBox("Field from_node_id does not exist in link.csv. Please check.");
 				break;
 			}
 			if (!parser.GetValueByFieldName("to_node_id", to_node_id))
 			{
-				AfxMessageBox("Field to_node_id does not exist in road_ink.csv. Please check.");
+				AfxMessageBox("Field to_node_id does not exist in link.csv. Please check.");
 				break;
 			}
 
@@ -2092,7 +2092,7 @@ bool CTLiteDoc::ReadLinkCSVFile(LPCTSTR lpszFileName, bool bCreateNewNodeFlag = 
 				if (bCreateNewNodeFlag == false)  // not create new node
 				{
 					CString warning;
-					warning.Format("from_node_id %d in road_ink.csv has not been defined in node.csv.\n", from_node_id);
+					warning.Format("from_node_id %d in link.csv has not been defined in node.csv.\n", from_node_id);
 					bNodeNonExistError = true;
 
 					if (warning_message.GetLength() < 3000)  // not adding and showing too many links
@@ -2142,7 +2142,7 @@ bool CTLiteDoc::ReadLinkCSVFile(LPCTSTR lpszFileName, bool bCreateNewNodeFlag = 
 				if (bCreateNewNodeFlag == false)  // not create new node
 				{
 					CString warning;
-					warning.Format("to_node_id %d in road_ink.csv has not been defined in node.csv\n", to_node_id);
+					warning.Format("to_node_id %d in link.csv has not been defined in node.csv\n", to_node_id);
 					bNodeNonExistError = true;
 
 					if (warning_message.GetLength() < 3000)  // not adding and showing too many links
@@ -2207,7 +2207,7 @@ bool CTLiteDoc::ReadLinkCSVFile(LPCTSTR lpszFileName, bool bCreateNewNodeFlag = 
 			{
 				if (!length_field_warning)
 				{
-					AfxMessageBox("Field length has not been defined in file road_ink.csv. Please check.");
+					AfxMessageBox("Field length has not been defined in file link.csv. Please check.");
 					length_field_warning = true;
 				}
 
@@ -2223,7 +2223,7 @@ bool CTLiteDoc::ReadLinkCSVFile(LPCTSTR lpszFileName, bool bCreateNewNodeFlag = 
 			{
 				if (!number_of_lanes_field_warning)
 				{
-					AfxMessageBox("Field lanes has not been defined in file road_ink.csv. Please check.");
+					AfxMessageBox("Field lanes has not been defined in file link.csv. Please check.");
 					number_of_lanes_field_warning = true;
 				}
 				number_of_lanes = 1;
@@ -2235,7 +2235,7 @@ bool CTLiteDoc::ReadLinkCSVFile(LPCTSTR lpszFileName, bool bCreateNewNodeFlag = 
 			{
 				if (!speed_limit_field_warning)
 				{
-					error_message.Format("Link %s: Field free_speed has not been defined in file road_ink.csv. Please check.", name.c_str());
+					error_message.Format("Link %s: Field free_speed has not been defined in file link.csv. Please check.", name.c_str());
 					AfxMessageBox(error_message);
 					speed_limit_field_warning = true;
 				}
@@ -2246,7 +2246,7 @@ bool CTLiteDoc::ReadLinkCSVFile(LPCTSTR lpszFileName, bool bCreateNewNodeFlag = 
 			{
 				if (!capacity_field_warning)
 				{
-					error_message.Format("Link %s: Field capacity has not been defined in fileroad_ink.csv. Please check.", name.c_str());
+					error_message.Format("Link %s: Field capacity has not been defined in filelink.csv. Please check.", name.c_str());
 					AfxMessageBox(error_message);
 					capacity_field_warning = true;
 				}
@@ -2590,7 +2590,7 @@ bool CTLiteDoc::ReadLinkCSVFile(LPCTSTR lpszFileName, bool bCreateNewNodeFlag = 
 		{
 			if (LayerNo == 0)
 			{
-				AfxMessageBox("Error: File road_ink.csv cannot be opened.\n It might be currently used and locked by EXCEL.");
+				AfxMessageBox("Error: File link.csv cannot be opened.\n It might be currently used and locked by EXCEL.");
 			}
 			return false;
 			//		g_ProgramStop();
@@ -2754,7 +2754,7 @@ BOOL CTLiteDoc::SaveLinkData(LPCTSTR lpszPathName,bool bExport_Link_MOE_in_input
 	if(st!=NULL)
 	{
 		std::list<DTALink*>::iterator iLink;
-		fprintf(st,"link_id,name,from_node_id,to_node_id,facility_type,link_type,dir_flag,length,lanes,free_speed,capacity,agent_type_code,geometry,");
+		fprintf(st,"link_id,name,from_node_id,to_node_id,facility_type,link_type,dir_flag,length,lanes,free_speed,capacity,geometry,");
 		fprintf(st,"\n");	
 
 		for (iLink = m_LinkSet.begin(); iLink != m_LinkSet.end(); iLink++)
@@ -2784,22 +2784,22 @@ BOOL CTLiteDoc::SaveLinkData(LPCTSTR lpszPathName,bool bExport_Link_MOE_in_input
 					(*iLink)->m_link_type,
 					(*iLink)->m_Direction);
 
-				fprintf(st, "%.5f,%d,%.1f,%.1f,\"%s\",",
+				fprintf(st, "%.5f,%d,%.1f,%.1f,",
 					(*iLink)->m_Length,
 					(*iLink)->m_NumberOfLanes,
 					(*iLink)->m_FreeSpeed,
-					(*iLink)->m_LaneCapacity,
-					(*iLink)->m_agent_type_code.c_str());
+					(*iLink)->m_LaneCapacity
+					);
 
 				// geometry
 				fprintf(st,"\"LINESTRING (");
 
 				for(unsigned int si = 0; si< (*iLink)->m_ShapePoints.size(); si++)
 				{
-					fprintf(st,"%f %f ",(*iLink)->m_ShapePoints[si].x, (*iLink)->m_ShapePoints[si].y);
+					fprintf(st,"%f %f",(*iLink)->m_ShapePoints[si].x, (*iLink)->m_ShapePoints[si].y);
 
 					if(si!=(*iLink)->m_ShapePoints.size()-1)
-						fprintf(st,",");
+						fprintf(st," ,");
 				}
 
 				fprintf(st,")\"");
@@ -3010,8 +3010,8 @@ void CTLiteDoc::OnFileSaveProjectAs()
 	try{
 		CMainFrame* pMainFrame = (CMainFrame*) AfxGetMainWnd();
 
-		CFileDialog fdlg (FALSE, "*.tnp", "*.tnp",OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT |OFN_ENABLESIZING,
-			"Transportation Network Project (*.tnp)|*.tnp|",pMainFrame,0,true);
+		CFileDialog fdlg (FALSE, "node.csv", "node.csv",OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT |OFN_ENABLESIZING,
+			"Transportation Network Project (node.csv)|*.csv|",pMainFrame,0,true);
 
 
 		if(fdlg.DoModal()==IDOK)
@@ -3023,7 +3023,7 @@ void CTLiteDoc::OnFileSaveProjectAs()
 			m_ProjectTitle = GetWorkspaceTitleName(m_ProjectFile);
 
 			bool bSavedFlag = false;
-			if(path.Find("tnp")>=0)  //Transportation network project format
+			if(path.Find("csv")>=0)  //Transportation network project format
 			{
 				bSavedFlag = SaveProject(path);
 			}
@@ -3033,12 +3033,9 @@ void CTLiteDoc::OnFileSaveProjectAs()
 				CString msg;
 				if(m_NodeSet.size()>0)
 				{
-					msg.Format ("Files node.csv and road_ink.csv  have been successfully saved with %d nodes, %d signals, %d links, %d zones.",
+					msg.Format ("Files node.csv and link.csv  have been successfully saved with %d nodes and %d links.",
 						m_NodeSet.size(), 
-						number_of_signals,
-						m_LinkSet.size(), 
-						m_ZoneMap.size()
-						);
+						m_LinkSet.size());
 					AfxMessageBox(msg,MB_OK|MB_ICONINFORMATION);
 				}
 				SetTitle(m_ProjectTitle);
@@ -6897,7 +6894,7 @@ void CTLiteDoc::OnUpdateViewShowmoe(CCmdUI *pCmdUI)
 
 void CTLiteDoc::OnFileUploadlinkdatatogooglefusiontable()
 {
-	AfxMessageBox("Please first save the data set to a folder, and they you can uploadroad_ink.csv to Goolge Fusion Tables.");
+	AfxMessageBox("Please first save the data set to a folder, and they you can uploadlink.csv to Goolge Fusion Tables.");
 }
 
 void CTLiteDoc::On3Viewdatainexcel()
@@ -6968,10 +6965,13 @@ void CTLiteDoc::OnToolsUnittesting()
 void CTLiteDoc::OnToolsGeneratephysicalzonecentroidsonroadnetwork()
 {
 	CWaitCursor cursor;
-	// step 1: mark old centroids, remove old activity locations 
 
+	// given conditions in node.csv, zone_id, super_zone_id
+	// step 1: mark old centroids, map them to the new super zone id;
+		
+	// step 2: create new centriods for each super zone
 	
-	// step 2: create new centriods: find a pair of incoming and outgoing links to centroid, if exist
+	//step 3: for each original centroid, creat  a pair of incoming and outgoing links to super centroid, if exist
 
 	std::list<DTALink*>::iterator iLink;
 	for (iLink = m_LinkSet.begin(); iLink != m_LinkSet.end(); iLink++)
@@ -6993,10 +6993,6 @@ void CTLiteDoc::OnToolsGeneratephysicalzonecentroidsonroadnetwork()
 		DTANode* pFromNode = m_NodeNoMap[pLink->m_FromNodeNo ];
 		DTANode* pToNode = m_NodeNoMap[pLink->m_ToNodeNo ];
 
-		if(pFromNode->m_NodeID == 220 &&  pToNode->m_NodeID == 57185)
-		{
-			TRACE("%d ->%d\n ",  pFromNode->m_NodeID ,  pToNode->m_NodeID);
-		}
 
 		if(pFromNode->m_CentroidUpdateFlag >=1 && pRevLink != NULL && m_LinkTypeMap[pLink->m_link_type ].IsConnector()) // old centroid and no-external origin node // if it is an external origin node, then we do not need to add nodes
 		{
@@ -7057,8 +7053,6 @@ void CTLiteDoc::OnToolsGeneratephysicalzonecentroidsonroadnetwork()
 
 			}  //two-way link  from node
 
-			if( pFromNode->m_NodeID == 54317)
-				TRACE("");
 			pFromNode->m_CentroidUpdateFlag+=1; // +1 as to be removed, we "touch" this node
 
 		}  // centriod 
@@ -7067,7 +7061,6 @@ void CTLiteDoc::OnToolsGeneratephysicalzonecentroidsonroadnetwork()
 
 
 	// step 2.1: do not delete adjacent nodes of physical links
-
 
 	for (iLink = m_LinkSet.begin(); iLink != m_LinkSet.end(); iLink++)
 	{
@@ -7135,25 +7128,6 @@ void CTLiteDoc::OnToolsGeneratephysicalzonecentroidsonroadnetwork()
 
 
 		}
-
-
-		// update movement counts
-		for(i = 0; i < (*itr_path).second.m_NodeVector.size(); i++)
-		{
-			if(i>=2)
-			{
-				CString movement_label;
-				movement_label.Format ("%d;%d;%d",(*itr_path).second.m_NodeVector[i-2],(*itr_path).second.m_NodeVector[i-1],(*itr_path).second.m_NodeVector[i]);
-
-				m_Movement3NodeMap[movement_label].TotalAgentSize ++;
-
-
-			}
-
-		}
-
-
-		// one Agent type for now
 
 	}
 
