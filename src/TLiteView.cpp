@@ -1265,17 +1265,7 @@ void CTLiteView::DrawObjects(CDC* pDC)
 			}
 
 
-			if (m_DislayedAgentType >= 1)  //show the allowed demand type only
-			{
-				CString number;
-				number.Format("%d", m_DislayedAgentType);
-
-				std::string str_number = GetDocument()->CString2StdString(number);
-				if ((*iLink)->m_agent_type_code.find(str_number) == std::string::npos)   // do not find this number
-					continue; // do not display 
-
-			}
-
+			
 			if (pMainFrame->m_bShowLayerMap[layer_reference_line] == false)
 			{
 				if ((*iLink)->m_LayerNo == 1)  //skip reference nodes
@@ -1395,9 +1385,6 @@ void CTLiteView::DrawObjects(CDC* pDC)
 
 				case link_display_link_id: 
 					str_text.Format ("%s", (*iLink)->m_LinkID.c_str()  ); break;
-
-			case link_display_agent_type_code:
-					str_text.Format("%s", (*iLink)->m_agent_type_code.c_str()); break;
 
 				case  link_display_speed_limit_:
 					str_text.Format ("%.1f",(*iLink)->m_FreeSpeed ); break;

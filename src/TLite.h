@@ -106,7 +106,6 @@ public:
 	afx_msg void OnFileOpen();
 	afx_msg void OnFileOpenNewDoc();
 	virtual int ExitInstance();
-	afx_msg void OnResearchtoolsExporttodtalitesensordataformat();
 	afx_msg void OnFileOpenmultipletrafficdataprojects();
 	afx_msg void OnAppExit();
 	afx_msg void OnFileOpenNetworkOnly();

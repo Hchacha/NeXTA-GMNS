@@ -327,11 +327,7 @@ BEGIN_MESSAGE_MAP(CTLiteDoc, CDocument)
 	ON_COMMAND(ID_TOOLS_VIEWSIMULATIONSUMMARY, &CTLiteDoc::OnToolsViewsimulationsummary)
 	ON_COMMAND(ID_TOOLS_VIEWASSIGNMENTSUMMARYLOG, &CTLiteDoc::OnToolsViewassignmentsummarylog)
 	ON_COMMAND(ID_HELP_VISITDEVELOPMENTWEBSITE, &CTLiteDoc::OnHelpVisitdevelopmentwebsite)
-	ON_COMMAND(ID_TOOLS_RUNTRAFFICASSIGNMENT, &CTLiteDoc::OnToolsRuntrafficassignment)
-	ON_COMMAND(ID_FILE_CHANGECOORDINATESTOLONG, &CTLiteDoc::OnFileChangecoordinatestolong)
-	ON_COMMAND(ID_TOOLS_EXPORTOPMODEDISTRIBUTION, &CTLiteDoc::OnToolsExportopmodedistribution)
-	ON_COMMAND(ID_RESEARCHTOOLS_EXPORTTODTALITESENSORDATAFORMAT, &CTLiteDoc::OnResearchtoolsExporttodtalitesensordataformat)
-	ON_COMMAND(ID_SCENARIO_CONFIGURATION, &CTLiteDoc::OnScenarioConfiguration)
+
 	ON_COMMAND(ID_MOE_AgentPATHANALAYSIS, &CTLiteDoc::OnMoeAgentpathanalaysis)
 	ON_COMMAND(ID_IMPORT_NGSIM_FILE, &CTLiteDoc::OnImportNgsimFile)
 	ON_COMMAND(ID_LINK_AgentSTATISTICSANALAYSIS, &CTLiteDoc::OnLinkAgentstatisticsanalaysis)
@@ -383,13 +379,9 @@ BEGIN_MESSAGE_MAP(CTLiteDoc, CDocument)
 	ON_COMMAND(ID_MOVEMENT_VIEWMOVEMENTDATATABLE, &CTLiteDoc::OnMovementViewmovementdatatable)
 	ON_COMMAND(ID_ODMATRIX_ODDEMANDMATRIX, &CTLiteDoc::OnOdmatrixOddemandmatrix)
 	ON_COMMAND(ID_SHOW_MOE_PATHLIST, &CTLiteDoc::OnShowMoePathlist)
-	ON_COMMAND(ID_EXPORT_EXPORTAGGREGATEDLINKMOEFILE, &CTLiteDoc::OnExportExportaggregatedlinkmoefile)
 	ON_COMMAND(ID_DETECTOR_EXPORTLINKFLOWPROPORTIONMATRIXTOCSVFILE, &CTLiteDoc::OnDetectorExportlinkflowproportionmatrixtocsvfile)
-	ON_COMMAND(ID_TRAFFICCAPACITY_SETDEFAULT, &CTLiteDoc::OnTrafficcapacitySetdefault)
 	ON_COMMAND(ID_MOVEMENT_HIDENON, &CTLiteDoc::OnMovementHidenon)
 	ON_UPDATE_COMMAND_UI(ID_MOVEMENT_HIDENON, &CTLiteDoc::OnUpdateMovementHidenon)
-	ON_COMMAND(ID_MOVEMENT_SETPEAKHOURFACTOR, &CTLiteDoc::OnMovementSetpeakhourfactor)
-	ON_COMMAND(ID_ZONE_CHANGEZONENUMBER, &CTLiteDoc::OnZoneChangezonenumber)
 	ON_COMMAND(ID_CHANGELINKTYPECOLOR_FREEWAY, &CTLiteDoc::OnChangelinktypecolorFreeway)
 	ON_COMMAND(ID_CHANGELINKTYPECOLOR_RAMP, &CTLiteDoc::OnChangelinktypecolorRamp)
 	ON_COMMAND(ID_CHANGELINKTYPECOLOR_ARTERIAL, &CTLiteDoc::OnChangelinktypecolorArterial)
@@ -2045,9 +2037,8 @@ bool CTLiteDoc::ReadLinkCSVFile(LPCTSTR lpszFileName, bool bCreateNewNodeFlag = 
 			double capacity_in_pcphpl = 2000;
 			string link_type_str;
 			string name;
-			float k_jam = 180;
-			string mode_code = "";
-			string agent_type_code = "";
+			float k_jam = 200;
+
 
 			float grade = 0;
 
@@ -2199,7 +2190,7 @@ bool CTLiteDoc::ReadLinkCSVFile(LPCTSTR lpszFileName, bool bCreateNewNodeFlag = 
 				length_in_mile = 1;
 			}
 
-			if (!parser.GetValueByFieldName("dir_flag", direction))
+			if (!parser.GetValueByFieldName("dir_flag", direction,false))
 				direction = 1;
 
 
@@ -2241,16 +2232,6 @@ bool CTLiteDoc::ReadLinkCSVFile(LPCTSTR lpszFileName, bool bCreateNewNodeFlag = 
 			parser.GetValueByFieldName("facility_type", link_type_str);
 			int link_type = 1;
 			parser.GetValueByFieldName("link_type", link_type);
-
-
-			parser.GetValueByFieldName("agent_type_code", agent_type_code);
-
-
-			float BPR_alpha_term = 0.15;
-			float BPR_beta_term = 4;
-
-			parser.GetValueByFieldName("BPR_alpha_term", BPR_alpha_term);
-			parser.GetValueByFieldName("BPR_beta_term", BPR_beta_term);
 
 			string link_key;
 			parser.GetValueByFieldName("link_key", link_key);
@@ -2323,15 +2304,18 @@ bool CTLiteDoc::ReadLinkCSVFile(LPCTSTR lpszFileName, bool bCreateNewNodeFlag = 
 
 				pLink->m_LayerNo = layer_no;
 				pLink->m_LinkNo = i;
+
+				if (i == 44645)
+				{
+					int i_debug = 1;
+				}
+
 				pLink->m_Name = name;
 				pLink->m_OrgDir = direction;
 				pLink->m_LinkID = link_id;
 				pLink->m_LinkKey = link_key.c_str();
 
 				m_LinkKeyMap[pLink->m_LinkKey] = pLink;
-
-				pLink->m_Mode_code = mode_code;
-				pLink->m_agent_type_code = agent_type_code;
 
 				pLink->m_geo_string = geo_string;
 
@@ -2340,6 +2324,11 @@ bool CTLiteDoc::ReadLinkCSVFile(LPCTSTR lpszFileName, bool bCreateNewNodeFlag = 
 					pLink->m_FromNodeID = from_node_id;
 
 					pLink->m_ToNodeID = to_node_id;
+
+					if (pLink->m_ToNodeID == 90002800)
+					{
+						int idebug = 1;
+					}
 					pLink->m_Direction = 1;
 
 					pLink->m_FromNodeNo = m_NodeIDtoNodeNoMap[from_node_id];
@@ -2366,6 +2355,11 @@ bool CTLiteDoc::ReadLinkCSVFile(LPCTSTR lpszFileName, bool bCreateNewNodeFlag = 
 				{
 					pLink->m_FromNodeID = to_node_id;
 					pLink->m_ToNodeID = from_node_id;
+
+					if (pLink->m_ToNodeID == 90002800)
+					{
+						int idebug = 1;
+					}
 					pLink->m_Direction = 1;
 
 					pLink->m_FromNodeNo = m_NodeIDtoNodeNoMap[to_node_id];
@@ -2415,8 +2409,6 @@ bool CTLiteDoc::ReadLinkCSVFile(LPCTSTR lpszFileName, bool bCreateNewNodeFlag = 
 				pLink->m_FreeFlowTravelTime = pLink->m_Length / pLink->m_FreeSpeed*60.0f;  // convert from hour to min
 				pLink->m_StaticTravelTime = pLink->m_FreeFlowTravelTime;
 
-				pLink->m_BPR_alpha_term = BPR_alpha_term;
-				pLink->m_BPR_beta_term = BPR_beta_term;
 
 
 				pLink->m_MaximumServiceFlowRatePHPL = capacity_in_pcphpl;
@@ -2481,26 +2473,6 @@ bool CTLiteDoc::ReadLinkCSVFile(LPCTSTR lpszFileName, bool bCreateNewNodeFlag = 
 
 		}
 
-
-		if (bNodeNonExistError)
-		{
-			ofstream m_WarningLogFile;
-
-			m_WarningLogFile.open(m_ProjectDirectory + "NeXTA.log", ios::out);
-			if (m_WarningLogFile.is_open())
-			{
-				m_WarningLogFile.width(12);
-				m_WarningLogFile.precision(3);
-				m_WarningLogFile.setf(ios::fixed);
-				m_WarningLogFile << warning_message << endl;
-
-			}
-
-
-			m_WarningLogFile.close();
-
-			AfxMessageBox("Some nodes in link.csv have not been defined in node.csv. Please check file NeXTA.log.");
-		}
 
 		m_UnitDistance = 1.0f;
 
@@ -3275,6 +3247,7 @@ void CTLiteDoc::ReadAgentCSVFile_Parser(LPCTSTR lpszFileName)
 	{
 		m_AgentSet.clear();
 		int count = 0;
+		int error_count = 0;
 		while(parser.ReadRecord())
 		{
 
@@ -3347,7 +3320,14 @@ void CTLiteDoc::ReadAgentCSVFile_Parser(LPCTSTR lpszFileName)
 						DTALink* pLink = FindLinkWithNodeIDs(m_PathNodeVectorSP[i - 1], m_PathNodeVectorSP[i]);
 						if (pLink == NULL)
 						{
-							pLink = AddNewLinkWithNodeIDs(m_PathNodeVectorSP[i - 1], m_PathNodeVectorSP[i]);
+							if(error_count == 0)
+							{
+							CString msg;
+							msg.Format("Agent file has an invalid link sequence %d->%d in the field node_sequence for agent %d. Please check.", 
+							m_PathNodeVectorSP[i - 1], m_PathNodeVectorSP[i], m_AgentID);
+							AfxMessageBox(msg);
+							}
+							error_count++;
 						}
 
 						if (pLink != NULL)
@@ -4841,75 +4821,6 @@ bool CTLiteDoc::CheckControlData()
 }
 
 
-void CTLiteDoc::OnToolsRuntrafficassignment()
-{
-
-
-
-}
-
-
-void CTLiteDoc::OnToolsPerformscheduling()
-{
-	STARTUPINFO si = { 0 };  
-	PROCESS_INFORMATION pi = { 0 };  
-
-	si.cb = sizeof(si); 
-
-	CWaitCursor curs;
-	if(!SetCurrentDirectory(m_ProjectDirectory))
-	{
-		if(m_ProjectDirectory.GetLength()==0)
-		{
-			AfxMessageBox("The project directory has not been specified.");
-			return;
-		}
-		CString msg;
-		msg.Format ("The specified project directory %s does not exist.", m_ProjectDirectory);
-		AfxMessageBox(msg);
-		return;
-	}
-
-	CString sCommand;
-	CString strParam;
-	CTime ExeStartTime = CTime::GetCurrentTime();
-
-	CMainFrame* pMainFrame = (CMainFrame*) AfxGetMainWnd();
-
-	sCommand.Format("%s\\FastTrain.exe", pMainFrame->m_CurrentDirectory);
-
-	ProcessExecute(sCommand, strParam, m_ProjectDirectory, true);
-
-	CTime ExeEndTime = CTime::GetCurrentTime();
-
-	CTimeSpan ts = ExeEndTime  - ExeStartTime;
-	CString str_running_time;
-
-	FILE* st = NULL;
-
-	CString directory = m_ProjectDirectory;
-	char simulation_short_summary1[200];
-	char simulation_short_summary2[200];
-	char simulation_short_summary3[200];
-
-	fopen_s(&st,directory+"short_summary.csv","r");
-	if(st!=NULL)
-	{  
-		fgets (simulation_short_summary1, 200 , st);
-		fgets (simulation_short_summary2 , 200 , st);
-		fgets (simulation_short_summary3, 200 , st);
-		fclose(st);
-	}
-
-	str_running_time.Format ("Program execution has completed.\nSimulation Statistics: %s\n%s\n%sProgram execution time: %d hour(s) %d min(s) %d sec(s) \nDo you want to load the output now?",
-		simulation_short_summary1,simulation_short_summary2, simulation_short_summary3,ts.GetHours(), ts.GetMinutes(), ts.GetSeconds());
-
-	if( AfxMessageBox(str_running_time, MB_YESNO| MB_ICONINFORMATION)==IDYES)
-	{
-		LoadSimulationOutput();
-		UpdateAllViews(0);
-	}
-}
 
 
 void CTLiteDoc::ResetBackgroundImageCoordinate()
@@ -5036,112 +4947,6 @@ void CTLiteDoc::ResetBackgroundImageCoordinate()
 	UpdateAllViews(0);
 }
 
-void CTLiteDoc::OnFileChangecoordinatestolong()
-{
-	m_LongLatFlag = true;
-	CDlgNetworkAlignment  dlg;
-	if(dlg.DoModal() ==IDOK)
-	{
-		if(dlg.m_Node1!=dlg.m_Node2 && m_NodeIDtoNodeNoMap.find(dlg.m_Node1)!= m_NodeIDtoNodeNoMap.end() && 
-			m_NodeIDtoNodeNoMap.find(dlg.m_Node2)!= m_NodeIDtoNodeNoMap.end())
-		{
-
-			GDPoint m_Node1OrgPt, m_Node2OrgPt;
-			m_Node1OrgPt = m_NodeIDMap[dlg.m_Node1]->pt;
-			m_Node2OrgPt = m_NodeIDMap[dlg.m_Node2]->pt;
-
-			float m_XScale = 1;
-			float m_YScale = 1;
-
-			if(m_Node1OrgPt.x - m_Node2OrgPt.x)
-			{
-				m_XScale = (dlg.m_NodeX1 - dlg.m_NodeX2)/(m_Node1OrgPt.x - m_Node2OrgPt.x);
-			}
-
-			if(m_Node1OrgPt.y - m_Node2OrgPt.y)
-			{
-				m_YScale = (dlg.m_NodeY1 - dlg.m_NodeY2)/(m_Node1OrgPt.y - m_Node2OrgPt.y);
-			}
-
-			float m_XOrigin = m_Node1OrgPt.x - dlg.m_NodeX1 /m_XScale;
-
-			float m_YOrigin = m_Node1OrgPt.y - dlg.m_NodeY1 /m_YScale;
-
-			// adjust node coordinates
-			std::list<DTANode*>::iterator iNode;
-			for (iNode = m_NodeSet.begin(); iNode != m_NodeSet.end(); iNode++)
-			{
-
-				(*iNode)->pt .x  = ((*iNode)->pt .x - m_XOrigin)*m_XScale;
-				(*iNode)->pt .y  = ((*iNode)->pt .y - m_YOrigin)*m_YScale;
-			}
-			//adjust link cooridnates
-
-			std::list<DTALink*>::iterator iLink;
-
-			for (iLink = m_LinkSet.begin(); iLink != m_LinkSet.end(); iLink++)
-			{
-				(*iLink)->m_FromPoint.x = ((*iLink)->m_FromPoint.x -m_XOrigin)*m_XScale;
-				(*iLink)->m_FromPoint.y = ((*iLink)->m_FromPoint.y -m_YOrigin)*m_YScale;
-
-				(*iLink)->m_ToPoint.x = ((*iLink)->m_ToPoint.x -m_XOrigin)*m_XScale;
-				(*iLink)->m_ToPoint.y = ((*iLink)->m_ToPoint.y -m_YOrigin)*m_YScale;
-
-
-				for(unsigned int si = 0; si< (*iLink)->m_Original_ShapePoints.size(); si++)
-				{
-
-					(*iLink)->m_Original_ShapePoints[si].x = ((*iLink)->m_Original_ShapePoints[si].x - m_XOrigin)*m_XScale;
-					(*iLink)->m_Original_ShapePoints[si].y = ((*iLink)->m_Original_ShapePoints[si].y - m_YOrigin)*m_YScale;
-
-				}
-
-				for(unsigned int si = 0; si< (*iLink)->m_ShapePoints.size(); si++)
-				{
-
-					(*iLink)->m_ShapePoints[si].x = ((*iLink)->m_ShapePoints[si].x - m_XOrigin)*m_XScale;
-					(*iLink)->m_ShapePoints[si].y = ((*iLink)->m_ShapePoints[si].y - m_YOrigin)*m_YScale;
-
-				}
-
-			}
-
-			// zone layer
-			std::map<int, DTAZone>	:: iterator itr;
-
-			for(itr = m_ZoneMap.begin(); itr != m_ZoneMap.end(); ++itr)
-			{
-				for(unsigned int si = 0; si< itr->second.m_ShapePoints.size(); si++)
-				{
-					itr->second.m_ShapePoints[si].x = (itr->second.m_ShapePoints[si].x - m_XOrigin)*m_XScale;
-					itr->second.m_ShapePoints[si].y = (itr->second.m_ShapePoints[si].y - m_YOrigin)*m_YScale;
-
-				}
-
-			}
-
-			// image layer
-
-			m_ImageX1 = (m_ImageX1- m_XOrigin)*m_XScale;
-			m_ImageY1 = (m_ImageY1- m_YOrigin)*m_YScale;
-			m_ImageX2 = (m_ImageX2- m_XOrigin)*m_XScale;
-			m_ImageY2 =  (m_ImageY2- m_YOrigin)*m_YScale;
-
-			m_ImageWidth = fabs(m_ImageX2 - m_ImageX1);
-			m_ImageHeight = fabs(m_ImageY2 - m_ImageY1);
-
-			m_ImageMoveSize = m_ImageWidth/2000.0f;
-
-			CString str_result;
-			str_result.Format ("The coordinates of %d nodes, %d links and %d zones have been adjusted to long/lat format.\nPleaes save the network to confirm the change.\nYou can use NEXTA_32.exe ->menu->Tools->GIS tools->Export GIS shape files to check the changed network on Google Maps",m_NodeSet.size(),m_LinkSet.size(),m_ZoneMap.size());
-			AfxMessageBox(str_result, MB_ICONINFORMATION);
-		}
-
-
-		UpdateAllViews(0);
-	}
-}
-
 void CTLiteDoc::OpenWarningLogFile(CString directory)
 {
 	m_NEXTALOGFile.open (directory+"NeXTA.log", ios::out);
@@ -5155,57 +4960,7 @@ void CTLiteDoc::OpenWarningLogFile(CString directory)
 		AfxMessageBox("File NeXTA.log cannot be opened, and it might be locked by another program!");
 	}
 }
-void CTLiteDoc::OnToolsExportopmodedistribution()
-{
 
-}
-
-void CTLiteDoc::OnResearchtoolsExporttodtalitesensordataformat()
-{
-	CWaitCursor wc;
-	int max_day = 23;
-	FILE* st = NULL;
-
-	for(int day = 0; day < max_day; day++)
-	{
-		CString str;
-		str.Format( "SensorDataDay%03d.csv",day+1);
-		fopen_s(&st,str,"w");
-		if(st!=NULL)
-		{
-			std::list<DTALink*>::iterator iLink;
-
-			fprintf(st,"Unix Timestamp (local time),StationID,Total Flow_per_obs_interval,Avg Density,Avg Speed\n");
-			for (iLink = m_LinkSet.begin(); iLink != m_LinkSet.end(); iLink++)
-			{
-				if((*iLink)->m_bSensorData )
-				{
-
-					for(int t= day*1440; t<(day+1)*1440; t+=5)
-					{
-						//
-						int hour = (t-day*1440)/60;
-						int min =  (t-day*1440-hour*60);
-						fprintf(st,"07/%02d/2010 %02d:%02d, %d %4.1f, 0, %4.1f\n", day, hour, min, (*iLink)->m_LinkNo+1,
-							(*iLink)->m_LinkMOEAry[ t].LinkFlow/12, (*iLink)->m_LinkMOEAry[t].Speed);
-					}
-
-
-				}
-			}
-
-			fclose(st);
-
-		}
-
-	}
-
-
-}
-void CTLiteDoc::OnScenarioConfiguration()
-{
-
-}
 
 void CTLiteDoc::OnMoeViewmoes()
 {
@@ -5363,10 +5118,6 @@ void CTLiteDoc::HighlightSelectedAgents(bool bSelectionFlag)
 
 
 
-void CTLiteDoc::OnLinkUserDefinedMOE()
-{
-
-}
 
 
 
@@ -8331,16 +8082,6 @@ void CTLiteDoc::OnShowMoePathlist()
 	m_bShowPathList = true;
 	ShowPathListDlg(m_bShowPathList);}
 
-void CTLiteDoc::OnExportExportaggregatedlinkmoefile()
-{
-	if(m_ProjectDirectory.GetLength () >0)
-	{
-		SaveLinkData(m_ProjectDirectory+"AMS_link.csv",true,0);
-		OpenCSVFileInExcel(m_ProjectDirectory + "AMS_link.csv");
-
-	}
-
-}
 
 void CTLiteDoc::OnHelpReportbug()
 {
@@ -8380,67 +8121,6 @@ int CTLiteDoc:: FindNonCentroidNodeIDWithCoordinate(double x, double y, int this
 }
 
 
-void CTLiteDoc::OnLinkApplydefaultlinkattributestoalllinks()
-{
-	CWaitCursor wait;
-
-	std::list<DTALink*>::iterator iLink;
-	Modify();
-
-	for (iLink = m_LinkSet.begin(); iLink != m_LinkSet.end(); iLink++)
-	{
-
-		DTALink* pLink = (*iLink);
-
-		pLink->m_FreeSpeed = m_LinkTypeMap[pLink->m_link_type ].default_speed ;
-
-	}
-
-}
-
-void CTLiteDoc::OnLinkApplydefaultlanecapacitytoalllinks()
-{
-	CWaitCursor wait;
-
-	std::list<DTALink*>::iterator iLink;
-
-	Modify();
-	for (iLink = m_LinkSet.begin(); iLink != m_LinkSet.end(); iLink++)
-	{
-
-		DTALink* pLink = (*iLink);
-
-		pLink->m_LaneCapacity = m_LinkTypeMap[pLink->m_link_type ].default_lane_capacity ;
-
-	}
-}
-
-void CTLiteDoc::OnLinkApplydefaultnumberoflanestoalllinks()
-{
-	CWaitCursor wait;
-
-	std::list<DTALink*>::iterator iLink;
-
-	Modify();
-	for (iLink = m_LinkSet.begin(); iLink != m_LinkSet.end(); iLink++)
-	{
-
-		DTALink* pLink = (*iLink);
-
-		pLink->m_NumberOfLanes  = m_LinkTypeMap[pLink->m_link_type ].default_number_of_lanes ;
-
-	}
-}
-
-
-
-void CTLiteDoc::OnTrafficcapacitySetdefault()
-{
-
-}
-
-
-
 
 
 
@@ -8454,20 +8134,6 @@ void CTLiteDoc::OnUpdateMovementHidenon(CCmdUI *pCmdUI)
 	pCmdUI->SetCheck(m_hide_non_specified_movement_on_freeway_and_ramp);
 }
 
-void CTLiteDoc::OnMovementSetpeakhourfactor()
-{
-
-}
-
-void CTLiteDoc::OnZoneChangezonenumber()
-{
-	
-}
-
-void CTLiteDoc::OnUpdateZoneDeletezone(CCmdUI *pCmdUI)
-{
-	pCmdUI->Enable (m_SelectedZoneID>=1);
-}
 
 void CTLiteDoc::OnUpdateZoneChangezonenumber(CCmdUI *pCmdUI)
 {

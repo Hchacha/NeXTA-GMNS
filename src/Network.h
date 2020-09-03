@@ -1591,9 +1591,6 @@ public:
 	
 		m_bToBeShifted = true;
 
-	m_BPR_alpha_term = 0.15f;
-	m_BPR_beta_term = 4.0f;
-
 
 	};
 
@@ -1606,9 +1603,6 @@ public:
 	bool m_bSensorData;
 
 	std::string m_CountSensorID;
-	float m_BPR_alpha_term;
-	float m_BPR_beta_term;
-
 
 	float m_UserDefinedHeight;
 
@@ -1922,8 +1916,6 @@ void AdjustLinkEndpointsWithSetBack()
 	float m_Wave_speed_in_mph;
 	int m_EffectiveLeftTurnGreenTimeInSecond;
 	int m_GreenStartTimetInSecond;
-	string m_Mode_code;
-	string m_agent_type_code;
 
 	int m_DisplayLinkID;
 

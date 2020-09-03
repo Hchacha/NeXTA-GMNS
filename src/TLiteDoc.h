@@ -2189,18 +2189,10 @@ public:
 	afx_msg void OnToolsViewsimulationsummary();
 	afx_msg void OnToolsViewassignmentsummarylog();
 	afx_msg void OnHelpVisitdevelopmentwebsite();
-	afx_msg void OnToolsRuntrafficassignment();
-	afx_msg void OnToolsPerformscheduling();
-	afx_msg void OnFileChangecoordinatestolong();
-	afx_msg void OnToolsExportopmodedistribution();
 	
-	afx_msg void OnResearchtoolsExporttodtalitesensordataformat();
-	afx_msg void OnScenarioConfiguration();
 	afx_msg void OnMoeViewmoes();
 	afx_msg void OnImportdataImport();
 	afx_msg void OnMoeAgentpathanalaysis();
-	afx_msg void OnFileConstructandexportsignaldata();
-	afx_msg void OnLinkUserDefinedMOE();
 	afx_msg void OnEditOffsetlinks();
 	afx_msg void OnFileOpenNetworkOnly();
 	afx_msg void OnLinkAddlink();
@@ -2295,20 +2287,11 @@ public:
 	afx_msg void OnGridUselong();
 	afx_msg void OnUpdateGridUselong(CCmdUI *pCmdUI);
 	afx_msg void OnShowMoePathlist();
-	afx_msg void OnExportExportaggregatedlinkmoefile();
 	afx_msg void OnHelpReportbug();
 
 	afx_msg void OnDetectorExportlinkflowproportionmatrixtocsvfile();
-
-	afx_msg void OnLinkApplydefaultlinkattributestoalllinks();
-	afx_msg void OnLinkApplydefaultlanecapacitytoalllinks();
-	afx_msg void OnLinkApplydefaultnumberoflanestoalllinks();
-	afx_msg void OnTrafficcapacitySetdefault();
 	afx_msg void OnMovementHidenon();
 	afx_msg void OnUpdateMovementHidenon(CCmdUI *pCmdUI);
-	afx_msg void OnMovementSetpeakhourfactor();
-	afx_msg void OnZoneChangezonenumber();
-	afx_msg void OnUpdateZoneDeletezone(CCmdUI *pCmdUI);
 	afx_msg void OnUpdateZoneChangezonenumber(CCmdUI *pCmdUI);
 	afx_msg void OnChangelinktypecolorFreeway();
 	afx_msg void OnChangelinktypecolorRamp();

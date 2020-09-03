@@ -54,7 +54,6 @@ BEGIN_MESSAGE_MAP(CTLiteApp, CWinApp)
 	ON_COMMAND(ID_FILE_OPEN, &CWinApp::OnFileOpen)
 	ON_COMMAND(ID_FILE_OPEN, &CTLiteApp::OnFileOpen)
 	ON_COMMAND(ID_FILE_OPEN_NEW_DOC, &CTLiteApp::OnFileOpenNewDoc)
-	ON_COMMAND(ID_RESEARCHTOOLS_EXPORTTODTALITESENSORDATAFORMAT, &CTLiteApp::OnResearchtoolsExporttodtalitesensordataformat)
 	ON_COMMAND(ID_FILE_OPENMULTIPLETRAFFICDATAPROJECTS, &CTLiteApp::OnFileOpenmultipletrafficdataprojects)
 	ON_COMMAND(ID_APP_EXIT, &CTLiteApp::OnAppExit)
 	ON_COMMAND(ID_FILE_OPEN_NETWORK_ONLY, &CTLiteApp::OnFileOpenNetworkOnly)
@@ -377,10 +376,7 @@ void CTLiteApp::UpdateAllViews()
 
 }
 
-void CTLiteApp::OnResearchtoolsExporttodtalitesensordataformat()
-{
-	// TODO: Add your command handler code here
-}
+
 
 void CTLiteApp::OnFileOpenmultipletrafficdataprojects()
 {
