@@ -75,24 +75,20 @@ bool CCSVParser::OpenCSVFile(string fileName, bool bIsFirstLineHeader)
 	}
 }
 
-bool CCSVParser::ReadSectionHeader()
+bool CCSVParser::ReadSectionHeader(string s)
 {
 	//skip // data 
 
 	Headers.clear();
 	FieldsIndices.clear();
 
-	string s;   // skip one line
-	std::getline(inFile,s);
 
-	if(s.length () ==0)
-		return true; 
-
-	std::getline(inFile,s);  // read the line for the header
+	if (s.length() == 0)
+		return true;
 
 	vector<string> FieldNames = ParseLine(s);
 
-	for (size_t i=0;i<FieldNames.size();i++)
+	for (size_t i = 0; i < FieldNames.size(); i++)
 	{
 		string tmp_str = FieldNames.at(i);
 		size_t start = tmp_str.find_first_not_of(" ");
@@ -105,10 +101,9 @@ bool CCSVParser::ReadSectionHeader()
 		else
 		{
 			name = tmp_str.substr(start);
-			TRACE("%s,",name.c_str ());
 		}
 		Headers.push_back(name);
-		FieldsIndices[name] = (int) i;
+		FieldsIndices[name] = (int)i;
 	}
 
 
@@ -155,7 +150,7 @@ bool CCSVParser::ReadRecord()
 				}
 
 				//re-read section header
-				ReadSectionHeader();
+				ReadSectionHeader(s);
 				std::getline(inFile,s);  // read the line for field values
 
 
@@ -182,6 +177,55 @@ bool CCSVParser::ReadRecord()
 			{
 				return false;
 			}
+		}
+	}
+	else
+	{
+		return false;
+	}
+}
+
+bool CCSVParser::ReadRecord_Section()
+{
+	LineFieldsValue.clear();
+
+	if (inFile.is_open())
+	{
+		string s;
+		std::getline(inFile, s);
+		if (s.length() > 0)
+		{
+			if (s.find("[") != string::npos)  // synchro single csv file
+			{
+				LineFieldsValue = ParseLine(s);
+
+				if (LineFieldsValue.size() >= 1)
+				{
+					SectionName = LineFieldsValue[0];
+
+				}
+
+				//re-read section header
+				ReadSectionHeader(s);
+				std::getline(inFile, s);
+
+			}
+			LineFieldsValue = ParseLine(s);
+			return true;
+		}
+		else
+		{
+
+			if (m_bLastSectionRead)  // reach the last section
+				return false;
+			else
+			{
+				if (inFile.eof())
+					return false;
+				else
+					return true;
+			}
+
 		}
 	}
 	else

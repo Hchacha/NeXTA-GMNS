@@ -208,44 +208,45 @@ int CTLiteDoc::Routing(bool bCheckConnectivity, bool bRebuildNetwork)
 	// calculate time-dependent travel time
 
 
-		//for(unsigned int p = 0; p < m_PathDisplayList.size(); p++) // for each path
-		//{
-		//	DTAPath path_element = m_PathDisplayList[p];
+		for(unsigned int p = 0; p < m_PathDisplayList.size(); p++) // for each path
+		{
+			DTAPath* path_element = &(m_PathDisplayList[p]);
 
-		//	for(int t=0; t< g_Simulation_Time_Horizon; t+= TIME_DEPENDENT_TRAVLE_TIME_CALCULATION_INTERVAL)  // for each starting time
-		//	{
-		//		path_element.m_TimeDependentTravelTime[t] = t;  // t is the departure time
+			for(int t=0; t< g_Simulation_Time_Horizon; t+= TIME_DEPENDENT_TRAVLE_TIME_CALCULATION_INTERVAL)  // for each starting time
+			{
+				path_element->m_TimeDependentTravelTime[t] = 0;  // t is the departure time
 
-		//		for (int i=0 ; i < path_element.m_LinkVector.size(); i++)  // for each pass link
-		//		{
-		//			DTALink* pLink = m_LinkNoMap[m_PathDisplayList[p].m_LinkVector[i]];
-		//			if(pLink == NULL)
-		//				break;
+				for (int i=0 ; i < path_element->m_LinkVector.size(); i++)  // for each pass link
+				{
+					DTALink* pLink = m_LinkNoMap[m_PathDisplayList[p].m_LinkVector[i]];
+					if(pLink == NULL)
+						break;
+					if(t>=420)
+					{ 
+						path_element->m_TimeDependentTravelTime[t] += pLink->GetDynamicTravelTime(t+ path_element->m_TimeDependentTravelTime[t] );
+					}
 
-		//			path_element.m_TimeDependentTravelTime[t] += pLink->GetDynamicTravelTime(path_element.m_TimeDependentTravelTime[t] );
-
-		//		}
-
-		//		path_element.m_TimeDependentTravelTime[t] -= t; // remove the starting time, so we have pure travel time;
-
-		//		ASSERT(path_element.m_TimeDependentTravelTime[t]>=0);
-
-		//		if( path_element.m_MaxTravelTime < path_element.m_TimeDependentTravelTime[t])
-		//			path_element.m_MaxTravelTime = path_element.m_TimeDependentTravelTime[t];
-
-		//		for(int tt=1; tt<TIME_DEPENDENT_TRAVLE_TIME_CALCULATION_INTERVAL; tt++)
-		//		{
-		//			path_element.m_TimeDependentTravelTime[t+tt] = path_element.m_TimeDependentTravelTime[t];
-		//		}
+				}
 
 
-		//		//                              TRACE("\n path %d, time at %d = %f",p, t,path_element.m_TimeDependentTravelTime[t]  );
+				ASSERT(path_element->m_TimeDependentTravelTime[t]>=0);
 
-		//	}
+				if(path_element->m_MaxTravelTime < path_element->m_TimeDependentTravelTime[t])
+					path_element->m_MaxTravelTime = path_element->m_TimeDependentTravelTime[t];
+
+				for(int tt=1; tt<TIME_DEPENDENT_TRAVLE_TIME_CALCULATION_INTERVAL; tt++)
+				{
+					path_element->m_TimeDependentTravelTime[t+tt] = path_element->m_TimeDependentTravelTime[t];
+				}
+
+
+				//                              TRACE("\n path %d, time at %d = %f",p, t,path_element.m_TimeDependentTravelTime[t]  );
+
+			}
 
 	
 
-		//}
+		}
 
 
 /*

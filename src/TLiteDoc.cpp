@@ -43,7 +43,7 @@
 #include "DlgLinkList.h"
 #include "DlgPathList.h"
 
-#include "Dlg_ImageSettings.h"
+
 #include "Shellapi.h"
 
 #include "DlgNetworkAlignment.h"
@@ -298,7 +298,6 @@ BEGIN_MESSAGE_MAP(CTLiteDoc, CDocument)
 	ON_COMMAND(ID_FILE_OPEN, &CTLiteDoc::OnFileOpen)
 	ON_COMMAND(ID_FILE_SAVE_PROJECT, &CTLiteDoc::OnFileSaveProject)
 	ON_COMMAND(ID_FILE_SAVE_PROJECT_AS, &CTLiteDoc::OnFileSaveProjectAs)
-	ON_COMMAND(ID_IMAGE_IMPORTBACKGROUNDIMAGE, &CTLiteDoc::OnImageImportbackgroundimage)
 	ON_COMMAND(ID_FILE_DATALOADINGSTATUS, &CTLiteDoc::OnFileDataloadingstatus)
 	ON_COMMAND(ID_MOE_VOLUME, &CTLiteDoc::OnMoeVolume)
 	ON_COMMAND(ID_MOE_SPEED, &CTLiteDoc::OnMoeSpeed)
@@ -348,8 +347,8 @@ BEGIN_MESSAGE_MAP(CTLiteDoc, CDocument)
 	ON_COMMAND(ID_DELETE_SELECTED_LINK, &CTLiteDoc::OnDeleteSelectedLink)
 	ON_COMMAND(ID_EXPORT_GENERATEZONE, &CTLiteDoc::OnExportGenerateTravelTimeMatrix)
 	ON_COMMAND(ID_EXPORT_GENERATESHAPEFILES, &CTLiteDoc::OnExportGenerateshapefiles)
-	ON_COMMAND(ID_LINKMOEDISPLAY_QUEUELENGTH, &CTLiteDoc::OnLinkmoedisplayQueuelength)
-	ON_UPDATE_COMMAND_UI(ID_LINKMOEDISPLAY_QUEUELENGTH, &CTLiteDoc::OnUpdateLinkmoedisplayQueuelength)
+	ON_COMMAND(ID_MOETYPE1_QUEUELENGTH, &CTLiteDoc::OnLinkmoedisplayQueueLengthRatio)
+	ON_UPDATE_COMMAND_UI(ID_MOETYPE1_QUEUELENGTH, &CTLiteDoc::OnUpdateLinkmoedisplayQueueLengthRatio)
 
 
 	ON_COMMAND(ID_MOE_PATHLIST, &CTLiteDoc::OnMoePathlist)
@@ -592,7 +591,6 @@ CTLiteDoc::CTLiteDoc()
 	m_LinkTypeFreeway = 1;
 	m_LinkTypeArterial = 3;
 	m_LinkTypeHighway = 2;
-
 
 	m_OriginOnBottomFlag = 1;
 
@@ -991,15 +989,20 @@ bool CTLiteDoc::ReadSimulationLinkMOEData_Parser(LPCTSTR lpszFileName)
 						float link_volume = 0;
 						float density = 0;
 						float speed = 60.0; 
-						float queue_length_percentage = 0;
+						float queue_length_ratio = 0;
 						float number_of_queued_agents = 0;
 
 						parser.GetValueByFieldName("travel_time", travel_time_in_min);
 						parser.GetValueByFieldName("volume", link_volume);
 						parser.GetValueByFieldName("density", density);
 						parser.GetValueByFieldName("speed", speed);
-						parser.GetValueByFieldName("queue_percentage", queue_length_percentage);
-						parser.GetValueByFieldName("queue", number_of_queued_agents);
+						parser.GetValueByFieldName("queue", number_of_queued_agents);  // virtual queue
+
+						float K_jam = 200;
+						if(number_of_queued_agents>=1)
+						{
+							queue_length_ratio = number_of_queued_agents / (pLink->m_Length * pLink->m_NumberOfLanes * K_jam);
+						}
 
 						if (travel_time_in_min < 0.01 && speed>0.1)  // travel time data invalid, but with speed data
 						{
@@ -1031,7 +1034,7 @@ bool CTLiteDoc::ReadSimulationLinkMOEData_Parser(LPCTSTR lpszFileName)
 								pLink->m_LinkMOEAry[tt].LinkFlow = link_volume/ time_duration_per_hour;
 								pLink->m_LinkMOEAry[tt].Density = density;
 								pLink->m_LinkMOEAry[tt].Speed = speed;
-								pLink->m_LinkMOEAry[tt].QueueLength = queue_length_percentage;
+								pLink->m_LinkMOEAry[tt].QueueLengthRatio = queue_length_ratio;
 
 							}
 						}
@@ -1125,10 +1128,10 @@ BOOL CTLiteDoc::OnOpenTrafficNetworkDocument(CString ProjectFileName, bool bNetw
 	ReadGPSTrajectory(m_ProjectDirectory + "CAR_GPS_data.csv");
 
 	// read users' prespecified control type
-	ReadLinkTypeCSVFile(directory+"link_type.csv");
+	ReadLinkTypeCSVFile(directory+"settings.csv");
 
  // we need to check the data consistency here
-	ReadAgentTypeCSVFile(directory+"agent_type.csv");
+	ReadAgentTypeCSVFile(directory+"settings.csv");
 
 	CWaitCursor wc;
 	OpenWarningLogFile(directory);
@@ -1159,7 +1162,6 @@ BOOL CTLiteDoc::OnOpenTrafficNetworkDocument(CString ProjectFileName, bool bNetw
 	ReadAMSMovementCSVFile(directory + "movement.csv", -1);
 //	ReadAMSSignalControlCSVFile(directory + "input_timing.csv");
 
-	//ReadDYNASMART_ControlFile_ForAMSHub();
 	if (bNetworkOnly == false)
 	{
 		LoadSimulationOutput();
@@ -1167,7 +1169,6 @@ BOOL CTLiteDoc::OnOpenTrafficNetworkDocument(CString ProjectFileName, bool bNetw
 
 	CalculateDrawingRectangle(false);
 	m_bFitNetworkInitialized  = false;
-
 
 	CTime LoadingEndTime = CTime::GetCurrentTime();
 
@@ -1225,11 +1226,14 @@ BOOL CTLiteDoc::OnOpenDocument(CString ProjectFileName, bool bLoadNetworkOnly )
 bool CTLiteDoc::ReadBackgroundImageFile(LPCTSTR lpszFileName, bool bAskForInput)
 {
 	//read impage file Background.bmp
-
+	
+	
+	
 	if(m_BackgroundBitmapLoaded)
 		m_BackgroundBitmap.Detach ();
 
-	m_BackgroundBitmap.Load(m_ProjectDirectory + "background_image.bmp");
+	m_BackgroundBitmap.Load(m_ProjectDirectory + "image.bmp");
+
 
 	m_BackgroundBitmapLoaded = !(m_BackgroundBitmap.IsNull ());
 	//	m_BackgroundBitmapLoaded = true;
@@ -1237,30 +1241,22 @@ bool CTLiteDoc::ReadBackgroundImageFile(LPCTSTR lpszFileName, bool bAskForInput)
 	m_ImageXResolution = 1;
 	m_ImageYResolution = 1;
 
-
 	if(m_BackgroundBitmapLoaded)
 	{
+		CString SettingsPath;
+		SettingsPath.Format("%s\\image.ini", m_ProjectDirectory);
 
-		if(bAskForInput)
-		{
+		float real_world_width = (int)g_GetPrivateProfileDouble("image", "real_world_width", 10, SettingsPath);
 
+		float width = m_BackgroundBitmap.GetWidth();
+		float height = m_BackgroundBitmap.GetHeight();
+
+		m_OriginOnBottomFlag = 1;
 			m_ImageX1 = 0;
 			m_ImageY1 = 0;
-			m_ImageX2 = 20;
-			m_ImageY2 = 10;
-
-			m_OriginOnBottomFlag = 1;
-		}else
-		{
-			m_OriginOnBottomFlag = (int)(g_GetPrivateProfileDouble("coordinate_info", "origin_on_bottom_flag", m_OriginOnBottomFlag, lpszFileName));
-			m_ImageX1 = g_GetPrivateProfileDouble("background_image_coordinate_info", "left", m_NetworkRect.left, lpszFileName);
-			m_ImageY1 = g_GetPrivateProfileDouble("background_image_coordinate_info", "bottom", m_NetworkRect.bottom, lpszFileName);
-			m_ImageX2 = g_GetPrivateProfileDouble("background_image_coordinate_info", "right", m_NetworkRect.right, lpszFileName);
-			m_ImageY2 = g_GetPrivateProfileDouble("background_image_coordinate_info", "top", m_NetworkRect.top, lpszFileName);
-			m_ImageWidthInMile = g_GetPrivateProfileDouble("background_image_coordinate_info", "width",1, lpszFileName);
-
-
-		}
+			m_ImageX2 = width;
+			m_ImageY2 = height;
+			m_ImageWidthInMile = real_world_width;
 
 		m_ImageWidth = fabs(m_ImageX2 - m_ImageX1);
 		m_ImageHeight = fabs(m_ImageY2 - m_ImageY1);
@@ -1269,9 +1265,18 @@ bool CTLiteDoc::ReadBackgroundImageFile(LPCTSTR lpszFileName, bool bAskForInput)
 
 		m_BackgroundImageFileLoadingStatus.Format ("Optional background image file is loaded.");
 
+		m_NetworkRect.left = 0;
+		m_NetworkRect.right = width;
+		m_NetworkRect.top = height;
+		m_NetworkRect.bottom = 0;
+
+		m_UnitDistance = width / max(0.0001, real_world_width);
+
 	}
 	else
 		m_BackgroundImageFileLoadingStatus.Format ("Optional background image file is not loaded.");
+
+
 
 	return m_BackgroundBitmapLoaded;
 }
@@ -1290,24 +1295,6 @@ void CTLiteDoc::OnFileOpen()
 
 void CTLiteDoc::OnFileSaveimagelocation()
 {
-
-	/*TCHAR IniFilePath[_MAX_PATH];
-	sprintf_s(IniFilePath,"%s", m_ProjectFile);
-
-	char lpbuffer[64];
-
-	sprintf_s(lpbuffer,"%f",m_ImageX1);
-	WritePrivateProfileString("background_image_coordinate_info","left",lpbuffer,IniFilePath);
-	sprintf_s(lpbuffer,"%f",m_ImageY1);
-	WritePrivateProfileString("background_image_coordinate_info","bottom",lpbuffer,IniFilePath);
-
-	sprintf_s(lpbuffer,"%f",m_ImageX2);
-	WritePrivateProfileString("background_image_coordinate_info","right",lpbuffer,IniFilePath);
-	sprintf_s(lpbuffer,"%f",m_ImageY2);
-	WritePrivateProfileString("background_image_coordinate_info","top",lpbuffer,IniFilePath);
-
-	sprintf_s(lpbuffer,"%f",m_ImageWidthInMile);
-	WritePrivateProfileString("background_image_coordinate_info","width",lpbuffer,IniFilePath);*/
 
 
 }
@@ -1334,8 +1321,6 @@ void CTLiteDoc::OnUpdateShowShowpathmoe(CCmdUI *pCmdUI)
 {
 	pCmdUI->SetCheck(g_LinkMOEDlgShowFlag);
 }
-
-
 
 
 
@@ -2661,8 +2646,11 @@ bool CTLiteDoc::ReadLinkTypeCSVFile(LPCTSTR lpszFileName)
 	if (parser.OpenCSVFile(lpszFileName))
 	{
 		m_LinkTypeMap.clear();
-		while(parser.ReadRecord())
+		while(parser.ReadRecord_Section())
 		{
+			if (parser.SectionName == "[link_type]")
+			{
+
 			DTALinkType element;
 
 			if(parser.GetValueByFieldName("link_type",element.link_type ) == false)
@@ -2708,7 +2696,9 @@ bool CTLiteDoc::ReadLinkTypeCSVFile(LPCTSTR lpszFileName)
 
 			m_LinkTypeMap[element.link_type] = element;
 
+			}
 			lineno++;
+			
 		}
 
 		CString msg;
@@ -2799,7 +2789,7 @@ BOOL CTLiteDoc::SaveLinkData(LPCTSTR lpszPathName,bool bExport_Link_MOE_in_input
 					fprintf(st,"%f %f",(*iLink)->m_ShapePoints[si].x, (*iLink)->m_ShapePoints[si].y);
 
 					if(si!=(*iLink)->m_ShapePoints.size()-1)
-						fprintf(st," ,");
+						fprintf(st,", ");
 				}
 
 				fprintf(st,")\"");
@@ -4029,50 +4019,7 @@ bool CTLiteDoc::GetAgentPosition(DTAAgent* pAgent, double CurrentTime, GDPoint& 
 	return false;
 }
 
-void CTLiteDoc::OnImageImportbackgroundimage()
-{
 
-	if(!m_BackgroundBitmapLoaded)
-		ReadBackgroundImageFile(m_ProjectFile);
-
-	m_ImageX2  = m_ImageX1+ m_ImageWidth * m_ImageXResolution;
-	m_ImageY2  = m_ImageY1+ m_ImageHeight * m_ImageYResolution;
-
-	CDlg_ImageSettings dlg_image;
-
-	dlg_image.m_pDoc = this;
-
-	dlg_image.m_X1 = m_ImageX1;
-	dlg_image.m_Y1 = m_ImageY1;
-
-	dlg_image.m_X2 = m_ImageX2;
-	dlg_image.m_Y2 = m_ImageY2;
-
-	if(m_BackgroundBitmapLoaded)
-	{
-		dlg_image.m_Image_File_Message  = "Background bitmap file has been loaded.";
-
-	}
-	else 
-	{
-		dlg_image.m_Image_File_Message  = "Please prepare background bitmap file as\nbackground_image.bmp.";
-	}
-
-	if(dlg_image.DoModal ()==IDOK)
-	{
-		m_ImageX1 = dlg_image.m_X1;
-		m_ImageY1 = dlg_image.m_Y1;
-
-		m_ImageX2 = dlg_image.m_X2;
-		m_ImageY2 = dlg_image.m_Y2;
-
-		OnFileSaveimagelocation();
-
-	}
-
-	m_bFitNetworkInitialized = false;
-	UpdateAllViews(0);
-}
 
 
 void CTLiteDoc::OnFileDataloadingstatus()
@@ -4107,9 +4054,9 @@ void CTLiteDoc::OnMoeDensity()
 	UpdateAllViews(0);
 }
 
-void CTLiteDoc::OnMoeQueuelength()
+void CTLiteDoc::OnMoeQueueLengthRatio()
 {
-	m_LinkMOEMode = MOE_queuelength;
+	m_LinkMOEMode = MOE_QueueLengthRatio;
 
 	GenerateOffsetLinkBand();
 	UpdateAllViews(0);}
@@ -4128,9 +4075,9 @@ void CTLiteDoc::OnUpdateMoeDensity(CCmdUI *pCmdUI)
 	pCmdUI->SetCheck(m_LinkMOEMode == MOE_density);
 }
 
-void CTLiteDoc::OnUpdateMoeQueuelength(CCmdUI *pCmdUI)
+void CTLiteDoc::OnUpdateMoeQueueLengthRatio(CCmdUI *pCmdUI)
 {
-	pCmdUI->SetCheck(m_LinkMOEMode == MOE_queuelength);
+	pCmdUI->SetCheck(m_LinkMOEMode == MOE_QueueLengthRatio);
 }
 
 
@@ -4243,7 +4190,7 @@ float CTLiteDoc::GetLinkMOE(DTALink* pLink, Link_MOE LinkMOEMode,int CurrentTime
 					total_value+= pLink->GetSimulatedDensity(CurrentTime);
 					break;
 				case MOE_queue_length: 
-					total_value+= pLink->GetQueueLengthPercentage(CurrentTime);
+					total_value+= pLink->GetQueueLengthRatioPercentage(CurrentTime);
 					break;
 
 
@@ -6722,7 +6669,7 @@ void CTLiteDoc::OnExportGenerateshapefiles()
 
 }
 
-void CTLiteDoc::OnLinkmoedisplayQueuelength()
+void CTLiteDoc::OnLinkmoedisplayQueueLengthRatio()
 {
 	m_LinkMOEMode = MOE_queue_length;
 	ShowLegend(false);
@@ -6731,7 +6678,7 @@ void CTLiteDoc::OnLinkmoedisplayQueuelength()
 
 }
 
-void CTLiteDoc::OnUpdateLinkmoedisplayQueuelength(CCmdUI *pCmdUI)
+void CTLiteDoc::OnUpdateLinkmoedisplayQueueLengthRatio(CCmdUI *pCmdUI)
 {
 	pCmdUI->SetCheck(m_LinkMOEMode == MOE_queue_length);
 }
@@ -8231,30 +8178,6 @@ void CTLiteDoc::OnTrafficcontroltoolsTransfersignaldatafromreferencenetworktocur
 void CTLiteDoc::OnImportBackgroundimage()
 {
 
-	CFileDialog dlg(TRUE, 0, 0, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT|OFN_LONGNAMES|OFN_ENABLESIZING,
-		_T("background image file(*.bmp)|*.bmp|"),NULL,0);
-	CMainFrame* pMainFrame = (CMainFrame*) AfxGetMainWnd();
-	CString bitmap_string  = "//importing_sample_data_sets";
-	CString NetworkFile = pMainFrame->m_CurrentDirectory + bitmap_string;
-	dlg.m_ofn.lpstrInitialDir = NetworkFile ;
-
-
-	if(dlg.DoModal() == IDOK)
-	{
-
-			CopyFile(dlg.GetPathName (),m_ProjectDirectory+"background_image.bmp",false);
-			m_ImageX1  = m_NetworkRect.left;
-			m_ImageY1  = m_NetworkRect.bottom;
-			m_ImageX2 = m_NetworkRect.right;
-			m_ImageY2 = m_NetworkRect.top;
-			m_ImageWidth = fabs(m_ImageX2 - m_ImageX1);
-			m_ImageHeight = fabs(m_ImageY2 - m_ImageY1);
-
-
-	}
-	m_bFitNetworkInitialized  = false;
-	CalculateDrawingRectangle(false);
-	UpdateAllViews(0);
 }
 
 void CTLiteDoc::OnZoneDeletezone()

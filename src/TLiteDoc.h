@@ -67,7 +67,7 @@ enum layer_mode
 	layer_subarea
 };
 enum Network_Data_Settings {_NODE_DATA = 0,_LINK_DATA, _MOVEMENT_DATA, _AGENT_DATA, MAX_NUM_OF_NETWORK_DATA_FILES};
-enum Link_MOE {MOE_none,MOE_volume, MOE_speed, MOE_queue_length, MOE_bottleneck,MOE_density,MOE_traveltime,MOE_capacity, MOE_speedlimit,  MOE_fftt, MOE_length, MOE_queuelength,MOE_Agent};
+enum Link_MOE {MOE_none,MOE_volume, MOE_speed, MOE_queue_length, MOE_bottleneck,MOE_density,MOE_traveltime,MOE_capacity, MOE_speedlimit,  MOE_fftt, MOE_length, MOE_QueueLengthRatio,MOE_Agent};
 
 enum OD_MOE {odnone,critical_volume};
 
@@ -2146,16 +2146,15 @@ public:
 	afx_msg void OnUpdateShowShowpathmoe(CCmdUI *pCmdUI);
 	afx_msg void OnFileSaveProject();
 	afx_msg void OnFileSaveProjectAs();
-	afx_msg void OnImageImportbackgroundimage();
 	afx_msg void OnFileDataloadingstatus();
 	afx_msg void OnMoeVolume();
 	afx_msg void OnMoeSpeed();
 	afx_msg void OnMoeDensity();
-	afx_msg void OnMoeQueuelength();
+	afx_msg void OnMoeQueueLengthRatio();
 	afx_msg void OnUpdateMoeVolume(CCmdUI *pCmdUI);
 	afx_msg void OnUpdateMoeSpeed(CCmdUI *pCmdUI);
 	afx_msg void OnUpdateMoeDensity(CCmdUI *pCmdUI);
-	afx_msg void OnUpdateMoeQueuelength(CCmdUI *pCmdUI);
+	afx_msg void OnUpdateMoeQueueLengthRatio(CCmdUI *pCmdUI);
 	afx_msg void OnMoeNone();
 	afx_msg void OnUpdateMoeNone(CCmdUI *pCmdUI);
 	afx_msg void OnToolsCarfollowingsimulation();
@@ -2225,8 +2224,8 @@ public:
 	afx_msg void OnImportRegionalplanninganddtamodels();
 	afx_msg void OnExportGenerateTravelTimeMatrix();
 	afx_msg void OnExportGenerateshapefiles();
-	afx_msg void OnLinkmoedisplayQueuelength();
-	afx_msg void OnUpdateLinkmoedisplayQueuelength(CCmdUI *pCmdUI);
+	afx_msg void OnLinkmoedisplayQueueLengthRatio();
+	afx_msg void OnUpdateLinkmoedisplayQueueLengthRatio(CCmdUI *pCmdUI);
 
 
 

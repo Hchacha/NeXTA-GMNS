@@ -227,10 +227,8 @@
     <ClCompile Include="ChildFrm.cpp" />
     <ClCompile Include="CSVParser.cpp" />
     <ClCompile Include="Data-Interface\DYNASMART-interface.cpp" />
-    <ClCompile Include="Dlg_BackgroundImageLocation.cpp" />
     <ClCompile Include="Dlg_DisplayConfiguration.cpp" />
     <ClCompile Include="Dlg_Find_Vehicle.cpp" />
-    <ClCompile Include="Dlg_ImageSettings.cpp" />
     <ClCompile Include="Dlg_Legend.cpp" />
     <ClCompile Include="Dlg_NodeProperties.cpp" />
     <ClCompile Include="Dlg_VehEmissions.cpp" />
@@ -305,10 +303,8 @@
     <ClInclude Include="BaseDialog.h" />
     <ClInclude Include="ChildFrm.h" />
     <ClInclude Include="CSVParser.h" />
-    <ClInclude Include="Dlg_BackgroundImageLocation.h" />
     <ClInclude Include="Dlg_DisplayConfiguration.h" />
     <ClInclude Include="Dlg_Find_Vehicle.h" />
-    <ClInclude Include="Dlg_ImageSettings.h" />
     <ClInclude Include="Dlg_Legend.h" />
     <ClInclude Include="Dlg_NodeProperties.h" />
     <ClInclude Include="Dlg_NodeProperty.h" />

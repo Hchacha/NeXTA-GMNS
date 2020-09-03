@@ -411,7 +411,7 @@ void CDlg_Legend::OnCbnSelchangeComboAggregation()
 {
 	if( m_pDoc->m_LinkMOEMode == MOE_bottleneck)
 	{
-		g_ImpactThreshold_QueueLengthPercentage= ( m_QueueCutOffComboBox.GetCurSel () +1)*10;
+		g_ImpactThreshold_QueueLengthRatioPercentage= ( m_QueueCutOffComboBox.GetCurSel () +1)*10;
 
 		Invalidate(1);
 		m_pDoc->UpdateAllViews (0);

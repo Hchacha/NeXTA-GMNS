@@ -41,7 +41,7 @@
 #include "Page_Node_Movement.h"
 #include "Page_Node_Phase.h"
 #include "CSVParser.h"
-#include "Dlg_BackgroundImageLocation.h"
+
 #include "Chart_Control\\NSChartCtrl.h"
 
 #include "Dlg_DisplayConfiguration.h"
@@ -993,7 +993,7 @@ void CTLiteView::DrawObjects(CDC* pDC)
 	if (pMainFrame->m_bShowLayerMap[layer_link] == true || (dispaly_link_flag && pMainFrame->m_bShowLayerMap[layer_path] == true) )  // show link layer either one of 2 conditions are met
 	{
 
-		if( pDoc->m_LinkMOEMode == MOE_Agent || pDoc->m_LinkMOEMode== MOE_queuelength  || pDoc->m_LinkMOEMode == MOE_bottleneck)
+		if( pDoc->m_LinkMOEMode == MOE_Agent || pDoc->m_LinkMOEMode== MOE_QueueLengthRatio  || pDoc->m_LinkMOEMode == MOE_bottleneck)
 				m_link_display_mode = link_display_mode_line;
 		else if( pDoc->m_LinkMOEMode == MOE_volume ||pDoc->m_LinkMOEMode ==  MOE_density ||  pDoc->m_LinkMOEMode ==  MOE_speed )
 				m_link_display_mode = link_display_mode_band;
@@ -4433,6 +4433,7 @@ void CTLiteView::OnLinkEditlink()
 				pLink->m_FreeSpeed = dlg.FreeSpeed;
 
 			pLink->m_Name  = pDoc->CString2StdString(dlg.StreetName);
+			pLink->m_LinkID = pDoc->CString2StdString(dlg.m_LinkID);
 			pLink->m_LaneCapacity  = dlg.LaneCapacity;
 
 			if(pLink->m_NumberOfLanes  != dlg.nLane)
@@ -7039,40 +7040,6 @@ void CTLiteView::OnBackgroundimageMarklongB()
 
 void CTLiteView::OnBackgroundimageAddlat()
 {
-	CTLiteDoc* pDoc = GetDocument();
-
-	CDlg_BackgroundImageLocation dlg;
-
-	if(pDoc->m_bPointB_Initialized)
-	{
-		dlg.m_bPointA_Initialized = true;
-		dlg.m_PointB_x = pDoc->m_PointB_x;
-		dlg.m_PointB_y = pDoc->m_PointB_y;
-	}
-
-	if(pDoc->m_bPointA_Initialized)
-	{
-		dlg.m_bPointB_Initialized = true;
-		dlg.m_PointA_x = pDoc->m_PointA_x;
-		dlg.m_PointA_y = pDoc->m_PointA_y;
-	}
-
-	if(dlg.DoModal ()==IDOK)
-	{
-		pDoc->m_bPointB_Initialized  = false;
-		pDoc->m_bPointA_Initialized = false;
-
-		pDoc->m_PointA_long = dlg.m_PointA_long ;
-		pDoc->m_PointB_long = dlg.m_PointB_long ;
-
-		pDoc->m_PointA_lat = dlg.m_PointA_lat ;
-		pDoc->m_PointB_lat = dlg.m_PointB_lat ;
-
-
-		pDoc->ResetBackgroundImageCoordinate();
-
-		Invalidate();
-	}
 }
 
 void CTLiteView::OnZoneHighlightassociatedacititylocations()

@@ -204,6 +204,7 @@ void CDlgPathList::ReloadData()
 
 
 			sprintf_s(text, "%d",i+1);
+			sprintf_s(text, "%d",i+1);
 			int Index = m_ListCtrl.InsertItem(LVIF_TEXT,i,text , 0, 0, 0, NULL);
 
 			// from -> to
@@ -376,38 +377,13 @@ void CDlgPathList::OnPathDataExportCSV()
 				fprintf(st,"%s,", m_pDoc->GetTimeStampString24HourFormat (t));
 			}
 
-			fprintf(st,"\nPath %d, %s,simulated travel time,",p+1,path_element.m_path_name .c_str ());
+			fprintf(st,"\nPath %d, %s,travel time,",p+1,path_element.m_path_name .c_str ());
 
 			for(int t = m_TimeLeft ; t<m_TimeRight; t+= time_step)  // for each starting time
 			{
 				fprintf(st,"%.2f,", path_element.m_TimeDependentTravelTime[t]);
 
 			}  // for each time
-
-
-			//if(path_element.m_bWithSensorTravelTime  == true);
-			//{
-			//	fprintf(st,"\n,,observed travel time,");
-
-			//	for(int t = m_TimeLeft ; t< m_TimeRight; t+= time_step)  // for each starting time
-			//	{
-			//		fprintf(st,"%.2f,", path_element.m_SensorTimeDependentTravelTime[t]);
-			//	}
-
-			//	//fprintf(st,"\nRelative Difference,,",p+1,path_element.m_path_name .c_str ());
-
-			//	//	for(int t = m_TimeLeft ; t< m_TimeRight; t+= time_step)  // for each starting time
-			//	//	{
-			//	//		if(path_element.m_SensorTimeDependentTravelTime[t] >0.001f)
-			//	//							fprintf(st,"%.2f,", path_element.m_TimeDependentTravelTime[t]/max(0.001,path_element.m_SensorTimeDependentTravelTime[t]));
-			//	//		else //no data
-			//	//							fprintf(st,",");
-
-			//	//	}
-
-			//	fprintf(st,"\n");
-
-			//}
 
 
 		}
@@ -475,7 +451,7 @@ void CDlgPathList::OnPathDataExportCSV()
 			fprintf(st, ",\n");
 		} //for each path
 
-		fprintf(st, "\npath_id,link_sequence_no,from_node_id->to_node_id,from_node_id,to_node_id,name,length,speed_limit,free-flow travel_time,# of lanes,Lane Saturation Flow Rate,Lane Capacity,Link Type\n");
+		fprintf(st, "\npath_id,link_sequence_no,from_node_id->to_node_id,from_node_id,to_node_id,name,length,free speed,free-flow travel_time,# of lanes,Lane Saturation Flow Rate,Lane Capacity,Link Type\n");
 
 		for(unsigned int p = 0; p < m_pDoc->m_PathDisplayList.size(); p++) // for each path
 		{

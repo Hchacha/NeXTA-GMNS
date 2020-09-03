@@ -1,6 +1,6 @@
 //{{NO_DEPENDENCIES}}
-// Microsoft Visual C++ ????????
-// ? TLite.rc ??
+// Microsoft Visual C++ generated include file.
+// Used by TLite.rc
 //
 #define IDSAVEASDEFAULT                 2
 #define IDOK_FIND_NODE                  2
@@ -93,7 +93,6 @@
 #define IDD_ODDEMAND_GRID_DIALOG        158
 #define IDS_STRING10106                 158
 #define IDS_STRING10107                 159
-#define IDD_DIALOG_Image_Width          159
 #define IDS_STRING10108                 160
 #define IDS_STRING10109                 161
 #define IDS_STRING10110                 162
@@ -145,8 +144,6 @@
 #define IDD_DIALOG_CONFIG_GIS_TEXT_DISPLAY 227
 #define IDD_DIALOG_NodeProperties       228
 #define IDD_DIALOG_NODE_MOVEMENTS       229
-#define IDD_DIALOG_Image_World_Width    234
-#define IDD_DIALOG_Image_Location       235
 #define IDC_CURSOR1                     237
 #define IDC_CURSOR_ZONE                 237
 #define IDC_CREATE_NODE_CURSOR          238
@@ -261,7 +258,6 @@
 #define IDC_COMBO_AgentType             1054
 #define IDC_BUTTON_ADD                  1055
 #define IDC_COMBO_TimeInterval          1055
-#define IDC_BUTTON2                     1056
 #define IDC_BUTTON_DELETE               1056
 #define IDC_COMBO_VOT_LB                1056
 #define IDC_BUTTON_READ_Signal_Timing   1056
@@ -286,7 +282,6 @@
 #define IDC_BUTTON_Find_CSF_File        1080
 #define IDC_BUTTON_GENERATE_DATA        1081
 #define IDC_BUTTON_QEM                  1082
-#define IDC_BUTTON1                     1082
 #define IDC_BUTTON_UPDATE               1083
 #define IDC_BUTTON_GENERATE_DATA2       1083
 #define IDC_BUTTON_GENERATE_VISSIM_DATA 1083
@@ -370,16 +365,8 @@
 #define IDC_COMBO3                      1155
 #define IDC_COMBO_PLOT_TYPE             1155
 #define IDC_COMBO_SensorDayNo           1155
-#define IDC_EDIT_Left                   1157
-#define IDC_EDIT_Top                    1158
-#define IDC_Image_File_Messge           1159
-#define IDC_BUTTON_EXIT                 1160
 #define IDC_BUTTON_FIND                 1161
-#define IDC_BUTTON_Reset                1161
 #define IDC_EDIT1                       1163
-#define IDC_EDIT_Bottom                 1163
-#define IDC_EDIT2                       1164
-#define IDC_EDIT_Right                  1164
 #define IDC_EDIT5                       1166
 #define IDC_EDIT6                       1167
 #define IDC_EDIT7                       1168
@@ -394,11 +381,8 @@
 #define IDC_LIST_DEMAND_FORMAT          1173
 #define IDC_EDIT8                       1173
 #define IDC_STATIC_UNIT_LENGTH3         1174
-#define IDC_BUTTONOK                    1175
 #define IDC_EDIT_COUNT_SENSOR_ID        1175
 #define IDC_EDIT_SPEED_SENSOR_ID        1176
-#define IDC_EDIT_LatLongA               1178
-#define IDC_EDIT_LatLongA2              1179
 #define IDC_BUTTON_RELOAD               1181
 #define IDC_BUTTON_EXPORT_MATRIX        1182
 #define IDC_QUESTION                    1183
@@ -1197,7 +1181,7 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        268
+#define _APS_NEXT_RESOURCE_VALUE        270
 #define _APS_NEXT_COMMAND_VALUE         33835
 #define _APS_NEXT_CONTROL_VALUE         1332
 #define _APS_NEXT_SYMED_VALUE           109

@@ -30,6 +30,10 @@
 #pragma warning(disable: 4244)  // stop warning: "conversion from 'int' to 'float', possible loss of data"
 #pragma warning(disable: 4996)  // Consider using sscanf_s instead
 #pragma warning(disable: 4101)  // unreferenced local variable
+#pragma warning(disable: 26495)  // unreferenced local variable
+#pragma warning(disable: 26451)  //type
+#pragma warning(disable: 4311)  //type conversion
+
 
 
 #include "resource.h"
@@ -212,7 +216,7 @@ enum DTA_SIG_PHASE_ROW
 	PHASE_MOVEMENT_DIR_VECTOR,
 	DTA_PHASE_ATTRIBUTE_MAX_ROW};
 
-enum eLinkMOEMode {no_display,lane_volume,speed_kmh, cummulative_volume, oblique_cummulative_volume, link_inflow_volume,link_outflow_volume,link_in_and_outflow_volume,link_travel_time,speed_mph,link_density,link_queue_length_ratio,number_of_queued_Agents,link_traveltime, link_travel_time_plus_prediction, Agent_trajectory,cumulative_SOV_count,cumulative_HOV_count,cumulative_truck_count,cumulative_intermodal_count, energy_miles_per_gallon, emission_CO,emission_CO2,emission_NOX,emission_HC};
+enum eLinkMOEMode {no_display,lane_volume,speed, link_outflow_volume,link_travel_time,link_density,link_queue_length_ratio,number_of_queued_Agents,link_traveltime, Agent_trajectory};
 
 class DTA_Movement_Data_Matrix
 {
@@ -342,7 +346,7 @@ extern int g_SimulationDayNo;
 
 extern int g_SimulatedLastDayNo;
 extern int g_SensorLastDayNo;
-extern int g_ImpactThreshold_QueueLengthPercentage;
+extern int g_ImpactThreshold_QueueLengthRatioPercentage;
 
 extern std::map <int,bool> g_SimulatedDayDataMap;
 extern  std::map <int,bool> g_SensorDayDataMap;
@@ -467,7 +471,7 @@ extern double g_GetPoint2Point_Distance(GDPoint p1, GDPoint p2);
 
 extern DTA_Turn g_RelativeAngle_to_Turn(int RelativeAngle);
 
-extern double g_GetPoint2LineDistance(GDPoint pt, GDPoint FromPt, GDPoint ToPt, double UnitFeet = 1, bool no_intersection_requirement = true);
+extern double g_GetPoint2LineDistance(GDPoint pt, GDPoint FromPt, GDPoint ToPt, double UnitFeet = 1, bool requirement_for_full_intersection = true);
 extern double g_CalculateP2PDistanceInMileFromLatitudeLongitude(GDPoint p1, GDPoint p2);
 extern bool g_get_line_intersection(float p0_x, float p0_y, float p1_x, float p1_y,float p2_x, float p2_y, float p3_x, float p3_y, float *i_x, float *i_y) ;
 
@@ -1362,7 +1366,7 @@ typedef struct{
 class SLinkMOE  // time-dependent link MOE
 {
 public:
-	float QueueLength;
+	float QueueLengthRatio;
 	float TravelTime;
 
 	float Speed;  // speed
@@ -1390,7 +1394,7 @@ public:
 		AgentInflowCount = 0;
 		AgentOutflowCount = 0;
 
-		QueueLength = 0;
+		QueueLengthRatio = 0;
 		TravelTime = 0;
 		Speed = 0;
 		LinkFlow = 0;
@@ -1411,7 +1415,7 @@ public:
 		AgentInflowCount = 0;
 		AgentOutflowCount = 0;
 	
-		QueueLength = 0;
+		QueueLengthRatio = 0;
 		TravelTime = FreeFlowTravelTime;
 
 		Speed = SpeedLimit;
@@ -2207,16 +2211,11 @@ void AdjustLinkEndpointsWithSetBack()
 				switch (MOEType)
 				{
 				case lane_volume: value= GetSimulatedLaneVolume(i); break;
-				case speed_kmh: value= GetTDSpeed (i)/0.621371192; break;
-				case cummulative_volume: value= GetArrivalCumulativeFlow(i); break;
-				case oblique_cummulative_volume: value= GetArrivalCumulativeFlow(i)-HourlyBackgroundFlow/60.0f*(i%1440); break;
-				case link_inflow_volume: value= GetSimulatedLinkInVolume(i); break;
-				case link_outflow_volume: value= GetSimulatedLinkOutVolume (i); break;
-				case link_in_and_outflow_volume: value= max(GetSimulatedLinkInVolume (i), GetSimulatedLinkOutVolume (i)); break;
+				case link_outflow_volume: value= GetSimulatedLaneVolume(i)* m_NumberOfLanes; break;
 				case link_travel_time: value= GetSimulatedTravelTime (i); break;
-				case speed_mph: value= GetTDSpeed (i); break;
+				case speed: value= GetTDSpeed (i); break;
 				case link_density: value= GetSimulatedDensity(i); break;
-				case link_queue_length_ratio: value= GetQueueLengthPercentage(i); break;
+				case link_queue_length_ratio: value= GetQueueLengthRatioPercentage(i); break;
 				case number_of_queued_Agents: value = GetNumberOfQueuedVeicles(i); break;
 					
 				case link_traveltime: value= GetSimulatedTravelTime(i); break;
@@ -2408,7 +2407,7 @@ void AdjustLinkEndpointsWithSetBack()
 
 
 			//ratio between 0 and 1
-			m_LinkMOEAry[t].QueueLength = min(1.0,number_of_Agents_on_the_link/(max(0.0001, m_Length * m_NumberOfLanes * m_Kjam )))*100;
+			m_LinkMOEAry[t].QueueLengthRatio = min(1.0,number_of_Agents_on_the_link/(max(0.0001, m_Length * m_NumberOfLanes * m_Kjam )))*100;
 		}
 
 	}
@@ -2530,7 +2529,7 @@ void AdjustLinkEndpointsWithSetBack()
 	}
 
 
-	float GetQueueLengthPercentage(int current_time )
+	float GetQueueLengthRatioPercentage(int current_time )
 	{
 		int total_count = 0;
 		float total_value = 0;
@@ -2542,16 +2541,16 @@ void AdjustLinkEndpointsWithSetBack()
 		if(t < m_LinkMOEArySize)
 		{
 
-			total_value +=max(0, m_LinkMOEAry[t].QueueLength);
+			total_value +=max(0, m_LinkMOEAry[t].QueueLengthRatio);
 
 			total_count++;
 			}
 		}
 	
 		if(total_count>=1)
-			return total_value/total_count;
+			return total_value/total_count * 100;  // 100 to convert 0-1 ratio to percentage
 		else
-			return m_StaticTravelTime;
+			return 0;
 
 
 			return 0;
@@ -2567,8 +2566,8 @@ void AdjustLinkEndpointsWithSetBack()
 
 	
 
-	if( ( m_Length < 0.2  && ( m_LinkMOEAry[t].QueueLength *100 >= 99  )
-	|| (m_Length >= 0.2  && m_LinkMOEAry[t].QueueLength*100 >= g_ImpactThreshold_QueueLengthPercentage)))
+	if( ( m_Length < 0.2  && ( m_LinkMOEAry[t].QueueLengthRatio >= 99  )
+	|| (m_Length >= 0.2  && m_LinkMOEAry[t].QueueLengthRatio >= g_ImpactThreshold_QueueLengthRatioPercentage)))
 	{
 						return 1;
 	}else 

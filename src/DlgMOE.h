@@ -174,13 +174,10 @@ public:
 	virtual BOOL OnInitDialog();
 	afx_msg void OnMoetypeLinkvolume();
 	afx_msg void OnMoetypeSpeed();
-	afx_msg void OnMoetypeCumulativevolume();
 	afx_msg void OnUpdateMoetypeLinkvolume(CCmdUI *pCmdUI);
 	afx_msg void OnUpdateMoetypeSpeed(CCmdUI *pCmdUI);
-	afx_msg void OnUpdateMoetypeCumulativevolume(CCmdUI *pCmdUI);
 	afx_msg void OnMoetype2Linkvolume();
 	afx_msg void OnMoetype2Speed();
-	afx_msg void OnMoetype2Cumulativevolume();
 	afx_msg void OnMoetype2None();
 	afx_msg void OnDataExport();
 	afx_msg void OnMoetype1Linkvolume();
@@ -218,13 +215,12 @@ public:
 	afx_msg void OnMoetype1Agenttrajectory();
 	afx_msg void OnMoetype1Agenttrajectory10();
 	afx_msg void OnMoetype1Agenttrajectory30();
-	afx_msg void OnMoetypeCumulativevolumeOblique();
 	afx_msg BOOL OnMouseHWheel(UINT nFlags, short zDelta, CPoint pt);
 	afx_msg void OnDataExportAgenttrajectory();
 	afx_msg void OnUpdateEstimationPrediction(CCmdUI *pCmdUI);
 	afx_msg void OnUpdateViewSimulationvs(CCmdUI *pCmdUI);
-	afx_msg void OnMoetype1Queuelength();
-	afx_msg void OnMoetype2Queuelength();
+	afx_msg void OnMoetype1QueueLengthRatio();
+	afx_msg void OnMoetype2QueueLengthRatio();
 	afx_msg void OnMoetype1Linkoutflowvolume();
 	afx_msg void OnDataFixyrange();
 	afx_msg void OnUpdateDataFixyrange(CCmdUI *pCmdUI);
@@ -235,8 +231,6 @@ public:
 	CComboBox m_AggregationIntervalList;
 	afx_msg void OnCbnSelchangeComboAgginterval();
 	afx_msg void OnMoetype2Linkoutflowvolume();
-	afx_msg void OnMoetype1Linkinandoutflow();
-	afx_msg void OnMoetype2Linkinandoutflow();
 	afx_msg void OnMoetype1Linktraveltime();
 	afx_msg void OnMoetype2Linktraveltime();
 	CComboBox m_SimuDayNo;

@@ -185,21 +185,10 @@ BOOL CTLiteApp::InitInstance()
 			
 
    char lpbuffer[_MAX_PATH];
-   if(GetPrivateProfileString("initialization", "UserDefinedSimulator_32","",lpbuffer,sizeof(lpbuffer),NEXTASettingsPath)) 
-   {
-		m_SimulatorString_32.Format ("%s",lpbuffer);
-   }
-
-   if(GetPrivateProfileString("initialization", "UserDefinedSimulator_64","",lpbuffer,sizeof(lpbuffer),NEXTASettingsPath)) 
-   {
-		m_SimulatorString_64.Format ("%s",lpbuffer);
-   }
-
-	int visualization_template = (int)g_GetPrivateProfileDouble("template", "traffic_assignment", 1, NEXTASettingsPath);
+   
+   int visualization_template = 1;
 
 	m_VisulizationTemplate = e_traffic_assignment;
-
-		m_LanguageSupport = (eLanguageSupport)g_GetPrivateProfileInt("template", "LanguageSupport", 0, NEXTASettingsPath);
 
 
 			m_pDocTemplate2DView = new CMultiDocTemplate(IDR_TLiteTYPE1,
