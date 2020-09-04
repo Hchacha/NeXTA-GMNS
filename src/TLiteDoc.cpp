@@ -1008,6 +1008,9 @@ bool CTLiteDoc::ReadSimulationLinkMOEData_Parser(LPCTSTR lpszFileName)
 
 
 						pLink->m_total_link_volume += link_volume;
+						pLink->m_total_speed += speed;
+						pLink->m_total_speed_count += 1;
+						pLink->m_MeanSpeed = pLink->m_total_speed / pLink->m_total_speed_count;
 
 						float time_duration_per_hour = max(0.01,(time_stamp_vector[1] - time_stamp_vector[0]) / 60.0);
 
@@ -1467,7 +1470,7 @@ CCSVParser parser;
 
 		
 
-		m_NodeDataLoadingStatus.Format ("%d nodes are loaded from file %s.",m_NodeSet.size(),lpszFileName);
+		m_NodeDataLoadingStatus.Format ("%d nodes and %d zones are loaded from file %s.",m_NodeSet.size(), m_ZoneIDToNodeNoMap, lpszFileName);
 		return true;
 	}else
 	{
@@ -3336,8 +3339,6 @@ void CTLiteDoc::ReadAgentCSVFile_Parser(LPCTSTR lpszFileName)
 							pAgent->m_NodeAry[i].LinkNo = pLink->m_LinkNo;
 							pAgent->m_NodeAry[i].from_pt = pLink->m_FromPoint;
 							pAgent->m_NodeAry[i].to_pt = pLink->m_ToPoint;
-
-
 							pLink->m_TotalTravelTime += pAgent->m_NodeAry[i].ArrivalTimeOnDSN - pAgent->m_NodeAry[i - 1].ArrivalTimeOnDSN;
 						}
 
@@ -4407,16 +4408,6 @@ void CTLiteDoc::LoadSimulationOutput()
 
 
 	int speed_data_aggregation_interval = 15;
-
-	//char microsimulation_file_name[_MAX_STRING_SIZE];
-	//g_GetProfileString("microsimulation_data","file_name","",microsimulation_file_name,sizeof(microsimulation_file_name),m_ProjectFile);
-
-	//CString microsimulation_file_str;
-
-	//microsimulation_file_str.Format("%s",microsimulation_file_name);
-
-
-
 
 	
 	SetStatusText("Generating OD statistics...");
@@ -7281,7 +7272,7 @@ void CTLiteDoc::ResetODMOEMatrix()
 
 			if(OrgNo<0 || DesNo< 0)
 				continue;
-			m_ODMOEMatrix[p][OrgNo][DesNo].TotalAgentSize+=1;
+			m_ODMOEMatrix[p][OrgNo][DesNo].TotalAgentSize+= pAgent->m_Volume;
 			m_ODMOEMatrix[p][OrgNo][DesNo].TotalTravelTime += (pAgent->m_ArrivalTime-pAgent->m_DepartureTime);
 			m_ODMOEMatrix[p][OrgNo][DesNo].TotalDistance += pAgent->m_Distance;
 

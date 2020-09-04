@@ -87,7 +87,7 @@ BOOL CDlg_DisplayConfiguration::OnInitDialog()
 
 	m_Node_Label.AddString("None");
 	m_Node_Label.AddString("Node ID");
-	m_Node_Label.AddString("Sequential Node No.");
+	m_Node_Label.AddString("Zone ID");
 	m_Node_Label.AddString("Node Name");
 	//m_Node_Label.AddString("Control Type");
 	//m_Node_Label.AddString("Distance from Source Node in Mile");
@@ -109,14 +109,13 @@ BOOL CDlg_DisplayConfiguration::OnInitDialog()
 
 	m_Link_Label.AddString("Lane Capacity");
 	m_Link_Label.AddString("Link Capacity");
-//	m_Link_Label.AddString("Demand Type Code");
-
 	m_Link_Label.AddString("Free Flow Travel Time");
 
 	m_Link_Label.AddString("Link type In Text");
 	m_Link_Label.AddString("Link type In Number");
 
 	m_Link_Label.AddString("Total Link Volume");
+	m_Link_Label.AddString("Avg Speed");
 	m_Link_Label.AddString("TD Link Volume");
 	m_Link_Label.AddString("TD Lane Volume");
 	m_Link_Label.AddString("TD Density");

@@ -52,7 +52,6 @@ enum layer_mode
 	layer_node = 0,
 	layer_link,
 	layer_movement,
-	layer_zone,
 	layer_ODMatrix,
 	layer_link_MOE,
 	layer_path, 
@@ -64,7 +63,8 @@ enum layer_mode
 	layer_transit_accessibility,
 	layer_transit,
 	layer_Agent_position,
-	layer_subarea
+	layer_subarea,
+	layer_zone,
 };
 enum Network_Data_Settings {_NODE_DATA = 0,_LINK_DATA, _MOVEMENT_DATA, _AGENT_DATA, MAX_NUM_OF_NETWORK_DATA_FILES};
 enum Link_MOE {MOE_none,MOE_volume, MOE_speed, MOE_queue_length, MOE_bottleneck,MOE_density,MOE_traveltime,MOE_capacity, MOE_speedlimit,  MOE_fftt, MOE_length, MOE_QueueLengthRatio,MOE_Agent};
@@ -1557,7 +1557,7 @@ public:
 
 		for (iNode = m_NodeSet.begin(); iNode != m_NodeSet.end(); iNode++)
 		{
-			if((*iNode)->m_Connections  == 0 && (*iNode)->m_NodeID  == NodeNo)
+			if((*iNode)->m_Connections  == 0 && (*iNode)->m_NodeNo  == NodeNo)
 			{
 
 				int ZoneID = (*iNode)->m_ZoneID;

@@ -62,14 +62,14 @@ enum link_text_display_mode
    link_display_link_type_in_text,
    link_display_link_type_in_number,
    link_display_total_link_volume,
-
-   link_display_time_dependent_link_volume,
+   link_display_avg_speed,
+  link_display_time_dependent_link_volume,
    link_display_time_dependent_lane_volume,
    link_display_time_dependent_density,
    link_display_time_dependent_speed_mph,
    link_display_time_dependent_queue_length,
 
-	link_display_separator_3,
+   link_display_separator_3,
 
 	   link_display_agent_type_code,
 
@@ -132,9 +132,9 @@ enum movement_text_display_mode
 enum node_display_mode
    { node_display_none = 0, 
    node_display_node_number, 
-   node_display_sequential_node_number, 
    node_display_zone_number, 
    node_display_intersection_name,
+   node_display_sequential_node_number, 
    node_display_control_type,
    node_display_cycle_length_in_second,
    node_display_cycle_length_in_second_for_signal_only, 

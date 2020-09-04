@@ -393,7 +393,7 @@ CPen g_SubareaPen(PS_DASH,2,RGB(255,0,0));
 CPen g_GridPen(PS_SOLID,1,RGB(190,190,190));
 
 CPen g_PenAgent(PS_SOLID,1,RGB(0,255,0));  // yellow
-CPen g_BrushAgent(PS_SOLID,1,RGB(0,255,0)); //magenta
+CPen g_BrushAgent(PS_SOLID,1,RGB(0,100,0)); //magenta
 
 CPen g_PenSelectedAgent(PS_SOLID,2,RGB(255,0,0));  // red
 CPen g_PenMatchedSensorLink(PS_DASH, 1, RGB(255, 0, 0));  // red
@@ -534,7 +534,7 @@ CTLiteView::CTLiteView()
 	m_bShowWalkLinksOnly = false;
 	m_bShowProhibitedMovements = false;
 	m_bShowTransitAccessibility  = false;
-	m_bShowTop10ODOnly = false;
+	m_bShowTop10ODOnly = true;
 
 	m_bUpdateLinkAttributeBasedOnType  = false;
 	m_LinkTextFontSize = 12;
@@ -1426,6 +1426,11 @@ void CTLiteView::DrawObjects(CDC* pDC)
 
 					break;
 
+				case link_display_avg_speed:
+					str_text.Format("%.1f", (*iLink)->m_MeanSpeed);
+
+					break;
+					
 
 
 				case link_display_total_delay:
@@ -2305,7 +2310,7 @@ void CTLiteView::DrawObjects(CDC* pDC)
 
 		CFont Agent_font;  // local font for nodes. dynamically created. it is effective only inside this function. if you want to pass this font to the other function, we need to pass the corresponding font pointer (which has a lot of communication overheads)
 
-		int Agent_size = min(200,max(3,int(pDoc->m_AgentDisplaySize *pDoc->m_UnitDistance*m_Resolution)));
+		int Agent_size = min(30,max(5,int(pDoc->m_AgentDisplaySize *pDoc->m_UnitDistance*m_Resolution)));
 
 		int NodeTypeSize = pDoc->m_NodeTextDisplayRatio;
 		int nFontSize =  max(Agent_size * NodeTypeSize*0.8, 10);
@@ -2320,7 +2325,6 @@ void CTLiteView::DrawObjects(CDC* pDC)
 
 		pDC->SelectObject(&g_PenAgent);  //green
 		pDC->SelectObject(&g_BrushAgent); //green
-
 
 
 		int Agent_set_size  = pDoc->m_AgentSet.size();
@@ -2356,114 +2360,110 @@ void CTLiteView::DrawObjects(CDC* pDC)
 
 				float ratio = 0;
 
-				//if((*iAgent)->m_bGPSAgent == false) 
-				//{
-				//	int link_sequence_no;
-				//	int LinkID = pDoc->GetVehilePosition((*iAgent), g_Simulation_Time_Stamp, link_sequence_no, ratio);
+					int link_sequence_no;
+					int LinkID = pDoc->GetVehilePosition((*iAgent), g_Simulation_Time_Stamp, link_sequence_no, ratio);
 
-				//	DTALink* pLink = pDoc->m_LinkNoMap[LinkID];
-				//	if(pLink!=NULL)
-				//	{
-
-				//		CPoint VehPoint= NPtoSP(pLink->GetRelativePosition(ratio));
-				//		if((*iAgent)->m_AgentID == pDoc->m_SelectedAgentID)
-				//		{
-				//			pDC->SelectObject(&g_PenSelectedAgent); //red transit users
-				//			pDC->Ellipse (VehPoint.x - Agent_size*3, VehPoint.y - Agent_size*3,
-				//				VehPoint.x + Agent_size*3, VehPoint.y + Agent_size*3);
-				//			pDC->SelectObject(&g_PenAgent);  //green
-
-				//		}else
-				//		{ 
-
-				//			//if (!m_bShowLinkArrow)
-				//			//{
-				//			//	pDC->Ellipse(VehPoint.x - Agent_size, VehPoint.y - Agent_size,
-				//			//		VehPoint.x + Agent_size, VehPoint.y + Agent_size);
-				//			//}
-				//			//else
-				//			{
-
-				//				FromPoint = NPtoSP(pLink->m_FromPoint);
-				//				ToPoint = NPtoSP(pLink->m_ToPoint);
-
-				//				double slopy = atan2((double)(FromPoint.y - ToPoint.y), (double)(FromPoint.x - ToPoint.x));
-				//				double cosy = cos(slopy);
-				//				double siny = sin(slopy);
-				//				double display_length = sqrt((double)(FromPoint.y - ToPoint.y)*(FromPoint.y - ToPoint.y) + (double)(FromPoint.x - ToPoint.x)*(FromPoint.x - ToPoint.x));
-				//				double arrow_size = Agent_size;
-
-				//				ToPoint = VehPoint;  // overwrite the position
-				//				if (arrow_size > 0.2)
-				//				{
-
-				//					m_arrow_pts[0] = ToPoint;
-				//					m_arrow_pts[1].x = ToPoint.x + (int)(arrow_size * cosy - (arrow_size / 3.0 * siny) + 0.5);
-				//					m_arrow_pts[1].y = ToPoint.y + (int)(arrow_size * siny + (arrow_size / 3.0 * cosy) + 0.5);
-				//					m_arrow_pts[2].x = ToPoint.x + (int)(arrow_size * cosy + arrow_size / 3.0 * siny + 0.5);
-				//					m_arrow_pts[2].y = ToPoint.y - (int)(arrow_size / 3.0 * cosy - arrow_size * siny + 0.5);
-
-				//					pDC->Polygon(m_arrow_pts, 3);
-				//				}
-				//			}
-				//		}
-				//		if(m_bShowAgentNumber)
-				//		{
-
-				//			CString str_number;
-				//			str_number.Format ("%d",(*iAgent)->m_AgentID  );
-
-				//			if (link_sequence_no >= 0 && link_sequence_no < (*iAgent)->m_NodeSize)
-				//			{
-				//				if ((*iAgent)->m_NodeAry[i].State.size() > 0)  // with content of states
-				//				{
-				//					str_number.Format("%d[%s]", (*iAgent)->m_AgentID, (*iAgent)->m_NodeAry[i].State.c_str());
-
-				//				}
-				//			}
-
-				//			VehPoint.y -= tm_Agent.tmHeight / 2;
-
-				//			pDC->TextOut(VehPoint.x , VehPoint.y,str_number);
-				//		}
-				//	}
-
-				//}else
-				{  // show GPS position
-
-					GDPoint pt;
-					if(pDoc->GetAgentPosition((*iAgent), g_Simulation_Time_Stamp, pt) == false)
-						continue;
-
-					CPoint VehPoint= NPtoSP(pt);
-					if((*iAgent)->m_AgentID == pDoc->m_SelectedAgentID)
-					{
-						pDC->SelectObject(&g_PenSelectedAgent); //red transit users
-						pDC->Ellipse (VehPoint.x - Agent_size*3, VehPoint.y - Agent_size*3,
-							VehPoint.x + Agent_size*3, VehPoint.y + Agent_size*3);
-						pDC->SelectObject(&g_PenAgent);  //green
-
-					}else
-					{ 
-
-						pDC->Ellipse (VehPoint.x - Agent_size, VehPoint.y - Agent_size,
-							VehPoint.x + Agent_size, VehPoint.y + Agent_size);
-
-					}
-
-					if(m_bShowAgentNumber)
+					DTALink* pLink = pDoc->m_LinkNoMap[LinkID];
+					if(pLink!=NULL)
 					{
 
-						CString str_number;
-						str_number.Format ("%d",(*iAgent)->m_AgentID  );
+						CPoint VehPoint= NPtoSP(pLink->GetRelativePosition(ratio));
+						if((*iAgent)->m_AgentID == pDoc->m_SelectedAgentID)
+						{
+							pDC->SelectObject(&g_PenSelectedAgent); //red transit users
+							pDC->Ellipse (VehPoint.x - Agent_size*3, VehPoint.y - Agent_size*3,
+								VehPoint.x + Agent_size*3, VehPoint.y + Agent_size*3);
+							pDC->SelectObject(&g_PenAgent);  //green
 
-						VehPoint.y -= tm_Agent.tmHeight / 2;
+						}else
+						{ 
 
-						pDC->TextOut(VehPoint.x , VehPoint.y,str_number);
+							//if (!m_bShowLinkArrow)
+							//{
+							//	pDC->Ellipse(VehPoint.x - Agent_size, VehPoint.y - Agent_size,
+							//		VehPoint.x + Agent_size, VehPoint.y + Agent_size);
+							//}
+							//else
+							{
+
+								FromPoint = NPtoSP(pLink->m_FromPoint);
+								ToPoint = NPtoSP(pLink->m_ToPoint);
+
+								double slopy = atan2((double)(FromPoint.y - ToPoint.y), (double)(FromPoint.x - ToPoint.x));
+								double cosy = cos(slopy);
+								double siny = sin(slopy);
+								double display_length = sqrt((double)(FromPoint.y - ToPoint.y)*(FromPoint.y - ToPoint.y) + (double)(FromPoint.x - ToPoint.x)*(FromPoint.x - ToPoint.x));
+								double arrow_size = Agent_size;
+
+								ToPoint = VehPoint;  // overwrite the position
+								if (arrow_size > 0.2)
+								{
+
+									m_arrow_pts[0] = ToPoint;
+									m_arrow_pts[1].x = ToPoint.x + (int)(arrow_size * cosy - (arrow_size / 3.0 * siny) + 0.5);
+									m_arrow_pts[1].y = ToPoint.y + (int)(arrow_size * siny + (arrow_size / 3.0 * cosy) + 0.5);
+									m_arrow_pts[2].x = ToPoint.x + (int)(arrow_size * cosy + arrow_size / 3.0 * siny + 0.5);
+									m_arrow_pts[2].y = ToPoint.y - (int)(arrow_size / 3.0 * cosy - arrow_size * siny + 0.5);
+
+									pDC->Polygon(m_arrow_pts, 3);
+								}
+							}
+						}
+						if(m_bShowAgentNumber)
+						{
+
+							CString str_number;
+							str_number.Format ("%d",(*iAgent)->m_AgentID  );
+
+							if (link_sequence_no >= 0 && link_sequence_no < (*iAgent)->m_NodeSize)
+							{
+								if ((*iAgent)->m_NodeAry[i].State.size() > 0)  // with content of states
+								{
+									str_number.Format("%d[%s]", (*iAgent)->m_AgentID, (*iAgent)->m_NodeAry[i].State.c_str());
+
+								}
+							}
+
+							VehPoint.y -= tm_Agent.tmHeight / 2;
+
+							pDC->TextOut(VehPoint.x , VehPoint.y,str_number);
+						}
 					}
 
 
-				}
+					//GDPoint pt;
+					//if(pDoc->GetAgentPosition((*iAgent), g_Simulation_Time_Stamp, pt) == false)
+					//	continue;
+
+					//CPoint VehPoint= NPtoSP(pt);
+					//if((*iAgent)->m_AgentID == pDoc->m_SelectedAgentID)
+					//{
+					//	pDC->SelectObject(&g_PenSelectedAgent); //red transit users
+					//	pDC->Ellipse (VehPoint.x - Agent_size*3, VehPoint.y - Agent_size*3,
+					//		VehPoint.x + Agent_size*3, VehPoint.y + Agent_size*3);
+					//	pDC->SelectObject(&g_PenAgent);  //green
+
+					//}else
+					//{ 
+
+					//	pDC->Ellipse (VehPoint.x - Agent_size, VehPoint.y - Agent_size,
+					//		VehPoint.x + Agent_size, VehPoint.y + Agent_size);
+
+					//}
+
+					//if(m_bShowAgentNumber)
+					//{
+
+					//	CString str_number;
+					//	str_number.Format ("%d",(*iAgent)->m_AgentID  );
+
+					//	VehPoint.y -= tm_Agent.tmHeight / 2;
+
+					//	pDC->TextOut(VehPoint.x , VehPoint.y,str_number);
+					//}
+
+
+		
 
 			}
 
@@ -2607,46 +2607,49 @@ void CTLiteView::DrawObjects(CDC* pDC)
 			std::map<int, int>	::const_iterator itr_o;
 			std::map<int, int>	::const_iterator itr_d;
 
-			//for(itr_o = pDoc->m_ZoneIDToNodeNoMap.begin(); itr_o != pDoc->m_ZoneIDToNodeNoMap.end(); itr_o++)
-			//	for (itr_d = pDoc->m_ZoneIDToNodeNoMap.begin(); itr_d != pDoc->m_ZoneIDToNodeNoMap.end(); itr_d++)
-			//	{
-			//		if( pDoc->m_ODMOEMatrix[p][i][j].TotalAgentSize >=5 && i!=j)
-			//		{
-			//			CPoint FromPoint = NPtoSP(pDoc->m_ZoneMap[pDoc->m_ZoneIDToNodeNoMap[i]].GetCenter());
-			//			CPoint ToPoint = NPtoSP(pDoc->m_ZoneMap[pDoc->m_ZoneNumberVector [j]].GetCenter());
+			for (i = 0; i < pDoc->m_ZoneNoSize; i++)
+				for (j = 0; j < pDoc->m_ZoneNoSize; j++)
+				{
+					if( pDoc->m_ODMOEMatrix[p][i][j].TotalAgentSize >=5 && i!=j)
+					{
+						int node_i = pDoc->m_ZoneIDToNodeNoMap[pDoc->m_ZoneNotoZoneIDMap[i]];
+						int node_j = pDoc->m_ZoneIDToNodeNoMap[pDoc->m_ZoneNotoZoneIDMap[j]];
 
-			//			CPen penmoe;
-			//			double value = pDoc->m_ODMOEMatrix[p][i][j].TotalAgentSize;
-			//			float Width = value/MaxODDemand*10;
+						CPoint FromPoint = NPtoSP(pDoc->m_NodeNoMap[node_i]->pt);
+						CPoint ToPoint = NPtoSP(pDoc->m_NodeNoMap[node_j]->pt);
 
-			//			if(m_bShowTop10ODOnly == false)
-			//			{
-			//				if(value >= threashold_200)
-			//					Width = max(1.1,Width);  // show the line for 200th largest value
+						CPen penmoe;
+						double value = pDoc->m_ODMOEMatrix[p][i][j].TotalAgentSize;
+						float Width = value/MaxODDemand*10;
 
-			//				if(value >= threashold_100)
-			//					Width = max(Width,2);  
+						if(m_bShowTop10ODOnly == false)
+						{
+							if(value >= threashold_200)
+								Width = max(1.1,Width);  // show the line for 200th largest value
 
-			//				if(value >= threashold_50)
-			//					Width = max(Width,3);  // show the line for 50th largest value
+							if(value >= threashold_100)
+								Width = max(Width,2);  
 
-			//				if(value >= threashold_20)
-			//					Width = max(Width,4);  // show the line for 50th largest value
-			//			}
-			//			if(value >= threashold_10)
-			//				Width = max(Width,5);  // show the line for 50th largest value
+							if(value >= threashold_50)
+								Width = max(Width,3);  // show the line for 50th largest value
 
-			//			if(Width>=1)  //draw critical OD demand only
-			//			{
+							if(value >= threashold_20)
+								Width = max(Width,4);  // show the line for 50th largest value
+						}
+						if(value >= threashold_10)
+							Width = max(Width,5);  // show the line for 50th largest value
 
-			//				penmoe.CreatePen (PS_SOLID, (int)(Width), RGB(0,255,255));
-			//				pDC->SelectObject(&penmoe);
-			//				pDC->MoveTo(FromPoint);
-			//				pDC->LineTo(ToPoint);
-			//			}
+						if(Width>=1)  //draw critical OD demand only
+						{
 
-			//		}
-			//	}
+							penmoe.CreatePen (PS_SOLID, (int)(Width), RGB(0,255,255));
+							pDC->SelectObject(&penmoe);
+							pDC->MoveTo(FromPoint);
+							pDC->LineTo(ToPoint);
+						}
+
+					}
+				}
 
 	}
 
@@ -6088,30 +6091,40 @@ void CTLiteView::DrawNode(CDC *pDC, DTANode* pNode, CPoint point, int node_size,
 
 		return;
 	}
-else
-{
+	else
+	{
+
+		if (m_ShowNodeTextMode == node_display_zone_number && pNode->m_ZoneID <= 0)
+		{
+			//donothing
+		}
+		else
+		{
 
 
-	if(pNode->m_ControlType == pDoc->m_ControlType_PretimedSignal || 
-		pNode->m_ControlType == pDoc->m_ControlType_ActuatedSignal)  // traffic signal control
-	{
-		pDC->Rectangle (point.x - node_size, point.y + node_size,
-			point.x + node_size, point.y - node_size);
-	}else if (pNode->m_ControlType == pDoc->m_ControlType_YieldSign || 
-		pNode->m_ControlType == pDoc->m_ControlType_2wayStopSign ||
-		pNode->m_ControlType == pDoc->m_ControlType_4wayStopSign)
-	{
-		int  width_of_ellipse = node_size*4/5;
-		pDC->RoundRect (point.x - node_size, point.y + node_size,
-			point.x + node_size, point.y - node_size,width_of_ellipse,width_of_ellipse);
+			if (pNode->m_ControlType == pDoc->m_ControlType_PretimedSignal ||
+				pNode->m_ControlType == pDoc->m_ControlType_ActuatedSignal)  // traffic signal control
+			{
+				pDC->Rectangle(point.x - node_size, point.y + node_size,
+					point.x + node_size, point.y - node_size);
+			}
+			else if (pNode->m_ControlType == pDoc->m_ControlType_YieldSign ||
+				pNode->m_ControlType == pDoc->m_ControlType_2wayStopSign ||
+				pNode->m_ControlType == pDoc->m_ControlType_4wayStopSign)
+			{
+				int  width_of_ellipse = node_size * 4 / 5;
+				pDC->RoundRect(point.x - node_size, point.y + node_size,
+					point.x + node_size, point.y - node_size, width_of_ellipse, width_of_ellipse);
 
-	}else
-	{
-		pDC->Ellipse(point.x - node_size, point.y + node_size,
-			point.x + node_size, point.y - node_size);
+			}
+			else
+			{
+				pDC->Ellipse(point.x - node_size, point.y + node_size,
+					point.x + node_size, point.y - node_size);
+			}
+
+		}
 	}
-}
-
 	// 
 	if (node_size < 4)  // node display size is too small to  show node labels 
 		return; 

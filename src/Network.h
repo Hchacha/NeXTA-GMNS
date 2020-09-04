@@ -1571,6 +1571,8 @@ public:
 
 		m_total_link_volume = 0;
 		m_total_travel_time = 0;
+		m_total_speed = 0;
+		m_total_speed_count = 0;
 		m_volume_over_capacity_ratio  = 0;
 		m_volume_over_capacity_ratio = 0;
 		m_StaticTravelTime = 0;
@@ -1634,6 +1636,8 @@ public:
 
 
 	// overall information
+	float m_total_speed;
+	float m_total_speed_count;
 
 	float m_total_link_volume;
 	float m_total_travel_time;

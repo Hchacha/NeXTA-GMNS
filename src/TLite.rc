@@ -1684,14 +1684,6 @@ BEGIN
             MENUITEM "Reset to Default Color Scheme", ID_CHANGELINKTYPECOLOR_RESETTODEFAULTCOLORSCHEMA
         END
         MENUITEM "Perform Agent Statistics Analaysis on Selected Link", ID_LINK_AgentSTATISTICSANALAYSIS
-        POPUP "Show Allowed Links for Demand Type"
-        BEGIN
-            MENUITEM "Show All",                    ID_SHOWALLOWEDLINKSFORDEMANDTYPE_SHOWALL
-            MENUITEM "Demand Type 1",               ID_SHOWALLOWEDLINKSFORDEMANDTYPE_DEMANDTYPE1
-            MENUITEM "Demand Type 2",               ID_SHOWALLOWEDLINKSFORDEMANDTYPE_DEMANDTYPE2
-            MENUITEM "Demand Type 3",               ID_SHOWALLOWEDLINKSFORDEMANDTYPE_DEMANDTYPE3
-            MENUITEM "Demand Type 4",               ID_SHOWALLOWEDLINKSFORDEMANDTYPE_DEMANDTYPE4
-        END
         MENUITEM SEPARATOR
         MENUITEM "Delete Link",                 ID_DELETE_SELECTED_LINK
         MENUITEM "Show Connector",              ID_VIEW_SHOW_CONNECTOR
@@ -1702,17 +1694,10 @@ BEGIN
         MENUITEM "View Movement Data Table",    ID_MOVEMENT_VIEWMOVEMENTDATATABLE
         MENUITEM "Highlight Prohibited Movements", ID_MOVEMENT_HIGHLIGHTPROHIBITEDMOVEMENTS
     END
-    POPUP "Zone"
-    BEGIN
-        MENUITEM "Change Zone Color",           ID_ZONE_CHANGEZONECOLOR
-    END
     POPUP "OD Matrix"
     BEGIN
-        MENUITEM "View OD Demand File List",    ID_TOOLS_EDITODDEMANDTABLE
         MENUITEM SEPARATOR
         MENUITEM "Show Top 10 OD Pairs Only",   ID_ODMATRIX_VIEWTOP50ODPAIRSONLY
-        MENUITEM "RAPID - Increase Demand",     ID_ODMATRIX_RAPID
-        MENUITEM "RAPID - Decrease Demand",     ID_ODMATRIX_RAPID_Decrease
     END
     POPUP "Link MOE"
     BEGIN
@@ -1738,17 +1723,15 @@ BEGIN
     END
     POPUP "Background Image"
     BEGIN
-        MENUITEM "Mark Point A",                ID_BACKGROUNDIMAGE_MARKLONG_A
-        MENUITEM "Mark Point B",                ID_BACKGROUNDIMAGE_MARKLONG_B
-        MENUITEM "Add Lat/Long Coordinates and Reset Image Location", ID_BACKGROUNDIMAGE_ADDLAT
-        MENUITEM SEPARATOR
-        MENUITEM "Unlock/Lock Position and Size of Background Image", ID_VIEW_IMAGE
-        MENUITEM SEPARATOR
         MENUITEM "Background Color",            ID_VIEW_BACKGROUNDCOLOR
     END
     POPUP "Reference Layer"
     BEGIN
         MENUITEM "Unlock/Lock Reference Network", ID_EDIT_MOVEReferenceNETWORKCOORDINATES
+    END
+    POPUP "Zone"
+    BEGIN
+        MENUITEM "Change Zone Color",           ID_ZONE_CHANGEZONECOLOR
     END
     POPUP "Backup"
     BEGIN
@@ -1907,7 +1890,7 @@ BEGIN
         MENUITEM "&About NeXTA- GMNS",          ID_APP_ABOUT
         MENUITEM SEPARATOR
         MENUITEM "Visit GNMS Website",          ID_HELP_VISITDEVELOPMENTWEBSITE
-        MENUITEM "Visit DTALite Development Website", ID_HELP_VISITDEVELOPMENTWEBSITE_DTALite
+        MENUITEM "Visit DTALite/STALite Development Website", ID_HELP_VISITDEVELOPMENTWEBSITE_DTALite
     END
 END
 
