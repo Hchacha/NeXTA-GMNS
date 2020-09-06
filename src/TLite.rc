@@ -1788,7 +1788,7 @@ BEGIN
         MENUITEM "&Open Traffic Network Project...\tCtrl+O", ID_FILE_OPEN_NEW_DOC
         MENUITEM SEPARATOR
         MENUITEM "Save Project",                ID_FILE_SAVE_PROJECT
-        MENUITEM "Save Project As",             ID_FILE_SAVE_PROJECT_AS
+        MENUITEM "Save Project To Another Folder", ID_FILE_SAVE_PROJECT_AS
         MENUITEM SEPARATOR
         MENUITEM "Check Data Loading Status",   ID_FILE_DATALOADINGSTATUS
         MENUITEM SEPARATOR
@@ -1919,6 +1919,7 @@ BEGIN
             MENUITEM "Lane Capacity",               ID_CHANGEATTRIBUTESFORLINKSALONGPATH_CHANGELANECAPACITY
             MENUITEM "# of Lanes",                  ID_CHANGEATTRIBUTESFORLINKSALONGPATH_CHANGE
             MENUITEM "Link Type",                   ID_CHANGEATTRIBUTESFORLINKSALONGPATH_CHANGELINKTYPE
+            MENUITEM "Free Speed",                  ID_CHANGEATTRIBUTESFORLINKSALONGPATH_FREESPEED
         END
     END
 END

@@ -2943,7 +2943,7 @@ void CTLiteView::OnViewMove()
 	m_ToolMode = move_tool;
 }
 
-int CTLiteView::FindClosestNode(CPoint point, float Min_distance)
+int CTLiteView::FindClosestNode(CPoint point, float Min_screen_distance)
 {
 	int SelectedNodeNo = -1;
 	CTLiteDoc* pDoc = GetDocument();
@@ -2956,18 +2956,14 @@ int CTLiteView::FindClosestNode(CPoint point, float Min_distance)
 
 		CSize size = NodePoint - point;
 		double distance = pow((size.cx*size.cx + size.cy*size.cy),0.5);
-		if( distance < Min_distance)
+		if( distance < Min_screen_distance)
 		{
 			SelectedNodeNo = (*iNode)->m_NodeNo ;
-			Min_distance = distance;
+			Min_screen_distance = distance;
 		}
 
 	}
 
-	//	if(Min_distance > pDoc->m_NodeDisplaySize*pDoc->m_UnitDistance*m_Resolution*20)
-	//	{
-	//		SelectedNodeNo = -1;
-	//	}
 	return SelectedNodeNo;
 }
 
@@ -2991,8 +2987,6 @@ void CTLiteView::OnLButtonDown(UINT nFlags, CPoint point)
 	CMainFrame* pMainFrame = (CMainFrame*) AfxGetMainWnd();
 
 	//speical condition first
-
-
 
 	CTLiteDoc* pDoc = GetDocument();
 

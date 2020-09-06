@@ -224,6 +224,7 @@
     <ClCompile Include="AssignmentSimulationSettingDlg.cpp" />
     <ClCompile Include="AssignmentSimulationTabDlg.cpp" />
     <ClCompile Include="BaseDialog.cpp" />
+    <ClCompile Include="CDlg_UserInput.cpp" />
     <ClCompile Include="ChildFrm.cpp" />
     <ClCompile Include="CSVParser.cpp" />
     <ClCompile Include="Data-Interface\DYNASMART-interface.cpp" />
@@ -285,6 +286,7 @@
   <ItemGroup>
     <ClInclude Include="AssignmentSimulationSettingDlg.h" />
     <ClInclude Include="AssignmentSimulationTabDlg.h" />
+    <ClInclude Include="CDlg_UserInput.h" />
     <ClInclude Include="CGridListCtrlEx\CGridColumnTrait.h" />
     <ClInclude Include="CGridListCtrlEx\CGridColumnTraitCombo.h" />
     <ClInclude Include="CGridListCtrlEx\CGridColumnTraitDateTime.h" />

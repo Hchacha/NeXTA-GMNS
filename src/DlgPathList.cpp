@@ -9,6 +9,7 @@
 #include "CGridListCtrlEx\CGridColumnTraitCombo.h"
 #include "CGridListCtrlEx\CGridRowTraitXP.h"
 #include "Dlg_VehicleClassification.h"
+#include "CDlg_UserInput.h"
 #include <string>
 #include <sstream>
 #include <vector>
@@ -82,6 +83,7 @@ BEGIN_MESSAGE_MAP(CDlgPathList, CDialog)
 	ON_BN_CLICKED(IDDATA_DYNAMIC_Flow_Contour, &CDlgPathList::OnBnClickedDynamicFlowContour)
 	ON_COMMAND(ID_DATA_DELETESELECTEDPATH, &CDlgPathList::OnDataDeleteselectedpath)
 	ON_COMMAND(ID_DATA_COCONTOURPLOT, &CDlgPathList::OnDataCocontourplot)
+	ON_COMMAND(ID_CHANGEATTRIBUTESFORLINKSALONGPATH_FREESPEED, &CDlgPathList::OnChangeattributesforlinksalongpathFreespeed)
 END_MESSAGE_MAP()
 
 
@@ -348,8 +350,49 @@ void CDlgPathList::OnPathDataExportCSV()
 	int time_step = 1;
 
 	CString export_file_name;
+	export_file_name = m_pDoc->m_ProjectDirectory + "path.csv";
+	FILE* st_path;
+	fopen_s(&st_path, export_file_name, "w");
+	if (st_path != NULL)
+	{
+		fprintf(st_path, "agent_id,o_zone_id,d_zone_id,path_id,o_node_id,d_node_id,agent_type,demand_period,ratio,node_sequence\n");
 
-	export_file_name = m_pDoc->m_ProjectDirectory +"export_path_MOE.csv";
+		for (unsigned int p = 0; p < m_pDoc->m_PathDisplayList.size(); p++) // for each path
+		{
+			DTAPath path_element = m_pDoc->m_PathDisplayList[p];
+			if(path_element.m_LinkVector.size() >=1)
+			{ 
+				DTALink* pFirstLink = m_pDoc->m_LinkNoMap[m_pDoc->m_PathDisplayList[p].m_LinkVector[0]];
+				DTALink* pLastLink = m_pDoc->m_LinkNoMap[m_pDoc->m_PathDisplayList[p].m_LinkVector[path_element.m_LinkVector.size()-1]];
+				fprintf(st_path, "0,0,0,0,%d,%d,0,0,1,", pFirstLink->m_FromNodeID, pLastLink->m_ToNodeID);
+			for (int i = 0; i < path_element.m_LinkVector.size(); i++)  // for each pass link
+			{
+				DTALink* pLink = m_pDoc->m_LinkNoMap[m_pDoc->m_PathDisplayList[p].m_LinkVector[i]];
+				if (pLink != NULL)
+				{
+					if (i == 0)
+					{
+						fprintf(st_path, "%d;", pLink->m_FromNodeID);
+					}
+					fprintf(st_path, "%d;", pLink->m_ToNodeID);
+				}
+
+			}
+			}
+		}
+
+		fclose(st_path);
+	}
+	else
+	{
+	AfxMessageBox("File path.csv cannot be opened.");
+	return;
+	}
+	m_pDoc->OpenCSVFileInExcel(export_file_name);
+
+
+
+	export_file_name = m_pDoc->m_ProjectDirectory +"path_performance.csv";
 	// save demand here
 
 	FILE* st;
@@ -357,7 +400,7 @@ void CDlgPathList::OnPathDataExportCSV()
 	if(st!=NULL)
 	{
 		fprintf(st,"Summary\n");
-		fprintf(st,"path index,path_name,distance,free_flow_travel_time(min),path_name,avg_simulated_travel_time(min),avg_sensor_travel_time(min),percentage_difference,avg_time-dependent_error(min),avg_time-dependent_percentage_error (%)\n");
+		fprintf(st,"path index,\n");
 
 
 		fprintf(st,"\n\nPart I,time-dependent travel time");
@@ -390,7 +433,6 @@ void CDlgPathList::OnPathDataExportCSV()
 
 		// travel time index
 
-
 		for(unsigned int p = 0; p < m_pDoc->m_PathDisplayList.size(); p++) // for each path
 		{
 			DTAPath path_element = m_pDoc->m_PathDisplayList[p];
@@ -409,7 +451,6 @@ void CDlgPathList::OnPathDataExportCSV()
 		{
 			fprintf(st,"%s,", m_pDoc->GetTimeStampString24HourFormat (t));
 		}
-
 
 		for(unsigned int p = 0; p < m_pDoc->m_PathDisplayList.size(); p++) // for each path
 		{
@@ -478,41 +519,37 @@ void CDlgPathList::OnPathDataExportCSV()
 			}
 		} //for each path
 
-		// part II: time-dependent speed contour
-		int step_size = 1;
+		//// part II: time-dependent speed contour
+		//int step_size = 1;
 
-	
+		//fprintf(st,"\n\nPart IV");
 
-		fprintf(st,"\n\nPart IV");
-	
-	
-		// 
+		//// 
 
-		time_step= 15;
+		//time_step= 15;
 
 
-		for(unsigned int p = 0; p < m_pDoc->m_PathDisplayList.size(); p++) // for each path
-		{
-			DTAPath path_element = m_pDoc->m_PathDisplayList[p];
+		//for(unsigned int p = 0; p < m_pDoc->m_PathDisplayList.size(); p++) // for each path
+		//{
+		//	DTAPath path_element = m_pDoc->m_PathDisplayList[p];
 
-			fprintf(st,"\nTime,,,");
+		//	fprintf(st,"\nTime,,,");
 
-			for(int t = m_TimeLeft ; t< m_TimeRight; t+= time_step)  // for each starting time
-			{
-				fprintf(st,"%s,", m_pDoc->GetTimeStampString24HourFormat (t));
-			}
+		//	for(int t = m_TimeLeft ; t< m_TimeRight; t+= time_step)  // for each starting time
+		//	{
+		//		fprintf(st,"%s,", m_pDoc->GetTimeStampString24HourFormat (t));
+		//	}
 
+		//	// for each time
+		//	fprintf(st,"\n");
 
-			// for each time
-			fprintf(st,"\n");
-
-		}
+		//}
 
 
 		fclose(st);
 	}else
 	{
-		AfxMessageBox("File cannot be opened.");
+		AfxMessageBox("File path_performance.csv cannot be opened.");
 		return;
 	}
 	m_pDoc->OpenCSVFileInExcel (export_file_name);
@@ -1151,7 +1188,43 @@ void CDlgPathList::OnChangeattributesforlinksalongpathChangelinktype()
 
 void CDlgPathList::ChangeLinkAttributeDialog()
 {
-	
+	CDlg_UserInput dlg;
+
+
+
+	float value = 0;
+
+	switch (m_ChangeLinkAttributeMode)
+	{
+	case eChangeLinkAttribute_lane_capacity:
+		dlg.m_StrQuestion = "Please input the value for lane capacity:";
+		dlg.m_InputValue = "2000";
+		break;
+	case eChangeLinkAttribute_number_of_lanes: 
+		dlg.m_StrQuestion = "Please input the number of lanes:";
+		dlg.m_InputValue = "3"; 
+		break;
+	case eChangeLinkAttribute_link_type: 
+		dlg.m_StrQuestion = "Please input the value for link type:";
+		dlg.m_InputValue = "1"; 
+		break;
+	case eChangeLinkAttribute_free_speed:
+		dlg.m_StrQuestion = "Please input the value for free speed:";
+		dlg.m_InputValue = "65"; 
+		break;
+	}
+
+	if (dlg.DoModal() == IDOK)
+	{
+		value = atof(dlg.m_InputValue);
+
+
+		if (AfxMessageBox("Are you sure to make the change?", MB_YESNO | MB_ICONINFORMATION) == IDYES)
+		{
+			ChangeLinkAttributeAlongPath(value, dlg.m_InputValue);
+		}
+	}
+
 
 }
 
@@ -1184,7 +1257,7 @@ void CDlgPathList::ChangeLinkAttributeAlongPath(float value, CString value_strin
 					case eChangeLinkAttribute_lane_capacity: pLink->m_LaneCapacity = value; break;
 					case eChangeLinkAttribute_number_of_lanes: pLink->m_NumberOfLanes = value; break;
 					case eChangeLinkAttribute_link_type: pLink->m_link_type = value; break;
-					case eChangeLinkAttribute_speed_limit_mph : pLink->m_FreeSpeed = value; break;
+					case eChangeLinkAttribute_free_speed : pLink->m_FreeSpeed = value; break;
 					
 					}
 
@@ -1195,9 +1268,6 @@ void CDlgPathList::ChangeLinkAttributeAlongPath(float value, CString value_strin
 
 		m_pDoc->UpdateAllViews(0);
 }
-
-
-
 
 
 void CDlgPathList::OnBnClickedDynamicDensityContour()
@@ -1887,3 +1957,10 @@ void CDlgPathList::OnBnClickedPathDataExportCsv()
 }
 
 
+
+
+void CDlgPathList::OnChangeattributesforlinksalongpathFreespeed()
+{
+	m_ChangeLinkAttributeMode = eChangeLinkAttribute_free_speed;
+	ChangeLinkAttributeDialog();
+}

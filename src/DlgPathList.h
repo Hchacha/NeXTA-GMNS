@@ -12,7 +12,7 @@ enum eChangeLinkAttributeMode {
 eChangeLinkAttribute_lane_capacity=0,
 eChangeLinkAttribute_number_of_lanes,
 eChangeLinkAttribute_link_type,
-eChangeLinkAttribute_speed_limit_mph,
+eChangeLinkAttribute_free_speed,
 };
 
 class CDlgPathList : public CBaseDialog
@@ -92,4 +92,5 @@ public:
 	afx_msg void OnDataDeleteselectedpath();
 	afx_msg void OnDataCocontourplot();
 	afx_msg void OnBnClickedPathDataExportCsv();
+	afx_msg void OnChangeattributesforlinksalongpathFreespeed();
 };
