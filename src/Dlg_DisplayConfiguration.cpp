@@ -106,14 +106,15 @@ BOOL CDlg_DisplayConfiguration::OnInitDialog()
 	m_Link_Label.AddString("Free Speed");
 
 	m_Link_Label.AddString("# of Lanes ");
-
 	m_Link_Label.AddString("Lane Capacity");
 	m_Link_Label.AddString("Link Capacity");
 	m_Link_Label.AddString("Free Flow Travel Time");
 
 	m_Link_Label.AddString("Link type In Text");
 	m_Link_Label.AddString("Link type In Number");
-
+	m_Link_Label.AddString("main node id");
+	m_Link_Label.AddString("movement str");
+	m_Link_Label.AddString("NEMA phase number");
 	m_Link_Label.AddString("Total Link Volume");
 	m_Link_Label.AddString("Avg Speed");
 	m_Link_Label.AddString("TD Link Volume");
@@ -129,10 +130,10 @@ BOOL CDlg_DisplayConfiguration::OnInitDialog()
 	m_Movement_Label.AddString("None");
 	m_Movement_Label.AddString ("Turn Type");
 	m_Movement_Label.AddString("Turn Direction");
-	m_Movement_Label.AddString("ib_lane");
-	m_Movement_Label.AddString("ob_lane");
-	m_Movement_Label.AddString("penalty");
-	m_Movement_Label.AddString("capacity");
+//	m_Movement_Label.AddString("ib_lane");
+//	m_Movement_Label.AddString("ob_lane");
+	m_Movement_Label.AddString("prohibition_flag");
+//	m_Movement_Label.AddString("capacity");
 
 		//	m_Movement_Label.AddString ("# of Lanes");
 //	m_Movement_Label.AddString ("Simulated Hourly Count");

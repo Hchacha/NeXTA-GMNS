@@ -2239,6 +2239,13 @@ bool CTLiteDoc::ReadLinkCSVFile(LPCTSTR lpszFileName, bool bCreateNewNodeFlag = 
 			string link_key;
 			parser.GetValueByFieldName("link_key", link_key);
 
+			string main_node_id;
+			string movement_str;
+			string NEMA_phase_number;
+			parser.GetValueByFieldName("main_node_id", main_node_id);
+			parser.GetValueByFieldName("movement_str", movement_str);
+			parser.GetValueByFieldName("NEMA_phase_number", NEMA_phase_number);
+
 			string geo_string;
 
 			std::vector<CCoordinate> Original_CoordinateVector;
@@ -2405,6 +2412,10 @@ bool CTLiteDoc::ReadLinkCSVFile(LPCTSTR lpszFileName, bool bCreateNewNodeFlag = 
 
 				}
 				pLink->m_NumberOfLanes = number_of_lanes;
+
+				pLink->main_node_id = main_node_id;
+				pLink->movement_str = movement_str;
+				pLink->NEMA_phase_number = NEMA_phase_number;
 
 				pLink->m_FreeSpeed = max(10, free_speed);  // minimum Free Speed is 1 mph
 				//	pLink->m_Length= max(length_in_mile, pLink->m_FreeSpeed*0.1f/60.0f);  // minimum distance, special note: we do not consider the minimum constraint here, but a Agent cannot travel longer then 0.1 seconds
@@ -2719,7 +2730,8 @@ BOOL CTLiteDoc::SaveLinkData(LPCTSTR lpszPathName,bool bExport_Link_MOE_in_input
 	if(st!=NULL)
 	{
 		std::list<DTALink*>::iterator iLink;
-		fprintf(st,"link_id,name,from_node_id,to_node_id,facility_type,link_type,dir_flag,length,lanes,free_speed,capacity,geometry,");
+
+		fprintf(st,"link_id,name,from_node_id,to_node_id,facility_type,link_type,dir_flag,length,lanes,free_speed,capacity,main_node_id,movement_str,NEMA_phase_number,geometry,");
 		fprintf(st,"\n");	
 
 		for (iLink = m_LinkSet.begin(); iLink != m_LinkSet.end(); iLink++)
@@ -2756,6 +2768,11 @@ BOOL CTLiteDoc::SaveLinkData(LPCTSTR lpszPathName,bool bExport_Link_MOE_in_input
 					(*iLink)->m_LaneCapacity
 					);
 
+
+					fprintf(st, "%s,%s,%s,",
+						(*iLink)->main_node_id.c_str(),
+						(*iLink)->movement_str.c_str(),
+						(*iLink)->NEMA_phase_number.c_str());
 				// geometry
 				fprintf(st,"\"LINESTRING (");
 
@@ -3484,9 +3501,12 @@ int CTLiteDoc::ReadAMSMovementCSVFile(LPCTSTR lpszFileName, int NodeNo = -1)
 			{
 				DTANodeMovement* pMovement = m_MovementPointerMap[label];
 
-				parser_movement.GetValueByFieldName ("prohibited_flag",pMovement->turning_prohibition_flag);
-				parser_movement.GetValueByFieldName ("protected_flag",pMovement->turning_protected_flag );
-				parser_movement.GetValueByFieldName ("permitted_flag",pMovement->turning_permitted_flag);
+				float penalty = 0;
+				parser_movement.GetValueByFieldName ("penalty", penalty);
+				if (penalty >= 99)
+				{
+					pMovement->turning_prohibition_flag = 1;
+				}
 
 				std::string turn_type;
 

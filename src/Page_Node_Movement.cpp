@@ -43,24 +43,14 @@ IMPLEMENT_DYNAMIC(CPage_Node_Movement, CPropertyPage)
 
 CPage_Node_Movement::CPage_Node_Movement()
 : CPropertyPage(CPage_Node_Movement::IDD)
-, m_CycleLengthInSec(0)
-, m_bPhasingDataEditMode(FALSE)
 , m_CurrentNode_Name(_T(""))
 , m_MovementMsg(_T(""))
-, m_CycleLength(0)
-, m_Offset(0)
 , m_bHideRightTurnMovement(FALSE)
 {
-	m_SelectedTimingPlanNo = 0;
-	m_TimingPlanName = "0";
 	m_bColumnWidthIncludeHeader = true;
 	m_SelectedMovementIndex = -1;
 	m_bModifiedFlag = false;
 	m_PeakHourFactor = 1.0;
-
-	m_SelectedTimingPlanNo = 0;
-
-	m_SelectedPhaseNumber = 0;
 
 	m_bSigalizedNode = false;
 
@@ -74,8 +64,6 @@ void CPage_Node_Movement::DoDataExchange(CDataExchange* pDX)
 {
 	CPropertyPage::DoDataExchange(pDX);
 	DDX_Control(pDX,IDC_GRIDLISTCTRLEX,m_ListCtrl);
-	DDX_Text(pDX, IDC_EDIT_CURRENT_NODENAME, m_CurrentNode_Name);
-	//DDX_Check(pDX, IDC_HIDE_RIGHT_TURN, m_bHideRightTurnMovement);
 }
 
 
@@ -99,11 +87,6 @@ BOOL CPage_Node_Movement::OnInitDialog()
 
 	CPropertyPage::OnInitDialog();
 
-	for(int p = 1; p <= _max_phase_number; p++)
-	{
-		m_bAvailablePhaseVector [p] = false; 
-		m_EffectiveGreenTime [p]= 0;
-	}
 
 	m_CurrentNodeNo =  m_pDoc->m_SelectedNodeNo ;
 

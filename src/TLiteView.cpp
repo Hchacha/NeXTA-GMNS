@@ -1351,37 +1351,25 @@ void CTLiteView::DrawObjects(CDC* pDC)
 
 				// select text string to be displayed
 
-				bool with_text = false;
+				bool with_text = true;
 				CString str_text, str_reference_text;
 				str_text.Format (""); 
-
-				if(screen_distance > 50)
-					with_text = true;
-
 
 				// show text condition 1: street name
 				// show text condition 2: crash rates
 			
 
-
-				if(m_ShowLinkTextMode == link_display_street_name)
+				if (screen_distance < 5)
 				{
-					if((*iLink)->m_Name.length () > 0 && (*iLink)->m_Name!="(null)"  && screen_distance > 50 )
-					{
-						str_text = (*iLink)->m_Name.c_str ();
-						with_text = true;
-					}else
-					{
-						with_text = false;
-					}
+					with_text = false;
 				}
-
-
 
 				switch (m_ShowLinkTextMode)
 				{
 				case link_display_from_id_to_id: 
 					str_text.Format ("%d->%d", (*iLink)->m_FromNodeID , (*iLink)->m_ToNodeID ); break;
+				case link_display_street_name:
+					str_text = (*iLink)->m_Name.c_str(); break;
 
 				case link_display_link_id: 
 					str_text.Format ("%s", (*iLink)->m_LinkID.c_str()  ); break;
@@ -1412,6 +1400,20 @@ void CTLiteView::DrawObjects(CDC* pDC)
 
 				case link_display_link_type_in_number:
 					str_text.Format ("%d", (*iLink)->m_link_type  ); break;
+
+				case link_display_main_node_id:
+
+					str_text.Format("%s", (*iLink)->main_node_id.c_str()); 
+					
+					break;
+
+				case link_display_NEMA_phase_number:
+					str_text.Format("%s", (*iLink)->NEMA_phase_number.c_str()); 
+					break;
+
+				case link_display_movement_str:
+					str_text.Format("%s", (*iLink)->movement_str.c_str()); break;
+
 
 				case link_display_LevelOfService:
 					str_text.Format ("%s",(*iLink)->m_LevelOfService    ); break;
@@ -4400,6 +4402,9 @@ void CTLiteView::OnLinkEditlink()
 		dlg.m_NumLeftTurnLanes  = pLink-> m_NumberOfLeftTurnLanes;
 		dlg.m_NumRightTurnLanes  = pLink-> m_NumberOfRightTurnLanes;
 
+		dlg.main_node_id = pLink->main_node_id.c_str();
+		dlg.NEMA_phase_number = pLink->NEMA_phase_number.c_str();
+		dlg.movement_str = pLink->movement_str.c_str();
 
 
 			dlg.LinkLength = pLink->m_Length ;
@@ -4415,6 +4420,11 @@ void CTLiteView::OnLinkEditlink()
 
 				pLink->m_Length = dlg.LinkLength;
 				pLink->m_FreeSpeed = dlg.FreeSpeed;
+
+				pLink->main_node_id = pDoc->CString2StdString(dlg.main_node_id);
+				pLink->NEMA_phase_number = pDoc->CString2StdString(dlg.NEMA_phase_number);
+				pLink->movement_str = pDoc->CString2StdString(dlg.movement_str);
+
 
 			pLink->m_Name  = pDoc->CString2StdString(dlg.StreetName);
 			pLink->m_LinkID = pDoc->CString2StdString(dlg.m_LinkID);
@@ -4448,7 +4458,6 @@ void CTLiteView::OnLinkEditlink()
 			pDoc->m_DefaultNumLanes = dlg.DefaultnLane;
 
 			// error checking here
-
 
 			if(dlg.m_bEditChange)
 			{
@@ -6216,32 +6225,13 @@ void CTLiteView::OnNodeMovementproperties()
 		if(pNode==NULL)
 			return;
 
-		//pDoc->GenerateMovementCountFromAgentFile();
-		//pDoc->ExportQEMData(pNode->m_NodeID );
-
 		CPropertySheet sheet("Node Movement Data");
 
 		CPage_Node_Movement MovementPage;
 		MovementPage.m_psp.pszTitle = _T("Movemnent");
-		MovementPage.m_psp.dwFlags |= PSP_USETITLE;
 		MovementPage.m_pDoc = pDoc;
 		MovementPage.m_CurrentNodeNo = pNode->m_NodeNo;
-		MovementPage.m_CurrentNode_Name = pNode->m_Name.c_str () ;
-
-		MovementPage.m_bSigalizedNode  = true;
 		sheet.AddPage(&MovementPage);  // 0
-
-		CPage_Node_Phase PhasePage;
-
-			PhasePage.m_psp.pszTitle = _T("Phase");
-			PhasePage.m_psp.dwFlags |= PSP_USETITLE;
-			PhasePage.m_pDoc = pDoc;
-			PhasePage.m_PeakHourFactor = pDoc->m_PeakHourFactor ;
-			PhasePage.m_CurrentNodeNo = pNode->m_NodeNo;
-			PhasePage.m_CurrentNodeID = pNode->m_NodeID;
-			
-			PhasePage.m_CurrentNode_Name = pNode->m_Name.c_str () ;
-			sheet.AddPage(&PhasePage);  // 0
 
 		sheet.DoModal();
 
@@ -6836,7 +6826,7 @@ void CTLiteView::DrawNodeMovements(CDC* pDC, DTANode* pNode, CRect PlotRect)
 
 		case movement_display_turn_type: str_text.Format("%s", pDoc->GetTurnString(movement.movement_turn)); break;
 		case movement_display_turn_direction: str_text.Format("%s", pDoc->GetTurnDirectionString(movement.movement_approach_turn)); break;
-		case movement_display_turn_protected_permited_prohibited: str_text.Format("%d", movement.turning_prohibition_flag); break;
+		case movement_display_turn_prohibited: str_text.Format("%d", movement.turning_prohibition_flag); break;
 
 
 		case movement_display_sim_turn_count: 
@@ -6845,10 +6835,6 @@ void CTLiteView::DrawNodeMovements(CDC* pDC, DTANode* pNode, CRect PlotRect)
 
 			break;
 
-		case movement_display_sim_turn_hourly_count: 
-			str_text.Format("%.0f", sim_turn_hourly_count ) ; 
-
-			break;
 
 		case movement_display_sim_turn_percentage: 
 
@@ -6887,29 +6873,6 @@ void CTLiteView::DrawNodeMovements(CDC* pDC, DTANode* pNode, CRect PlotRect)
 			str_text.Format("%d", movement.obs_turn_delay  ); 
 
 			break;
-
-		case movement_display_QEM_Lanes: str_text.Format("%d",movement.QEM_Lanes ); break;
-		case movement_display_QEM_Shared: str_text.Format("%d",movement.QEM_Shared ); break;
-		case movement_display_QEM_Width:  str_text.Format("%d",movement.QEM_Width ); break;
-		case movement_display_QEM_Storage: str_text.Format("%d",movement.QEM_Storage ); break;
-		case movement_display_QEM_StLanes: str_text.Format("%d",movement.QEM_StLanes ); break;
-		case movement_display_QEM_Grade:  str_text.Format("%.1f",movement.QEM_Grade ); break;
-		case movement_display_QEM_Speed: str_text.Format("%.1f mph",movement.QEM_Speed ); break;
-		case movement_display_QEM_IdealFlow: str_text.Format("%.1f",movement.QEM_IdealFlow ); break;
-		case movement_display_QEM_LostTime: str_text.Format("%.1f",movement.QEM_LostTime ); break;
-		case movement_display_QEM_Phase1: str_text.Format("%d",movement.QEM_Phase1 ); break;
-		case movement_display_QEM_PermPhase1: str_text.Format("%d",movement.QEM_PermPhase1 ); break;
-		case movement_display_QEM_DetectPhase1: str_text.Format("%d",movement.QEM_DetectPhase1 ); break;
-
-		case movement_display_QEM_TurnVolume: str_text.Format("%d",movement.QEM_TurnVolume  ); break;
-		case movement_display_QEM_TurnPercentage: str_text.Format("%.0f%%",movement.QEM_TurnPercentage  ); break;
-
-		case movement_display_QEM_EffectiveGreen: str_text.Format("%.0f",movement.QEM_EffectiveGreen ); break;
-		case movement_display_QEM_Capacity: str_text.Format("%.0f",movement.QEM_Capacity ); break;
-		case movement_display_QEM_VOC: str_text.Format("%.2f",movement.QEM_VOC ); break;
-		case movement_display_QEM_SatFlow: str_text.Format("%.0f",movement.QEM_SatFlow ); break;
-		case movement_display_QEM_Delay: str_text.Format("%.1f s",movement.QEM_Delay ); break;
-		case movement_display_QEM_LOS: str_text.Format("%s",movement.QEM_LOS ); break;
 
 
 		default: str_text.Format("");

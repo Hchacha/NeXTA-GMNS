@@ -39,6 +39,10 @@ public:
 	int nLane;
 	int LinkType;
 
+	CString main_node_id;
+	CString NEMA_phase_number;
+	CString movement_str;
+
 	CComboBox m_LinkTypeComboBox;
 	
 	float DefaultSpeedLimit;

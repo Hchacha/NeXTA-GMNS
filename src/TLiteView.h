@@ -61,6 +61,9 @@ enum link_text_display_mode
    link_display_free_flow_travel_time, 
    link_display_link_type_in_text,
    link_display_link_type_in_number,
+   link_display_main_node_id,
+   link_display_movement_str,
+   link_display_NEMA_phase_number,
    link_display_total_link_volume,
    link_display_avg_speed,
   link_display_time_dependent_link_volume,
@@ -87,9 +90,8 @@ enum movement_text_display_mode
    movement_display_none = 0, 
    movement_display_turn_type, 
    movement_display_turn_direction,
+   movement_display_turn_prohibited,
 
-   movement_display_QEM_Lanes,
-   movement_display_sim_turn_hourly_count,
    movement_display_sim_turn_percentage, 
    movement_display_sim_turn_delay, 
    movement_display_QEM_Phase1,
@@ -98,7 +100,7 @@ enum movement_text_display_mode
    movement_display_turn_up_node_number, 
    movement_display_turn_dest_node_number, 
    movement_display_turn_three_node_numbers, 
-   movement_display_turn_protected_permited_prohibited,
+
    movement_display_sim_turn_count, 
 
 

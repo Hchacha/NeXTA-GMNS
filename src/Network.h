@@ -1532,6 +1532,7 @@ public:
 		m_total_travel_time = 0;
 		m_total_delay = 0;
 
+
 		m_TotalVolumeForMovementCount = 0;
 		m_MeanSpeed  = m_FreeSpeed;
 		m_TotalTravelTime = 0;
@@ -1944,6 +1945,11 @@ void AdjustLinkEndpointsWithSetBack()
 	float	m_FreeSpeed;
 	float   m_SpeedAtCapacity;
 	float	m_ReversedSpeedLimit;
+
+	string main_node_id;
+	string movement_str;
+	string NEMA_phase_number;
+
 	int m_prohibited_u_turn;
 
 	float	m_MaximumServiceFlowRatePHPL;  //Capacity used in BPR for each link, reduced due to link type and other factors.
