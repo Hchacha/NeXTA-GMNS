@@ -337,8 +337,8 @@ using std::string;
 #define MAX_DAY_SIZE 1 
 
 extern int 	g_MOEAggregationIntervalInMin;
-extern std::string g_SelectedAgentID;
-extern std::string  g_SelectedPassengerID;
+extern int g_SelectedAgentID;
+extern int  g_SelectedPassengerID;
 extern int 	g_ImpactStudyPeriodInMin;
 extern bool g_bShowRadarChart;
 
@@ -1490,9 +1490,10 @@ class DTALink
 {
 public:
 
-
+	bool m_bActive; 
 	DTALink(int TimeHorizon)  // TimeHorizon's unit: per min
 	{
+		m_bActive = true;
 		m_Length = 10;
 		m_network_design_flag = 0;
 	
@@ -1529,12 +1530,14 @@ public:
 		m_Saturation_flow_rate_in_vhc_per_hour_per_lane = 1800;
 
 		m_total_link_volume = 0;
+		m_hourly_link_volume = 0;
 		m_total_travel_time = 0;
 		m_total_delay = 0;
 
 
 		m_TotalVolumeForMovementCount = 0;
 		m_MeanSpeed  = m_FreeSpeed;
+		m_VoCRatio = 0;
 		m_TotalTravelTime = 0;
 		m_TotalDiffValue = 0;
 		m_NumberOfMarkedAgents = 0;
@@ -1571,6 +1574,7 @@ public:
 		m_avg_waiting_time_on_loading_buffer = 0;
 
 		m_total_link_volume = 0;
+		m_hourly_link_volume = 0;
 		m_total_travel_time = 0;
 		m_total_speed = 0;
 		m_total_speed_count = 0;
@@ -1641,6 +1645,7 @@ public:
 	float m_total_speed_count;
 
 	float m_total_link_volume;
+	float m_hourly_link_volume;
 	float m_total_travel_time;
 	float m_total_delay;
 	float m_total_assigned_link_volume;
@@ -1962,6 +1967,7 @@ void AdjustLinkEndpointsWithSetBack()
 	float m_MaxSpeed;
 	float m_MeanSpeed;
 	float m_MeanVolume;
+	float m_VoCRatio;
 
 	/* For min-by-min train timetabling, m_LaneCapacity is 1 for each min. 
 	Example in airspace scheduling
@@ -2855,7 +2861,7 @@ class AgentLocationRecord
 {
 	public:
 	
-	string agent_id;
+	int agent_id;
 	int  agent_no;
 	int day_no;
 	string agent_type;
@@ -2915,6 +2921,7 @@ public:
 //	int m_FromNodeNo;
 //	int m_ToNodeNo;
 	string m_AgentType;  
+	int activity_node_flag;
 	int m_AgentTypeNo;// 
 	short m_SimLinkSequenceNo; //  range 0, 65535
 
@@ -2959,6 +2966,7 @@ public:
 
 	DTAAgent()
 	{
+		activity_node_flag = 0;
 		m_Volume = 1;
 		m_subarea_start_node_departure_time = 0;
 		m_subarea_end_node_arrival_time = 0;

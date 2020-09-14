@@ -116,7 +116,11 @@ BOOL CDlg_DisplayConfiguration::OnInitDialog()
 	m_Link_Label.AddString("movement str");
 	m_Link_Label.AddString("NEMA phase number");
 	m_Link_Label.AddString("Total Link Volume");
+	m_Link_Label.AddString("Hourly Link Volume");
+	m_Link_Label.AddString("Lane Link Volume");
 	m_Link_Label.AddString("Avg Speed");
+	m_Link_Label.AddString("Avg Travel Time (min)");
+	m_Link_Label.AddString("V/C ratio");
 	m_Link_Label.AddString("TD Link Volume");
 	m_Link_Label.AddString("TD Lane Volume");
 	m_Link_Label.AddString("TD Density");
@@ -367,30 +371,30 @@ void CDlg_DisplayConfiguration::OnCbnSelchangeComboAggregationInterval()
 
 void CDlg_DisplayConfiguration::OnLbnSelchangeListGpsCarTextLabel()
 {
-	CString s;
-	m_AgentIDList.GetText(m_AgentIDList.GetCurSel(),s);
+	//CString s;
+	//m_AgentIDList.GetText(m_AgentIDList.GetCurSel(),s);
 
-	g_SelectedAgentID = pView->GetDocument()->CString2StdString(s);
+	//g_SelectedAgentID = pView->GetDocument()->CString2StdString(s);
 	pView->Invalidate();
 }
 
 
 void CDlg_DisplayConfiguration::OnLbnDblclkListGpsCarTextLabel()
 {
-	CString s;
-	m_AgentIDList.GetText(m_AgentIDList.GetCurSel(), s);
+	//CString s;
+	//m_AgentIDList.GetText(m_AgentIDList.GetCurSel(), s);
 
-	g_SelectedAgentID = pView->GetDocument()->CString2StdString(s);
+	//g_SelectedAgentID = pView->GetDocument()->CString2StdString(s);
 	pView->Invalidate();	// TODO: Add your control notification handler code here
 }
 
 
 void CDlg_DisplayConfiguration::OnLbnSelchangeListGpsDayTextLabel2()
 {
-	CString s;
-	m_PassengerIDList.GetText(m_PassengerIDList.GetCurSel(), s);
+	//CString s;
+	//m_PassengerIDList.GetText(m_PassengerIDList.GetCurSel(), s);
 
-	g_SelectedPassengerID = pView->GetDocument()->CString2StdString(s);
+	//g_SelectedPassengerID = pView->GetDocument()->CString2StdString(s);
 
 	pView->Invalidate();	// TODO: Add your control notification handler code here
 }
@@ -398,9 +402,9 @@ void CDlg_DisplayConfiguration::OnLbnSelchangeListGpsDayTextLabel2()
 
 void CDlg_DisplayConfiguration::OnLbnDblclkListGpsDayTextLabel2()
 {
-	CString s;
-	m_PassengerIDList.GetText(m_PassengerIDList.GetCurSel(), s);
+	//CString s;
+	//m_PassengerIDList.GetText(m_PassengerIDList.GetCurSel(), s);
 
-	g_SelectedPassengerID = pView->GetDocument()->CString2StdString(s);
+	//g_SelectedPassengerID = pView->GetDocument()->CString2StdString(s);
 	pView->Invalidate();
 }

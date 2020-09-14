@@ -1066,6 +1066,7 @@ void CTLiteView::DrawObjects(CDC* pDC)
 		for (iLink = pDoc->m_LinkSet.begin(); iLink != pDoc->m_LinkSet.end(); iLink++)
 		{
 
+
 			if( pMainFrame->m_bShowLayerMap[layer_transit] == true && m_bShowTransitLinksOnly )
 			{
 				if (pDoc->m_LinkTypeMap[(*iLink)->m_link_type ].IsTransit  ()== false)  //show transit only
@@ -1117,6 +1118,9 @@ void CTLiteView::DrawObjects(CDC* pDC)
 
 			// step 5: select color and brush according to link MOE
 			float value = -1.0f ;
+
+			if ((*iLink)->m_bActive = false)  // for deleted links
+				continue; 
 
 			if( pDoc->m_LinkMOEMode != MOE_none) 
 			{
@@ -1418,6 +1422,7 @@ void CTLiteView::DrawObjects(CDC* pDC)
 				case link_display_LevelOfService:
 					str_text.Format ("%s",(*iLink)->m_LevelOfService    ); break;
 
+
 				case link_display_avg_waiting_time_on_loading_buffer:
 					if( (*iLink)->m_avg_waiting_time_on_loading_buffer > 0.1)
 						str_text.Format ("%.1f",(*iLink)->m_avg_waiting_time_on_loading_buffer   ); break;
@@ -1428,12 +1433,28 @@ void CTLiteView::DrawObjects(CDC* pDC)
 
 					break;
 
+				case link_display_hourly_link_volume:
+					str_text.Format("%.1f", (*iLink)->m_hourly_link_volume);
+					break;
+
+				case link_display_hourly_lane_volume:
+					str_text.Format("%.1f", (*iLink)->m_total_link_volume / max(1, (*iLink)->m_NumberOfLanes));
+					break;
+
 				case link_display_avg_speed:
 					str_text.Format("%.1f", (*iLink)->m_MeanSpeed);
 
 					break;
 					
+				case link_display_avg_travel_time:  // min 
+					str_text.Format("%.1f", (*iLink)->m_Length / max( 0.0001, (*iLink)->m_MeanSpeed)*60);
 
+					break;
+
+				case link_display_VOC_ratio:
+					str_text.Format("%.2f", (*iLink)->m_VoCRatio);
+
+					break;
 
 				case link_display_total_delay:
 					if((*iLink)->m_total_delay>=1 && pDoc->m_LinkTypeMap[(*iLink)->m_link_type].IsConnector () == false)
@@ -1960,7 +1981,7 @@ void CTLiteView::DrawObjects(CDC* pDC)
 
 	//step 12: draw generic point layer , e.g. crashes
 
-	if(pMainFrame->m_bShowLayerMap[layer_Agent_position])
+	if(pMainFrame->m_bShowLayerMap[layer_path])
 	{
 		pDC->SelectObject(&g_BlackBrush);
 		pDC->SetTextColor(RGB(255,255,0));
@@ -1989,37 +2010,37 @@ void CTLiteView::DrawObjects(CDC* pDC)
 	
 					//with Agent location data at this time stamp
 
-				std::map<string,AgentLocationTimeIndexedMap>::iterator itr2;
+				std::map<int,AgentLocationTimeIndexedMap>::iterator itr2;
 
 				for(itr2 = pDoc->m_AgentWithLocationVectorMap.begin();
 					itr2 != pDoc->m_AgentWithLocationVectorMap .end(); itr2++)
 				{		//scan all Agent records at this timestamp
 
-				int agent_no = atoi((*itr2).first.c_str());
+					int agent_no = (*itr2).first;
 
 				for (int i = 0; i<(*itr2).second.AgentLocationRecordVector.size()-1; i++)
 				{
 					std::string agent_type = (*itr2).second.AgentLocationRecordVector[i].agent_type;
 
-					if (agent_type == "p")  // pax
-					{
-						if (g_SelectedPassengerID != "All" &&  g_SelectedPassengerID != (*itr2).second.AgentLocationRecordVector[i].agent_id)
-							continue;
-					}
+					//if (agent_type == "p")  // pax
+					//{
+					//	if (g_SelectedPassengerID != "All" &&  g_SelectedPassengerID != (*itr2).second.AgentLocationRecordVector[i].agent_id)
+					//		continue;
+					//}
 
-					
-					if (agent_type == "v")  // Agent
-					{
-						if (g_SelectedAgentID != "All" &&  g_SelectedAgentID != (*itr2).second.AgentLocationRecordVector[i].agent_id)
-							continue;
-					}
+					//
+					//if (agent_type == "v")  // Agent
+					//{
+					//	if (g_SelectedAgentID != "All" &&  g_SelectedAgentID != (*itr2).second.AgentLocationRecordVector[i].agent_id)
+					//		continue;
+					//}
 
 
-					// if day_no is 0 always display 
-					if (agent_type == "p")  // pax
-						pDC->SelectObject(&g_PenPaxSelectColor0);
-					else
-						g_SelectColorCode(pDC, (*itr2).second.AgentLocationRecordVector[i].agent_no % 5);
+					//// if day_no is 0 always display 
+					//if (agent_type == "p")  // pax
+					//	pDC->SelectObject(&g_PenPaxSelectColor0);
+					//else
+					//	g_SelectColorCode(pDC, (*itr2).second.AgentLocationRecordVector[i].agent_no % 5);
 
 					CPoint from_point, to_point;
 
@@ -2485,7 +2506,7 @@ void CTLiteView::DrawObjects(CDC* pDC)
 
 		pDC->SelectObject(&g_PenAgent);  //green
 		pDC->SelectObject(&g_BrushAgent); //green
-		std::map<string, AgentLocationTimeIndexedMap>::iterator itr2;
+		std::map<int, AgentLocationTimeIndexedMap>::iterator itr2;
 
 		for (itr2 = pDoc->m_AgentWithLocationVectorMap.begin();
 			itr2 != pDoc->m_AgentWithLocationVectorMap.end(); itr2++)
@@ -2493,7 +2514,7 @@ void CTLiteView::DrawObjects(CDC* pDC)
 
 			std::vector<AgentLocationRecord>::iterator itr;
 
-			int agent_no = atoi((*itr2).first.c_str());
+			int agent_no = (*itr2).first;
 			//if (bSamplingDisplay)
 			//{
 			//	if((*iAgent)->m_AgentID %sample_size !=0)
@@ -2539,7 +2560,7 @@ void CTLiteView::DrawObjects(CDC* pDC)
 
 						//}
 							CString str_number;
-							str_number.Format("%s", (*itr2).first.c_str());
+							str_number.Format("%d", (*itr2).first);
 							AgentPoint.y -=15;
 							pDC->TextOut(AgentPoint.x, AgentPoint.y, str_number);
 			
@@ -4286,6 +4307,13 @@ void CTLiteView::OnEditCreate2waylinks()
 
 		m_link_display_mode = link_display_mode_line;
 		m_bShowLinkArrow = true;
+
+
+		if (pDoc->m_bLinkToBeShifted == false || pDoc->m_OffsetInDistance <0.004)
+		{
+			pDoc->OnLinkIncreaseoffsetfortwo();
+			pDoc->OnLinkIncreaseoffsetfortwo();
+		}
 
 		m_ToolMode = create_2waylinks_tool;
 			Invalidate();

@@ -721,7 +721,7 @@ public:
 
 
 	int GetVehilePosition(DTAAgent* pAgent, double CurrentTime, int &link_sequence_no, float& ratio );
-	bool GetAgentPosition(string agent_id, double CurrentTime, GDPoint& pt);
+	bool GetAgentPosition(int agent_id, double CurrentTime, GDPoint& pt);
 	bool GetAgentPosition(DTAAgent* pAgent, double CurrentTime, GDPoint & pt);
 
 	float GetLinkMOE(DTALink* pLink, Link_MOE LinkMOEMode, int CurrentTime,  int AggregationIntervalInMin, float &value);
@@ -1029,6 +1029,7 @@ public:
 	
 	bool WriteSelectAgentDataToCSVFile(LPCTSTR lpszFileName, std::vector<DTAAgent*> AgentVector);
 	void ReadAgentCSVFile_Parser(LPCTSTR lpszFileName);
+	void ReadTrajectoryCSVFile(LPCTSTR lpszFileName);
 
 	int ReadAMSMovementCSVFile(LPCTSTR lpszFileName, int NodeNo);
 	int ReadAMSSignalControlCSVFile(LPCTSTR lpszFileName);
@@ -1069,8 +1070,8 @@ public:
 		}
 		return SeperatedIntegers;
 	}
-	std::map<long,AgentLocationTimeIndexedMap> m_AgentLocationMap;
-	std::map<string,AgentLocationTimeIndexedMap> m_AgentWithLocationVectorMap;
+	std::map<int,AgentLocationTimeIndexedMap> m_AgentLocationMap;
+	std::map<int,AgentLocationTimeIndexedMap> m_AgentWithLocationVectorMap;
 
 	void AddLocationRecord(AgentLocationRecord element)
 	{
@@ -1082,8 +1083,7 @@ public:
 	
 	}
 
-	bool ReadModelAgentTrajectory(LPCTSTR lpszFileName);
-	bool ReadGPSTrajectory(LPCTSTR lpszFileName);
+	bool ReadAgentTrajectory(LPCTSTR lpszFileName);
 
 	std::vector<string > m_PassengerIDStringVector;
 	std::vector<string > m_AgentIDStringVector;
@@ -1587,6 +1587,7 @@ public:
 		m_NodeIDtoLinkMap.erase (LinkKey);  
 		m_NodeIDtoLinkMap[LinkKey] =NULL;
 
+	
 		m_NodeNoMap[FromNodeNo ]->m_Connections-=1;
 
 		for(int ii = 0; ii< m_NodeNoMap[FromNodeNo ]->m_OutgoingLinkVector.size();ii++)
@@ -1603,6 +1604,7 @@ public:
 		m_LinkNoMap.erase (pLink->m_LinkNo);  
 
 		m_LinkNoMap[pLink->m_LinkNo]  = NULL;
+		pLink->m_bActive = false;
 
 		std::list<DTALink*>::iterator iLink;
 
@@ -1615,7 +1617,7 @@ public:
 			}
 		}
 
-		// 
+		 
 		//resort link no;
 		m_LinkNoMap.clear();
 		int i= 0;

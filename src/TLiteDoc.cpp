@@ -983,12 +983,14 @@ bool CTLiteDoc::ReadSimulationLinkMOEData_Parser(LPCTSTR lpszFileName)
 						float speed = 60.0; 
 						float queue_length_ratio = 0;
 						float number_of_queued_agents = 0;
+						float VOC = 0;
 
 						parser.GetValueByFieldName("travel_time", travel_time_in_min);
 						parser.GetValueByFieldName("volume", link_volume);
 						parser.GetValueByFieldName("density", density);
 						parser.GetValueByFieldName("speed", speed);
 						parser.GetValueByFieldName("queue", number_of_queued_agents);  // virtual queue
+						parser.GetValueByFieldName("VOC", VOC);  // virtual queue
 
 						float K_jam = 200;
 						if(number_of_queued_agents>=1)
@@ -1011,6 +1013,10 @@ bool CTLiteDoc::ReadSimulationLinkMOEData_Parser(LPCTSTR lpszFileName)
 						pLink->m_total_speed += speed;
 						pLink->m_total_speed_count += 1;
 						pLink->m_MeanSpeed = pLink->m_total_speed / pLink->m_total_speed_count;
+						pLink->m_MeanSpeed = pLink->m_total_speed / pLink->m_total_speed_count;
+						pLink->m_VoCRatio = VOC;
+
+						pLink->m_hourly_link_volume = pLink->m_total_link_volume / (max(1,m_DemandLoadingEndTimeInMin - m_DemandLoadingStartTimeInMin)/60);
 
 						float time_duration_per_hour = max(0.01,(time_stamp_vector[1] - time_stamp_vector[0]) / 60.0);
 
@@ -1115,12 +1121,11 @@ BOOL CTLiteDoc::OnOpenTrafficNetworkDocument(CString ProjectFileName, bool bNetw
 	directory = m_ProjectFile.Left(ProjectFileName.ReverseFind('\\') + 1);
 
 	m_ProjectDirectory = directory;
-	m_ProjectTitle = GetWorkspaceTitleName(ProjectFileName);
+	m_ProjectTitle = GetWorkspaceTitleName(directory);
 	SetTitle(m_ProjectTitle);
 
-	ReadModelAgentTrajectory(m_ProjectDirectory + "model_trajectory.csv");
+	ReadAgentTrajectory(m_ProjectDirectory + "trajectory.csv");
 
-	ReadGPSTrajectory(m_ProjectDirectory + "CAR_GPS_data.csv");
 
 	// read users' prespecified control type
 	ReadLinkTypeCSVFile(directory+"settings.csv");
@@ -1157,10 +1162,7 @@ BOOL CTLiteDoc::OnOpenTrafficNetworkDocument(CString ProjectFileName, bool bNetw
 	ReadAMSMovementCSVFile(directory + "movement.csv", -1);
 //	ReadAMSSignalControlCSVFile(directory + "input_timing.csv");
 
-	if (bNetworkOnly == false)
-	{
-		LoadSimulationOutput();
-	}
+	LoadSimulationOutput();
 
 	CalculateDrawingRectangle(false);
 	m_bFitNetworkInitialized  = false;
@@ -2736,7 +2738,7 @@ BOOL CTLiteDoc::SaveLinkData(LPCTSTR lpszPathName,bool bExport_Link_MOE_in_input
 
 		for (iLink = m_LinkSet.begin(); iLink != m_LinkSet.end(); iLink++)
 		{
-			if( (*iLink)->m_FromNodeNo != (*iLink)->m_ToNodeNo)
+			if( (*iLink)->m_FromNodeNo != (*iLink)->m_ToNodeNo && (*iLink)->m_bActive)
 			{
 				int ToNodeNo = (*iLink)->m_ToNodeNo ;
 				DTANode* pNode = m_NodeNoMap[ToNodeNo];
@@ -3251,12 +3253,12 @@ void CTLiteDoc::ReadAgentCSVFile_Parser(LPCTSTR lpszFileName)
 				}
 
 
-				if (!parser_test.GetValueByFieldName("agent_type", pAgent->m_AgentType))
-				{
-					AfxMessageBox("Field agent_type does not exist in agent.csv");
-					return;
+				//if (!parser_test.GetValueByFieldName("agent_type", pAgent->m_AgentType))
+				//{
+				//	AfxMessageBox("Field agent_type does not exist in agent.csv");
+				//	return;
 
-				}
+				//}
 
 			
 				delete pAgent;
@@ -3308,6 +3310,74 @@ void CTLiteDoc::ReadAgentCSVFile_Parser(LPCTSTR lpszFileName)
 				pAgent->m_AgentTypeNo = 0;
 			}
 
+			std::string activity_node_sequence_str;
+			parser.GetValueByFieldName("activity_node_sequence", activity_node_sequence_str);
+			if (activity_node_sequence_str.size() > 0)
+			{
+				std::string path_time_sequence, path_state_sequence;
+				parser.GetValueByFieldName("time_decimal_sequence", path_time_sequence);
+
+				std::vector<int> activity_node_sequence;
+				std::vector<float> time_sequence;
+				std::vector<string> state_sequence;
+
+				g_ParserIntSequence(activity_node_sequence_str, activity_node_sequence);
+
+				pAgent->m_NodeSize = activity_node_sequence.size();
+				g_ParserFloatSequence(path_time_sequence, time_sequence);
+
+				std::string node_sequence_node_timestamp;
+				std::vector<float> node_time_sequence;
+
+				pAgent->activity_node_flag = 1;  // activity node sequence activated
+
+				if (pAgent->m_NodeSize >= 1)  // in case reading error
+				{
+
+					pAgent->m_NodeAry = new SAgentLink[pAgent->m_NodeSize];
+					pAgent->m_NodeIDSum = 0;
+					pAgent->m_DepartureTime = 0;
+					pAgent->m_ArrivalTime = 0;
+
+					for (int i = 0; i < pAgent->m_NodeSize; i++)
+					{
+						m_PathNodeVectorSP[i] = activity_node_sequence[i];
+						pAgent->m_NodeIDSum += m_PathNodeVectorSP[i];
+						if (i >= 1)
+						{
+								pAgent->m_NodeAry[i].LinkNo = -1;
+
+						}
+
+						// random error beyond 6 seconds for better ainimation
+
+						float random_value = g_RNNOF() * 0.01; // 0.1 min = 6 seconds
+
+
+						if (time_sequence.size() > 0)
+						{
+							pAgent->m_NodeAry[i].ArrivalTimeOnDSN = time_sequence[i] + random_value;
+						}
+					}
+
+
+					if (time_sequence.size() > 0)
+					{
+						pAgent->m_DepartureTime = time_sequence[0];
+						pAgent->m_ArrivalTime = time_sequence[time_sequence.size()-1];
+					}
+
+
+
+
+
+				}
+
+			
+			
+			}else
+			{  //physcial node sequence
+
 			std::string path_node_sequence, path_time_sequence, path_state_sequence;
 			parser.GetValueByFieldName("node_sequence",path_node_sequence );
 			parser.GetValueByFieldName("time_decimal_sequence",path_time_sequence );
@@ -3340,12 +3410,12 @@ void CTLiteDoc::ReadAgentCSVFile_Parser(LPCTSTR lpszFileName)
 						DTALink* pLink = FindLinkWithNodeIDs(m_PathNodeVectorSP[i - 1], m_PathNodeVectorSP[i]);
 						if (pLink == NULL)
 						{
-							if(error_count == 0)
+							if (error_count == 0)
 							{
-							CString msg;
-							msg.Format("Agent file has an invalid link sequence %d->%d in the field node_sequence for agent %d. Please check.", 
-							m_PathNodeVectorSP[i - 1], m_PathNodeVectorSP[i], m_AgentID);
-							AfxMessageBox(msg);
+								CString msg;
+								msg.Format("Agent file has an invalid link sequence %d->%d in the field node_sequence for agent %d. Please check.",
+									m_PathNodeVectorSP[i - 1], m_PathNodeVectorSP[i], m_AgentID);
+								AfxMessageBox(msg);
 							}
 							error_count++;
 						}
@@ -3373,9 +3443,9 @@ void CTLiteDoc::ReadAgentCSVFile_Parser(LPCTSTR lpszFileName)
 
 				pAgent->m_DepartureTime = pAgent->m_NodeAry[0].ArrivalTimeOnDSN;
 
-				pAgent->m_ArrivalTime = pAgent->m_NodeAry[pAgent->m_NodeSize-1].ArrivalTimeOnDSN;
+				pAgent->m_ArrivalTime = pAgent->m_NodeAry[pAgent->m_NodeSize - 1].ArrivalTimeOnDSN;
 
-
+			}
 
 			}
 				m_AgentSet.push_back (pAgent);
@@ -3868,7 +3938,7 @@ int CTLiteDoc::GetVehilePosition(DTAAgent* pAgent, double CurrentTime, int &link
 	return 0;
 }
 
-bool CTLiteDoc::GetAgentPosition(string agent_id, double CurrentTime_in_min, GDPoint& pt)
+bool CTLiteDoc::GetAgentPosition(int agent_id, double CurrentTime_in_min, GDPoint& pt)
 {
 	float ratio = 0;
 	double CurrentTime = CurrentTime_in_min * 60;  // in seconds
@@ -4426,6 +4496,9 @@ void CTLiteDoc::LoadSimulationOutput()
 	ReadAgentCSVFile_Parser(m_ProjectDirectory+ "agent.csv");
 	//RecalculateLinkMOEFromAgentTrajectoryFile();
 
+//	ReadTrajectoryCSVFile(m_ProjectDirectory + "trajectory.csv");
+
+	ReadAgentTrajectory(m_ProjectDirectory + "trajectory.csv");
 
 	int speed_data_aggregation_interval = 15;
 
@@ -4531,12 +4604,19 @@ CString CTLiteDoc::GetWorkspaceTitleName(CString strFullPath)
 	strPathTitleName.Empty ();
 	bool StartFlag = false;
 
+	int count = 0;
+
 	for(int k=len-1;k>=0;k--)
 	{
-		if(strFullPath[k]=='\\')
-			break;
+		if (strFullPath[k] == '\\')
+		{
+			count++;
 
-		if(strFullPath[k]=='.' && StartFlag == false)
+			if(count == 2)
+			break;
+		}
+
+		if(strFullPath[k]=='\\' && StartFlag == false)
 		{
 			StartFlag = true;
 			continue;
@@ -7361,7 +7441,7 @@ void CTLiteDoc::OnDemandtoolsGenerateinput()
 
 }
 
-bool CTLiteDoc::ReadModelAgentTrajectory(LPCTSTR lpszFileName)
+bool CTLiteDoc::ReadAgentTrajectory(LPCTSTR lpszFileName)
 {
 	CCSVParser parser;
 	int i= 0;
@@ -7372,251 +7452,116 @@ bool CTLiteDoc::ReadModelAgentTrajectory(LPCTSTR lpszFileName)
 	{
 
 			CMainFrame* pMainFrame = (CMainFrame*)AfxGetMainWnd();
-			pMainFrame->m_bShowLayerMap[layer_Agent_position] = true;
-			//			m_bGPSDataSet  = true;
-		while(parser.ReadRecord())
-		{
+			pMainFrame->m_bShowLayerMap[layer_path] = true;
 
-			AgentLocationRecord element;
-			
-			if(parser.GetValueByFieldName("timestamp_in_second",element.time_stamp_in_second) == false)
-				continue;
-
-			if(parser.GetValueByFieldName("agent_id",element.agent_id) == false)
-				continue;
-
-
-			if(parser.GetValueByFieldName("x_coord",element.x, false) == false)
-				continue;
-
-			if(parser.GetValueByFieldName("y_coord",element.y, false) == false)
-				continue;
-
-
-
-			if(parser.GetValueByFieldName("to_x",element.to_x) == true)
+			while (parser.ReadRecord())
 			{
-				if(parser.GetValueByFieldName("to_y",element.to_y) == true)
-					element.b_to_data_flag  = true;
+
+				AgentLocationRecord element;
+
+
+				if (parser.GetValueByFieldName("agent_id", element.agent_id) == false)
+					continue;
+
+
+				DTAAgent* pAgent = 0;
+
+				if (m_AgentIDMap.find(element.agent_id) != m_AgentIDMap.end())
+				{
+					pAgent = m_AgentIDMap[element.agent_id];
+					pAgent->m_bComplete = true;
+				}
+				else
+				{
+					continue;
+				}
+
+				pAgent->m_AgentID = element.agent_id;
+
+				if (parser.GetValueByFieldName("x_coord", element.x, false) == false)
+					continue;
+
+				if (parser.GetValueByFieldName("y_coord", element.y, false) == false)
+					continue;
+
+				int timestamp = 0;
+
+				if (parser.GetValueByFieldName("timestamp", timestamp) == false)
+					continue;
+
+				timestamp = (int)(timestamp / 100);
+				int hh, mm, ss;
+
+				hh = (int)(timestamp / 10000);
+				mm = (int)timestamp / 100 - hh * 100;
+				ss = timestamp - hh * 10000 - mm * 100;
+
+				element.time_stamp_in_second = hh * 3600 + mm * 60 + ss;
+
+				if (parser.GetValueByFieldName("to_x", element.to_x) == true)
+				{
+					if (parser.GetValueByFieldName("to_y", element.to_y) == true)
+						element.b_to_data_flag = true;
+				}
+
+				AddLocationRecord(element);
+
+				if (!bRectInitialized)
+				{
+					m_NetworkRect.left = element.x;
+					m_NetworkRect.right = element.x;
+					m_NetworkRect.top = element.y;
+					m_NetworkRect.bottom = element.y;
+					bRectInitialized = true;
+				}
+
+				GDPoint point;
+				point.x = element.x;
+				point.y = element.y;
+
+				m_NetworkRect.Expand(point);
+
+
+				i++;
+
 			}
-				
-			AddLocationRecord(element);
-			
-			if(!bRectInitialized)
-			{
-				m_NetworkRect.left = element.x ;
-				m_NetworkRect.right = element.x;
-				m_NetworkRect.top = element.y;
-				m_NetworkRect.bottom = element.y;
-				bRectInitialized = true;
-			}
+				std::map<int, AgentLocationTimeIndexedMap>::iterator itr2;
 
-			GDPoint point;
-			point.x = element.x;
-			point.y = element.y;
-
-			m_NetworkRect.Expand(point);
-			
-			
-			i ++;
-
-		}
-
-
-///
-
-			m_ZoneMap[0].m_ZoneID = 0;
-
-				std::map<string,AgentLocationTimeIndexedMap>::iterator itr2;
-
-				for(itr2 = m_AgentWithLocationVectorMap.begin();
-					itr2 != m_AgentWithLocationVectorMap .end(); itr2++)
+				for (itr2 = m_AgentWithLocationVectorMap.begin();
+					itr2 != m_AgentWithLocationVectorMap.end(); itr2++)
 				{		//scan all Agent records at this timestamp
 
+					DTAAgent* pAgent = 0;
 
-			DTAAgent* pAgent = 0;
-			pAgent = new DTAAgent;
-			pAgent->m_AgentID		= m_AgentSet.size();
+					if (m_AgentIDMap.find(itr2->first) != m_AgentIDMap.end())
+					{
+						pAgent = m_AgentIDMap[itr2->first];
 
-			pAgent->m_o_ZoneID	= 0;
-			pAgent->m_d_ZoneID= 0;
-
-			pAgent->m_Distance = 10; // km to miles
-			pAgent->m_DepartureTime	=  itr2->second .AgentLocationRecordVector[0].time_stamp_in_second/10;
-			pAgent->m_ArrivalTime =  itr2->second .AgentLocationRecordVector[itr2->second .AgentLocationRecordVector.size()-1].time_stamp_in_second;
+						pAgent->m_Distance = 10; // km to miles
 
 
-			pAgent->m_TripTime  = pAgent->m_ArrivalTime - pAgent->m_DepartureTime;
-
-			if(g_Simulation_Time_Horizon < pAgent->m_ArrivalTime)
-				g_Simulation_Time_Horizon = pAgent->m_ArrivalTime;
-
-			pAgent->m_bComplete = true;
-			pAgent->m_AgentType = 1;
+						pAgent->m_DepartureTime = itr2->second.AgentLocationRecordVector[0].time_stamp_in_second / 60;  // 60 seconds per min
+						pAgent->m_ArrivalTime = itr2->second.AgentLocationRecordVector[itr2->second.AgentLocationRecordVector.size() - 1].time_stamp_in_second / 60;
 
 
-			//pAgent->m_AgentType = (unsigned char)g_read_integer(pFile);
+						pAgent->m_TripTime = pAgent->m_ArrivalTime - pAgent->m_DepartureTime;
 
-				m_AgentSet.push_back (pAgent);
-				m_AgentIDMap[pAgent->m_AgentID]  = pAgent;
+						if (g_Simulation_Time_Horizon < pAgent->m_ArrivalTime)
+							g_Simulation_Time_Horizon = pAgent->m_ArrivalTime;
+
+						pAgent->m_bComplete = true;
+						pAgent->m_AgentType = 1;
 
 
+					}
+
+			
 				}
 	
-	//	m_AgentLocationLoadingStatus.Format("%d agent location records for %d agents are loaded from file %s.",i,m_AgentWithLocationVectorMap.size(),lpszFileName);	
+		m_AgentLocationLoadingStatus.Format("%d agent location records for %d agents are loaded from file %s.",i,m_AgentWithLocationVectorMap.size(),lpszFileName);	
 	}
 return true;
 }
-
-
-
-bool CTLiteDoc::ReadGPSTrajectory(LPCTSTR lpszFileName)
-{
-	CCSVParser parser;
-	int i = 0;
-
-	bool bRectInitialized = false;
-
-	if (parser.OpenCSVFile(CString2StdString(lpszFileName)))
-	{
-
-		while (parser.ReadRecord())
-		{
-
-			AgentLocationRecord element;
-
-	
-
-			if (parser.GetValueByFieldName("car_id", element.agent_id) == false)
-				continue;
-
-
-			string geo_string;
-			if (parser.GetValueByFieldName("location", geo_string) == false)
-				continue;
-
-			std::vector<float> vect;
-
-			std::stringstream ss(geo_string);
-			float value;
-
-			while (ss >> value)
-			{
-				vect.push_back(value);
-
-				if (ss.peek() == ',')
-					ss.ignore();
-			}
-
-
-			if (vect.size() == 2)
-			{
-				element.y = vect[0];
-				element.x = vect[1];
-			}
-
-
-			string date_string;
-			if (parser.GetValueByFieldName("date", date_string) == false)
-				continue;
-
-			std::vector<int> date_vect;
-
-			std::stringstream ss_date(date_string);
-			int date_value;
-
-			while (ss_date >> date_value)
-			{
-				date_vect.push_back(date_value);
-
-				if (ss_date.peek() == ',' || ss_date.peek() == ' ' || ss_date.peek() == '-' || ss_date.peek() == ':')
-					ss_date.ignore();
-			}
-
-			if (date_vect.size() == 6)
-			{
-				int sec = date_vect[5] - date_vect[5] % 20;
-				element.time_stamp_in_second = date_vect[3] * 3600 + date_vect[4] * 60 + sec;  // hour, min, second
-			
-				element.day_no = date_vect[2];
-				if (element.time_stamp_in_second == 30780 && element.agent_no == 3)
-				{ 
-					TRACE("line no. %d", i);
-				}
-			}
-
-
-
-			AddLocationRecord(element);
-
-			if (!bRectInitialized)
-			{
-				m_NetworkRect.left = element.x;
-				m_NetworkRect.right = element.x;
-				m_NetworkRect.top = element.y;
-				m_NetworkRect.bottom = element.y;
-				bRectInitialized = true;
-			}
-
-			GDPoint point;
-			point.x = element.x;
-			point.y = element.y;
-
-			m_NetworkRect.Expand(point);
-
-
-			i++;
-
-		}
-
-
-		///
-
-		m_ZoneMap[0].m_ZoneID = 0;
-
-		std::map<string, AgentLocationTimeIndexedMap>::iterator itr2;
-
-		for (itr2 = m_AgentWithLocationVectorMap.begin();
-			itr2 != m_AgentWithLocationVectorMap.end(); itr2++)
-		{		//scan all Agent records at this timestamp
-
-
-			DTAAgent* pAgent = 0;
-			pAgent = new DTAAgent;
-
-			pAgent->m_AgentID = m_AgentSet.size();
-
-			pAgent->m_o_ZoneID = 0;
-			pAgent->m_d_ZoneID = 0;
-
-			pAgent->m_Distance = 10; // km to miles
-			pAgent->m_DepartureTime = itr2->second.AgentLocationRecordVector[0].time_stamp_in_second / 10;
-			pAgent->m_ArrivalTime = itr2->second.AgentLocationRecordVector[itr2->second.AgentLocationRecordVector.size() - 1].time_stamp_in_second;
-
-
-			pAgent->m_TripTime = pAgent->m_ArrivalTime - pAgent->m_DepartureTime;
-
-			if (g_Simulation_Time_Horizon < pAgent->m_ArrivalTime)
-				g_Simulation_Time_Horizon = pAgent->m_ArrivalTime;
-
-			pAgent->m_bComplete = true;
-			pAgent->m_AgentType = 1;
-
-
-			//pAgent->m_AgentType = (unsigned char)g_read_integer(pFile);
-
-			m_AgentSet.push_back(pAgent);
-			m_AgentIDMap[pAgent->m_AgentID] = pAgent;
-
-
-		}
-
-	///	m_AgentLocationLoadingStatus.Format("%d agent location records for %d agents are loaded from file %s.", i, m_AgentWithLocationVectorMap.size(), lpszFileName);
-	}
-	return true;
-}
-
-
 
 
 
