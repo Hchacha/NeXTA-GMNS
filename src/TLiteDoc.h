@@ -2160,7 +2160,6 @@ public:
 	afx_msg void OnMoeNone();
 	afx_msg void OnUpdateMoeNone(CCmdUI *pCmdUI);
 	afx_msg void OnToolsCarfollowingsimulation();
-	afx_msg void OnToolsPerformtrafficassignment();
 	afx_msg void OnMoeVcRatio();
 	afx_msg void OnUpdateMoeVcRatio(CCmdUI *pCmdUI);
 	afx_msg void OnMoeTraveltime();
@@ -2325,6 +2324,8 @@ public:
 	afx_msg void OnOdmatrixRapidDecrease();
 	afx_msg void OnButtonAbm();
 	afx_msg void OnHelpVisitdevelopmentwebsiteDtalite();
+	afx_msg void OnToolsRunSimulation();
+	afx_msg void OnToolsSimulationsettings();
 };
 extern std::list<CTLiteDoc*>	g_DocumentList;
 extern bool g_TestValidDocument(CTLiteDoc* pDoc);

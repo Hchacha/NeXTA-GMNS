@@ -409,6 +409,8 @@ BEGIN_MESSAGE_MAP(CTLiteDoc, CDocument)
 		ON_COMMAND(ID_ODMATRIX_RAPID_Decrease, &CTLiteDoc::OnOdmatrixRapidDecrease)
 		ON_COMMAND(ID_BUTTON_ABM, &CTLiteDoc::OnButtonAbm)
 		ON_COMMAND(ID_HELP_VISITDEVELOPMENTWEBSITE_DTALite, &CTLiteDoc::OnHelpVisitdevelopmentwebsiteDtalite)
+		ON_COMMAND(ID_TOOLS_RUNTRAFFICASSIGNMENT33023, &CTLiteDoc::OnToolsRunSimulation)
+		ON_COMMAND(ID_TOOLS_SIMULATIONSETTINGS, &CTLiteDoc::OnToolsSimulationsettings)
 		END_MESSAGE_MAP()
 
 
@@ -4393,7 +4395,7 @@ DWORD CTLiteDoc::ProcessExecute(CString & strCmd, CString & strArgs,  CString & 
 }
 
 
-void CTLiteDoc::OnToolsPerformtrafficassignment()
+void CTLiteDoc::OnToolsRunSimulation()
 {
 	STARTUPINFO si = { 0 };  
 	PROCESS_INFORMATION pi = { 0 };  
@@ -4433,7 +4435,7 @@ void CTLiteDoc::OnToolsPerformtrafficassignment()
 	FILE* pFile;
 
 	int OutputAgentFileSize = 0;
-	fopen_s(&pFile,m_ProjectDirectory + "\\output_LinkMOE.csv","rb");
+	fopen_s(&pFile,m_ProjectDirectory + "\\link_performance.csv","rb");
 	if(pFile!=NULL)
 	{
 		fseek(pFile, 0, SEEK_END );
@@ -4453,18 +4455,8 @@ void CTLiteDoc::OnToolsPerformtrafficassignment()
 	if (OutputAgentFileSize >= 1 && ts.GetTotalSeconds() >= 1)
 	{
 
-
-		str_running_time.Format("Simulation program execution has completed.\nProgram execution time: %d hour(s) %d min(s) %d sec(s).\nPlease check time-dependent link MOEs during period %s->%s.\nDo you want to load the simulation results now?",
-
-			ts.GetHours(), ts.GetMinutes(), ts.GetSeconds(),
-			GetTimeStampString24HourFormat(m_DemandLoadingStartTimeInMin) );
-
-			
-				str_running_time.Format("Simulation program execution has completed.\nProgram execution time: %d hour(s) %d min(s) %d sec(s).\nPlease check time-dependent link MOEs during period %s->%s.\nDo you want to view the output summary file now?",
-
-					ts.GetHours(), ts.GetMinutes(), ts.GetSeconds(),
-					GetTimeStampString24HourFormat(m_DemandLoadingStartTimeInMin),
-					GetTimeStampString24HourFormat(m_DemandLoadingEndTimeInMin));
+		str_running_time.Format("Simulation program execution has completed.\nProgram execution time: %d hour(s) %d min(s) %d sec(s).\nDo you want to load the simulation results now?",
+		ts.GetHours(), ts.GetMinutes(), ts.GetSeconds() );
 
 				if (AfxMessageBox(str_running_time, MB_YESNO | MB_ICONINFORMATION) == IDYES)
 				{
@@ -4495,8 +4487,6 @@ void CTLiteDoc::LoadSimulationOutput()
 
 	ReadAgentCSVFile_Parser(m_ProjectDirectory+ "agent.csv");
 	//RecalculateLinkMOEFromAgentTrajectoryFile();
-
-//	ReadTrajectoryCSVFile(m_ProjectDirectory + "trajectory.csv");
 
 	ReadAgentTrajectory(m_ProjectDirectory + "trajectory.csv");
 
@@ -4868,7 +4858,7 @@ void CTLiteDoc::OnToolsViewsimulationsummary()
 
 void CTLiteDoc::OnToolsViewassignmentsummarylog()
 {
-	OpenCSVFileInExcel(m_ProjectDirectory+"output_summary.csv");
+	OpenCSVFileInExcel(m_ProjectDirectory+"log.csv");
 }
 
 void CTLiteDoc::OnHelpVisitdevelopmentwebsite()
@@ -8860,4 +8850,13 @@ void CTLiteDoc::OnButtonAbm()
 void CTLiteDoc::OnHelpVisitdevelopmentwebsiteDtalite()
 {
 	g_OpenDocument("https://github.com/xzhou99/dtalite_software_release", SW_SHOW);
+}
+
+
+
+
+
+void CTLiteDoc::OnToolsSimulationsettings()
+{
+	OpenCSVFileInExcel(m_ProjectDirectory + "settings.csv");
 }

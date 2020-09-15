@@ -74,8 +74,6 @@ CTLiteApp theApp;
 // CTLiteApp initialization
 CTLiteApp::CTLiteApp()
 {
-	m_SimulatorString_32 = "DTALite_32.exe";
-	m_SimulatorString_64 = "DTALite.exe";
 
 	m_FreewayColor = RGB(030,144,255);
 	m_RampColor = RGB(160,032,240); 
@@ -109,15 +107,22 @@ BOOL CTLiteApp::InitInstance()
 	  CWinApp::InitInstance();
 
         // Standard initialization
-        SetRegistryKey(_T("NeXTA Version 3"));
+        SetRegistryKey(_T("NeXTA GMNS"));
         LoadStdProfileSettings(4);  // Load standard INI file options (including MRU)
 
 		char CurrentDirectory[MAX_PATH+1];
         GetCurrentDirectory(MAX_PATH,CurrentDirectory);
 
+		char simulation_engine[MAX_PATH + 1];
+
 		CString NEXTASettingsPath;
 		NEXTASettingsPath.Format ("%s\\NEXTA_Settings.ini", CurrentDirectory);
-	
+
+		g_GetProfileString("initialization", "simulation_engine", "DTALite.exe", simulation_engine, 80, NEXTASettingsPath);
+
+		m_SimulatorString_64.Format("%s",simulation_engine);
+
+
 		m_NEXTA_use_flag = (int)g_GetPrivateProfileDouble("initialization", "nexta", 0, NEXTASettingsPath);
 		WritePrivateProfileString("initialization", "nexta","1",NEXTASettingsPath);
 
@@ -232,7 +237,7 @@ BOOL CTLiteApp::InitInstance()
 
         GetCurrentDirectory(MAX_PATH,pMainFrame->m_CurrentDirectory);
 
-		pMainFrame->SetTitle ("NeXTA-GMNS v0.81");
+		pMainFrame->SetTitle ("NeXTA-GMNS v0.901");
 
         // The main window has been initialized, so show and update it
         pMainFrame->ShowWindow(SW_SHOWMAXIMIZED);

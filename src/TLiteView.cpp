@@ -294,8 +294,8 @@ CPen g_PenDisplayColor(PS_SOLID,2,RGB(255,255,0));
 CPen g_PenStopSignNodeColor(PS_SOLID,1,RGB(205,200,177));
 CPen g_PenSignalNodeColor(PS_SOLID,1,RGB(255,0,0));
 
-CPen g_GPSTrajectoryColor(PS_SOLID, 1, RGB(255,105,180));
-CPen g_GPSTrajectoryColor0(PS_SOLID, 0, RGB(0, 0, 0));
+CPen g_GPSTrajectoryColor(PS_SOLID, 2, RGB(255,0,0));
+CPen g_GPSTrajectoryColor0(PS_SOLID, 2, RGB(255, 0, 0));
 
 CPen g_PenNodeColor(PS_SOLID,1,RGB(0,0,0));
 
@@ -528,7 +528,7 @@ CTLiteView::CTLiteView()
 
 	m_bShowWalkLinksOnly = false;
 	m_MoveLayerNo = 0;
-	m_bShowCompleteTrajectory = false;
+	m_bShowCompleteTrajectory = true;
 	m_bShowAllCompleteTrajectory = false;
 	m_bShowTransitLinksOnly = false;
 	m_bShowWalkLinksOnly = false;
@@ -590,7 +590,7 @@ CTLiteView::CTLiteView()
 	m_ShowMovementTextMode  = movement_display_none;
 
 	m_bShowAgentNumber = false;
-	m_bShowSelectedAgentOnly = false;
+	m_bShowSelectedAgentOnly = true;
 	m_bShowLinkType  = true;
 
 	m_Origin.x = 0;
@@ -2002,7 +2002,7 @@ void CTLiteView::DrawObjects(CDC* pDC)
 		long timestamp_in_second = (long)(g_Simulation_Time_Stamp*60 + 0.5); // *60 convert min to second, +0.5, round to nearest integer
 
 
-		if (m_bShowAllCompleteTrajectory || m_bShowCompleteTrajectory)
+		if (m_bShowAllCompleteTrajectory || m_bShowSelectedAgentOnly)
 		{
 
 			pDC->SelectObject(&g_WhiteBrush);
@@ -2016,31 +2016,16 @@ void CTLiteView::DrawObjects(CDC* pDC)
 					itr2 != pDoc->m_AgentWithLocationVectorMap .end(); itr2++)
 				{		//scan all Agent records at this timestamp
 
-					int agent_no = (*itr2).first;
+					int agent_id = (*itr2).first;
 
+					if (m_bShowSelectedAgentOnly == true && agent_id != pDoc->m_SelectedAgentID)
+						continue;
+
+						
 				for (int i = 0; i<(*itr2).second.AgentLocationRecordVector.size()-1; i++)
 				{
 					std::string agent_type = (*itr2).second.AgentLocationRecordVector[i].agent_type;
 
-					//if (agent_type == "p")  // pax
-					//{
-					//	if (g_SelectedPassengerID != "All" &&  g_SelectedPassengerID != (*itr2).second.AgentLocationRecordVector[i].agent_id)
-					//		continue;
-					//}
-
-					//
-					//if (agent_type == "v")  // Agent
-					//{
-					//	if (g_SelectedAgentID != "All" &&  g_SelectedAgentID != (*itr2).second.AgentLocationRecordVector[i].agent_id)
-					//		continue;
-					//}
-
-
-					//// if day_no is 0 always display 
-					//if (agent_type == "p")  // pax
-					//	pDC->SelectObject(&g_PenPaxSelectColor0);
-					//else
-					//	g_SelectColorCode(pDC, (*itr2).second.AgentLocationRecordVector[i].agent_no % 5);
 
 					CPoint from_point, to_point;
 
@@ -2131,7 +2116,7 @@ void CTLiteView::DrawObjects(CDC* pDC)
 
 					pDC->SelectObject(&g_GPSTrajectoryColor0);
 
-					g_SelectBrushColor(pDC, (*itr).agent_no % 5);
+//					g_SelectBrushColor(pDC, (*itr).agent_no % 5);
 					CPoint point = NPtoSP(pt);
 
 					node_size = 5;

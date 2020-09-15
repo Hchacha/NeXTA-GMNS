@@ -785,11 +785,9 @@ void CDlg_VehPathAnalysis::ShowAgents()
 
 			m_pDoc->m_SelectedAgentID = pAgent->m_AgentID ;
 
-
-
 			}
 
-			AgentInfoString.Format ("No. %d, %s, @%3.1f min, %3.1f min",pAgent->m_AgentID , pAgent->m_AgentType.c_str(), pAgent->m_DepartureTime, pAgent->m_ArrivalTime-pAgent->m_DepartureTime);
+			AgentInfoString.Format ("No. %d, @%3.1f min, %3.1f min",pAgent->m_AgentID , pAgent->m_DepartureTime, pAgent->m_ArrivalTime-pAgent->m_DepartureTime);
 	
 			if(m_AgentList.GetCount () <= 20000)
 			{
@@ -810,6 +808,20 @@ void CDlg_VehPathAnalysis::OnLbnSelchangeListLink()
 
 void CDlg_VehPathAnalysis::OnLbnSelchangeListAgent()
 {
+	char m_Text[MAX_STRING_LENGTH];
+	int agent_id = -1;
+	m_AgentList.GetText(m_AgentList.GetCurSel(), m_Text);
+	sscanf(m_Text, "No. %d,", &agent_id);
+
+	if(agent_id>=0)
+	{
+		m_pDoc->m_SelectedAgentID = agent_id;
+		m_pDoc->UpdateAllViews(0);
+
+	}
+
+
+
 }
 
 void CDlg_VehPathAnalysis::OnLbnSelchangeListLink2()
