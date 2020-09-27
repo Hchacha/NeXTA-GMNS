@@ -3698,3 +3698,5 @@ extern void g_AddLinkIntoSelectionList(DTALink* pLink, int link_no, int document
 
 extern std::list<s_link_selection>	g_LinkDisplayList;
 extern int  g_SimulationStartTime_in_min;
+
+#include "Transit.h"

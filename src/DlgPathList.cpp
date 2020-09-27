@@ -80,10 +80,11 @@ BEGIN_MESSAGE_MAP(CDlgPathList, CDialog)
 	ON_COMMAND(ID_CHANGEATTRIBUTESFORLINKSALONGPATH_CHANGELINKTYPE, &CDlgPathList::OnChangeattributesforlinksalongpathChangelinktype)
 	ON_BN_CLICKED(IDDATA_DYNAMIC_Density_Contour, &CDlgPathList::OnBnClickedDynamicDensityContour)
 	ON_BN_CLICKED(IDDATA_DYNAMIC_Speed_Contour, &CDlgPathList::OnBnClickedDynamicSpeedContour)
-	ON_BN_CLICKED(IDDATA_DYNAMIC_Flow_Contour, &CDlgPathList::OnBnClickedDynamicFlowContour)
+//	ON_BN_CLICKED(IDDATA_DYNAMIC_Flow_Contour, &CDlgPathList::OnBnClickedDynamicFlowContour)
 	ON_COMMAND(ID_DATA_DELETESELECTEDPATH, &CDlgPathList::OnDataDeleteselectedpath)
 	ON_COMMAND(ID_DATA_COCONTOURPLOT, &CDlgPathList::OnDataCocontourplot)
 	ON_COMMAND(ID_CHANGEATTRIBUTESFORLINKSALONGPATH_FREESPEED, &CDlgPathList::OnChangeattributesforlinksalongpathFreespeed)
+	ON_BN_CLICKED(IDDATA_DYNAMIC_diagram, &CDlgPathList::OnBnClickedDynamicSpacetimediagram)
 END_MESSAGE_MAP()
 
 
@@ -749,8 +750,7 @@ void CDlgPathList::DrawPlot(CPaintDC* pDC,CRect PlotRect)
 				TimeXPosition-=3;
 
 			if(TimeInterval < 60)
-			{
-				int hour, min;
+			{int hour, min;
 				hour = i/60;
 				min =  i- hour*60;
 				wsprintf(buff,"%2d:%02d",hour, min);
@@ -1273,6 +1273,7 @@ void CDlgPathList::ChangeLinkAttributeAlongPath(float value, CString value_strin
 void CDlgPathList::OnBnClickedDynamicDensityContour()
 {
 	CString PathTitle;
+	SetCurrentDirectory(m_pDoc->m_ProjectDirectory);
 
 	int ytics_stepsize  = 1;
 
@@ -1486,6 +1487,7 @@ void CDlgPathList::OnBnClickedDynamicSpeedContour()
 
 	export_file_name = m_pDoc->m_ProjectDirectory +"export_path_speed.txt";
 	// 
+	SetCurrentDirectory(m_pDoc->m_ProjectDirectory);
 
 	export_plt_file_name = m_pDoc->m_ProjectDirectory +"export_path_speed.plt";
 
@@ -1701,9 +1703,10 @@ void CDlgPathList::OnBnClickedDynamicFlowContour()
 {
 	int ytics_stepsize = 1;
 	CString export_file_name, export_plt_file_name;
+	SetCurrentDirectory(m_pDoc->m_ProjectDirectory);
 
 	export_file_name = m_pDoc->m_ProjectDirectory +"export_path_v_over_c.txt";
-	// 
+
 
 	export_plt_file_name = m_pDoc->m_ProjectDirectory +"export_path_v_over_c.plt";
 
@@ -1963,4 +1966,191 @@ void CDlgPathList::OnChangeattributesforlinksalongpathFreespeed()
 {
 	m_ChangeLinkAttributeMode = eChangeLinkAttribute_free_speed;
 	ChangeLinkAttributeDialog();
+}
+
+
+void CDlgPathList::OnBnClickedDynamicSpacetimediagram()
+{
+	CString PathTitle;
+
+	int ytics_stepsize = 1;
+
+	CString export_file_name, export_plt_file_name;
+
+
+
+
+	int yrange = 0;
+	int xrange = m_TimeRight - m_TimeLeft + 1;
+
+	SetCurrentDirectory(m_pDoc->m_ProjectDirectory);
+
+	export_plt_file_name = m_pDoc->m_ProjectDirectory + "space_time_diagram.plt";
+	FILE* st_plt;
+	fopen_s(&st_plt, export_plt_file_name, "w");
+	if (st_plt != NULL)
+	{
+
+		CString xtics_str;
+		
+
+		fprintf(st_plt, "set title \"Space time trajectory diagram\"\n");
+
+		fprintf(st_plt, "set xlabel \"Time Horizon\"\n");
+		fprintf(st_plt, "set ylabel \"Space (distance)\"  offset -1\n");
+
+		int xtics_stepsize = 30;
+
+		if (xrange / xtics_stepsize > 20)
+			xtics_stepsize = 120;  // 2 hour interval
+		else if (xrange / xtics_stepsize > 10)
+			xtics_stepsize = 60;   // 1 hour interval
+		else if (xrange / xtics_stepsize < 5)
+			xtics_stepsize = 10;   // 1 hour interval
+
+
+		for (int t = m_TimeLeft; t <= m_TimeRight; t += xtics_stepsize)
+		{
+			CString str;
+			str.Format("\"%s\" %d ", m_pDoc->GetTimeStampString24HourFormat(t), t - m_TimeLeft);
+
+			if (t + xtics_stepsize > m_TimeRight)
+				xtics_str += str;
+			else
+			{
+				xtics_str += str;
+				xtics_str += ",";
+			}
+		}
+
+		fprintf(st_plt, "set xtics (%s) \n", xtics_str);
+
+		CString ytics_str;
+
+		float y_distance = 0;
+
+		CString last_node_number = " ";
+
+		std::map<long, float> PathLinkNoStartMap;
+		std::map<long, float> PathLinkNoEndMap;
+		for (unsigned int p = 0; p < m_pDoc->m_PathDisplayList.size(); p++) // for each path
+		{
+
+			if (p != m_PathList.GetCurSel())
+				continue;
+
+			DTAPath path_element = m_pDoc->m_PathDisplayList[p];
+
+			for (int i = 0; i < path_element.m_LinkVector.size(); i++)  // for each pass link
+			{
+				DTALink* pLink = m_pDoc->m_LinkNoMap[m_pDoc->m_PathDisplayList[p].m_LinkVector[i]];
+
+				if (pLink != NULL)
+				{
+					PathLinkNoStartMap[pLink->m_LinkNo] = y_distance;
+
+					y_distance += pLink->m_Length;
+
+					PathLinkNoEndMap[pLink->m_LinkNo] = y_distance;
+
+
+					CString label = pLink->m_Name.c_str();
+
+					CString str;
+					str.Format("\"%s\" %.3f, ", label, y_distance);
+			
+
+				}
+
+
+			}
+
+
+		} //for each path
+
+
+		CString str;
+		str.Format("\"%s\" %d", last_node_number, y_distance);
+		ytics_str += str;
+		fprintf(st_plt, "set ytics (%s)\n", ytics_str);
+
+		fprintf(st_plt, "set xrange [0:%d] \n", xrange);
+		fprintf(st_plt, "set yrange [0:%.2f] \n", y_distance);
+
+
+		std::list<DTAAgent*>::iterator iAgent;
+
+		int agent_count = 0;
+
+		for (iAgent = m_pDoc->m_AgentSet.begin(); iAgent != m_pDoc->m_AgentSet.end(); iAgent++)
+		{
+			DTAAgent* pAgent = (*iAgent);
+
+			bool bPassingPathFlag = false;
+			for (int i = 0; i < pAgent->m_NodeSize-1; i++)
+			{
+
+				if (PathLinkNoStartMap.find(pAgent->m_NodeAry[i].LinkNo) != PathLinkNoStartMap.end())
+				{
+					bPassingPathFlag = true;
+					break;
+				}
+			}
+
+
+			//testing
+			if (agent_count >= 4)
+				break;
+
+			if(bPassingPathFlag)
+			{
+
+
+				agent_count++;
+				CString agent_str;
+				agent_str.Format("agent%d.txt", agent_count);
+				export_file_name = m_pDoc->m_ProjectDirectory + agent_str;
+
+				FILE* st_agent;
+				fopen_s(&st_agent, export_file_name, "w");
+				if (st_agent != NULL)
+				{
+					fprintf(st_agent, "# agent_id = %d\n", pAgent->m_AgentID);
+					for (int i = 0; i < pAgent->m_NodeSize - 1; i++)
+					{
+
+						if (PathLinkNoStartMap.find(pAgent->m_NodeAry[i].LinkNo) != PathLinkNoStartMap.end())
+						{
+							fprintf(st_agent, "%.2f     %f\n", pAgent->m_NodeAry[i].ArrivalTimeOnDSN, PathLinkNoStartMap[pAgent->m_NodeAry[i].LinkNo]);
+							fprintf(st_agent, "%.2f     %f\n", pAgent->m_NodeAry[i+1].ArrivalTimeOnDSN, PathLinkNoEndMap[pAgent->m_NodeAry[i].LinkNo]);
+						}
+					}
+
+					fclose(st_agent);
+				}
+
+			}
+
+
+
+		}
+
+		fprintf(st_plt, "plot ");
+
+		for (int a = 1; a < agent_count; a++)
+		{
+			fprintf(st_plt, "\"agent%d.txt\" using 1:2 title 'agent %d'  with lines,\\\n", a, a);
+		}
+		fprintf(st_plt, "\"agent%d.txt\" using 1:2 title 'agent %d'  with lines\n", agent_count, agent_count);
+
+		fclose(st_plt);
+	}
+	else
+	{
+		AfxMessageBox("File export_path_density.plt cannot be opened. Please check");
+	}
+
+
+	HINSTANCE result = ShellExecute(NULL, _T("open"), export_plt_file_name, NULL, NULL, SW_SHOW);
+
 }

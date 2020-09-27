@@ -590,7 +590,7 @@ CTLiteView::CTLiteView()
 	m_ShowMovementTextMode  = movement_display_none;
 
 	m_bShowAgentNumber = false;
-	m_bShowSelectedAgentOnly = true;
+	m_bShowSelectedAgentOnly = false;
 	m_bShowLinkType  = true;
 
 	m_Origin.x = 0;
@@ -2348,12 +2348,6 @@ void CTLiteView::DrawObjects(CDC* pDC)
 		std::list<DTAAgent*>::iterator iAgent;
 		for (iAgent = pDoc->m_AgentSet.begin(); iAgent != pDoc->m_AgentSet.end(); iAgent++)
 		{
-			if(bSamplingDisplay)
-			{
-				if((*iAgent)->m_AgentID %sample_size !=0)
-					continue;
-			}
-
 
 			if((*iAgent)->m_DepartureTime <=g_Simulation_Time_Stamp &&
 				g_Simulation_Time_Stamp <=(*iAgent)->m_ArrivalTime && (*iAgent)->m_NodeSize>=2)
@@ -2386,12 +2380,12 @@ void CTLiteView::DrawObjects(CDC* pDC)
 						}else
 						{ 
 
-							//if (!m_bShowLinkArrow)
-							//{
-							//	pDC->Ellipse(VehPoint.x - Agent_size, VehPoint.y - Agent_size,
-							//		VehPoint.x + Agent_size, VehPoint.y + Agent_size);
-							//}
-							//else
+							if (!m_bShowLinkArrow)
+							{
+								pDC->Ellipse(VehPoint.x - Agent_size, VehPoint.y - Agent_size,
+									VehPoint.x + Agent_size, VehPoint.y + Agent_size);
+							}
+							else
 							{
 
 								FromPoint = NPtoSP(pLink->m_FromPoint);
@@ -2422,15 +2416,6 @@ void CTLiteView::DrawObjects(CDC* pDC)
 
 							CString str_number;
 							str_number.Format ("%d",(*iAgent)->m_AgentID  );
-
-							if (link_sequence_no >= 0 && link_sequence_no < (*iAgent)->m_NodeSize)
-							{
-								if ((*iAgent)->m_NodeAry[i].State.size() > 0)  // with content of states
-								{
-									str_number.Format("%d[%s]", (*iAgent)->m_AgentID, (*iAgent)->m_NodeAry[i].State.c_str());
-
-								}
-							}
 
 							VehPoint.y -= tm_Agent.tmHeight / 2;
 
@@ -3469,13 +3454,13 @@ void CTLiteView::OnLButtonUp(UINT nFlags, CPoint point)
 
 		if(m_ToolMode == create_1waylink_tool)
 		{
-			pDoc->AddNewLink(pFromNode->m_NodeID, pToNode->m_NodeID, flag_split_link);
+			pDoc->AddNewLink(pFromNode->m_NodeID, pToNode->m_NodeID, true);
 		}
 
 		// create 2 way links with opposite direction
 		if(m_ToolMode == create_2waylinks_tool)
 		{
-			pDoc->AddNewLink(pFromNode->m_NodeID, pToNode->m_NodeID, flag_split_link);
+			pDoc->AddNewLink(pFromNode->m_NodeID, pToNode->m_NodeID, true);
 			pDoc->AddNewLink(pToNode->m_NodeID,pFromNode->m_NodeID,true);
 
 		}

@@ -28,6 +28,8 @@
 #define IDDATA_FREEVAL_Analysis_Generate_File 7
 #define IDDATA_DYNAMIC_Speed_Contour    8
 #define IDDATA_DYNAMIC_Flow_Contour     9
+#define IDDATA_DYNAMIC_Space_time_diagram 9
+#define IDDATA_DYNAMIC_diagram          9
 #define IDD_ABOUTBOX                    100
 #define IDR_HTML_DLG_DEMANDTYPE         103
 #define IDR_HTML_DLG_DISPLAY_CONFIGURATION_NODE 104
@@ -421,7 +423,9 @@
 #define IDC_BUTTON_DECREASE_LINK_TEXT_SIZE2 1226
 #define IDC_CHECK_OPTIMIZATION_OBS      1227
 #define IDC_BUTTON_INCREASE_LINK_TEXT_SIZE3 1227
+#define IDC_BUTTON_INCREASE_AGENT_SIZE  1227
 #define IDC_HIDE_RIGHT_TURN             1228
+#define IDC_BUTTON_DECREASE_AGENT_SIZE  1228
 #define IDC_COMBOTIMINGPLAN             1229
 #define IDC_COMBO_Timing_Plan_2         1230
 #define IDC_STATIC_QUEUE_CUT_OFF        1231
@@ -1183,13 +1187,15 @@
 #define ID_CHANGEATTRIBUTESFORLINKSALONGPATH_FREESPEED 33835
 #define ID_TOOLS_RUNSIMULATION          33836
 #define ID_TOOLS_SIMULATIONSETTINGS     33837
+#define ID_TOOLS_IMPORTGTFSDATA         33838
+#define ID_TOOLS_SPACE                  33839
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        270
-#define _APS_NEXT_COMMAND_VALUE         33838
+#define _APS_NEXT_COMMAND_VALUE         33840
 #define _APS_NEXT_CONTROL_VALUE         1332
 #define _APS_NEXT_SYMED_VALUE           109
 #endif

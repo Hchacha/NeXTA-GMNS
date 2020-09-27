@@ -1030,6 +1030,8 @@ public:
 	bool WriteSelectAgentDataToCSVFile(LPCTSTR lpszFileName, std::vector<DTAAgent*> AgentVector);
 	void ReadAgentCSVFile_Parser(LPCTSTR lpszFileName);
 	void ReadTrajectoryCSVFile(LPCTSTR lpszFileName);
+	void ReadTransitFiles(CString TransitDataProjectFolder);
+	PT_Network m_PT_network;  // public transit network class by Shuguang Li
 
 	int ReadAMSMovementCSVFile(LPCTSTR lpszFileName, int NodeNo);
 	int ReadAMSSignalControlCSVFile(LPCTSTR lpszFileName);
@@ -1177,7 +1179,7 @@ public:
 	float m_LaneWidthInKM;
 
 	void ShowLegend(bool ShowLegendStatus);
-	DTALink* AddNewLinkWithNodeIDs(int FromNodeID, int ToNodeID, bool bOffset = false, bool bLongLatFlag = false)	
+	DTALink* AddNewLinkWithNodeIDs(int FromNodeID, int ToNodeID, bool bOffset = true, bool bLongLatFlag = false)	
 	{
 		int FromNodeNo =  -1;
 			if (m_NodeIDMap.find(FromNodeID)!= m_NodeIDMap.end())
@@ -2326,6 +2328,7 @@ public:
 	afx_msg void OnHelpVisitdevelopmentwebsiteDtalite();
 	afx_msg void OnToolsRunSimulation();
 	afx_msg void OnToolsSimulationsettings();
+	afx_msg void OnToolsImportgtfsdata();
 };
 extern std::list<CTLiteDoc*>	g_DocumentList;
 extern bool g_TestValidDocument(CTLiteDoc* pDoc);

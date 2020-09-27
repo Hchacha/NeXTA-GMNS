@@ -146,6 +146,7 @@ public:
 	afx_msg void OnNgsimmenuActivatespace();
 	afx_msg void OnViewSimulationtoolbar();
 	afx_msg void OnUpdateViewSimulationtoolbar(CCmdUI *pCmdUI);
+	afx_msg void OnToolsSpaceTimeView();
 };
 
 

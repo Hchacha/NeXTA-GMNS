@@ -609,8 +609,8 @@ CAPTION "About NeXTA V3 for GMNS"
 FONT 8, "MS Shell Dlg", 0, 0, 0x1
 BEGIN
     ICON            IDR_MAINFRAME,IDC_STATIC,14,14,20,20
-    LTEXT           "NEXTA, Version 3.0",IDC_STATIC,42,14,114,8,SS_NOPREFIX
-    LTEXT           "Open-Source Software under GNU Lisence\nRelease Date: 04/20/2020",IDC_STATIC,42,26,171,20,0,WS_EX_STATICEDGE
+    LTEXT           "NEXTA, Version 0.9",IDC_STATIC,42,14,114,8,SS_NOPREFIX
+    LTEXT           "Open-Source Software under GNU Lisence\nRelease Date: 09/18/2020",IDC_STATIC,42,26,171,20,0,WS_EX_STATICEDGE
     DEFPUSHBUTTON   "OK",IDOK,89,189,50,14,WS_GROUP
     LTEXT           "Contact:\nDr. Xuesong Zhou: xzhou74@asu.edu",IDC_STATIC,19,54,193,43,0,WS_EX_STATICEDGE
 END
@@ -930,7 +930,7 @@ BEGIN
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,199,87,10
     LISTBOX         IDC_LIST1,7,22,208,76,LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
     LTEXT           "Path List:",IDC_STATIC,7,7,31,8
-    PUSHBUTTON      "Trip Data Analysis",IDDATA_Analysis,350,174,66,14
+    PUSHBUTTON      "Trip Data Analysis",IDDATA_Analysis,445,173,66,14
     PUSHBUTTON      "Density Contour",IDDATA_DYNAMIC_Density_Contour,281,173,59,15
     PUSHBUTTON      "Speed Contour",IDDATA_DYNAMIC_Speed_Contour,221,173,57,14
     LTEXT           "Agg Interval:",IDC_STATIC,471,7,44,8
@@ -939,6 +939,7 @@ BEGIN
     COMBOBOX        IDC_COMBO_EndHour,437,7,31,153,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
     LTEXT           "End Hour:",IDC_STATIC,398,7,33,8
     LTEXT           "Start Hour:",IDC_STATIC,319,7,37,8
+    PUSHBUTTON      "Space-time diagram",IDDATA_DYNAMIC_diagram,344,173,83,15
 END
 
 IDD_DIALOG_GISLayer DIALOGEX 0, 0, 130, 393
@@ -1172,6 +1173,9 @@ BEGIN
     PUSHBUTTON      "-",IDC_BUTTON_DECREASE_NODE_TEXT_SIZE,89,169,14,12
     PUSHBUTTON      "+",IDC_BUTTON_INCREASE_LINK_TEXT_SIZE2,199,168,14,12
     PUSHBUTTON      "-",IDC_BUTTON_DECREASE_LINK_TEXT_SIZE2,217,168,14,12
+    LTEXT           "Size of Agents:",IDC_STATIC,7,193,61,9
+    PUSHBUTTON      "+",IDC_BUTTON_INCREASE_AGENT_SIZE,71,193,14,12
+    PUSHBUTTON      "-",IDC_BUTTON_DECREASE_AGENT_SIZE,89,193,14,12
 END
 
 
@@ -1869,6 +1873,7 @@ BEGIN
     END
     POPUP "Tools"
     BEGIN
+        MENUITEM "Import GTFS data",            ID_TOOLS_IMPORTGTFSDATA
         POPUP "Subarea Cut"
         BEGIN
             MENUITEM "Create Subarea",              ID_EDIT_CREATESUBAREA
@@ -1883,6 +1888,7 @@ BEGIN
         END
         MENUITEM "Run Simulation",              ID_TOOLS_RUNTRAFFICASSIGNMENT33023
         MENUITEM "Simulation Settings",         ID_TOOLS_SIMULATIONSETTINGS
+        MENUITEM "Space-time Network",          ID_TOOLS_SPACE
     END
     POPUP "&Window"
     BEGIN

@@ -26,10 +26,15 @@
 
 #include "stdafx.h"
 #include "Geometry.h"
+#include <string>
+#include <sstream>
+#include <iostream>
+#include <iomanip>
 #include "CSVParser.h"
 
 #include "TLite.h"
 #include "Network.h"
+#include "TLite.h"
 #include "TLiteDoc.h"
 #include "TLiteView.h"
 #include "DlgMOE.h"
@@ -164,14 +169,25 @@ void g_AddLinkIntoSelectionList(DTALink* pLink, int link_no, int document_no, bo
 
 }
 // CTLiteDoc
+string g_time_coding(float time_stamp)
+{
+	int hour = time_stamp / 60;
+	int minute = time_stamp - hour * 60;
+
+	int second = (time_stamp - hour * 60 - minute) * 60;
+
+	ostringstream strm;
+	strm.fill('0');
+	strm << setw(2) << hour << setw(2) << minute << ":" << setw(2) << second;
+
+	return strm.str();
+} // transform hhmm to minutes 
 
 vector<float> g_time_parser(string str)
 {
 	vector<float> output_global_minute;
 
 	int string_lenghth = str.length();
-
-	ASSERT(string_lenghth < 100);
 
 	const char *string_line = str.data(); //string to char*
 
@@ -205,7 +221,7 @@ vector<float> g_time_parser(string str)
 			buf_sss[buffer_j++] = ch;
 		}
 
-		if (ch == '_' || i == char_length) //start a new time string
+		if (ch == '_' || ch == ';' || i == char_length) //start a new time string
 		{
 			if (buffer_i == 4) //"HHMM"
 			{
@@ -411,6 +427,7 @@ BEGIN_MESSAGE_MAP(CTLiteDoc, CDocument)
 		ON_COMMAND(ID_HELP_VISITDEVELOPMENTWEBSITE_DTALite, &CTLiteDoc::OnHelpVisitdevelopmentwebsiteDtalite)
 		ON_COMMAND(ID_TOOLS_RUNTRAFFICASSIGNMENT33023, &CTLiteDoc::OnToolsRunSimulation)
 		ON_COMMAND(ID_TOOLS_SIMULATIONSETTINGS, &CTLiteDoc::OnToolsSimulationsettings)
+		ON_COMMAND(ID_TOOLS_IMPORTGTFSDATA, &CTLiteDoc::OnToolsImportgtfsdata)
 		END_MESSAGE_MAP()
 
 
@@ -687,7 +704,7 @@ CTLiteDoc::CTLiteDoc()
 	m_UnitDistance = 1;
 
 
-	m_OffsetInDistance = 0.001;
+	m_OffsetInDistance = 0.1;
 	m_LaneWidthInKM = 4/1000.0;
 	m_bFitNetworkInitialized = false; 
 
@@ -1126,8 +1143,7 @@ BOOL CTLiteDoc::OnOpenTrafficNetworkDocument(CString ProjectFileName, bool bNetw
 	m_ProjectTitle = GetWorkspaceTitleName(directory);
 	SetTitle(m_ProjectTitle);
 
-	ReadAgentTrajectory(m_ProjectDirectory + "trajectory.csv");
-
+	//ReadAgentTrajectory(m_ProjectDirectory + "trajectory.csv");
 
 	// read users' prespecified control type
 	ReadLinkTypeCSVFile(directory+"settings.csv");
@@ -1474,7 +1490,7 @@ CCSVParser parser;
 
 		
 
-		m_NodeDataLoadingStatus.Format ("%d nodes and %d zones are loaded from file %s.",m_NodeSet.size(), m_ZoneIDToNodeNoMap, lpszFileName);
+		m_NodeDataLoadingStatus.Format ("%d nodes and %d zones are loaded from file %s.",m_NodeSet.size(), m_ZoneIDToNodeNoMap.size(), lpszFileName);
 		return true;
 	}else
 	{
@@ -2740,7 +2756,7 @@ BOOL CTLiteDoc::SaveLinkData(LPCTSTR lpszPathName,bool bExport_Link_MOE_in_input
 
 		for (iLink = m_LinkSet.begin(); iLink != m_LinkSet.end(); iLink++)
 		{
-			if( (*iLink)->m_FromNodeNo != (*iLink)->m_ToNodeNo && (*iLink)->m_bActive)
+			if( (*iLink)->m_FromNodeNo != (*iLink)->m_ToNodeNo)
 			{
 				int ToNodeNo = (*iLink)->m_ToNodeNo ;
 				DTANode* pNode = m_NodeNoMap[ToNodeNo];
@@ -3286,8 +3302,6 @@ void CTLiteDoc::ReadAgentCSVFile_Parser(LPCTSTR lpszFileName)
 			pAgent->m_AgentID		= m_AgentID;
 			parser.GetValueByFieldName("o_zone_id",pAgent->m_o_ZoneID);
 			parser.GetValueByFieldName("d_zone_id",pAgent->m_d_ZoneID);
-			//parser.GetValueByFieldName("o_node_id", pAgent->m_FromNodeNo);
-			//parser.GetValueByFieldName("d_node_id", pAgent->m_ToNodeNo);
 
 			pAgent->m_bComplete = true;
 			pAgent->m_DepartureTime = 0;
@@ -3309,90 +3323,35 @@ void CTLiteDoc::ReadAgentCSVFile_Parser(LPCTSTR lpszFileName)
 			}
 			else
 			{
-				pAgent->m_AgentTypeNo = 0;
+				int agent_type_size = m_AgentTypeMap.size()+1;
+
+				DTAAgentType element;
+				element.agent_type = pAgent->m_AgentType;
+				element.agent_type_name = pAgent->m_AgentType;
+				element.agent_type_no = agent_type_size;
+
+				m_AgentTypeMap[pAgent->m_AgentType] = element;
+				pAgent->m_AgentTypeNo = agent_type_size;
+
 			}
 
 			std::string activity_node_sequence_str;
 			parser.GetValueByFieldName("activity_node_sequence", activity_node_sequence_str);
-			if (activity_node_sequence_str.size() > 0)
-			{
-				std::string path_time_sequence, path_state_sequence;
-				parser.GetValueByFieldName("time_decimal_sequence", path_time_sequence);
-
-				std::vector<int> activity_node_sequence;
-				std::vector<float> time_sequence;
-				std::vector<string> state_sequence;
-
-				g_ParserIntSequence(activity_node_sequence_str, activity_node_sequence);
-
-				pAgent->m_NodeSize = activity_node_sequence.size();
-				g_ParserFloatSequence(path_time_sequence, time_sequence);
-
-				std::string node_sequence_node_timestamp;
-				std::vector<float> node_time_sequence;
-
-				pAgent->activity_node_flag = 1;  // activity node sequence activated
-
-				if (pAgent->m_NodeSize >= 1)  // in case reading error
-				{
-
-					pAgent->m_NodeAry = new SAgentLink[pAgent->m_NodeSize];
-					pAgent->m_NodeIDSum = 0;
-					pAgent->m_DepartureTime = 0;
-					pAgent->m_ArrivalTime = 0;
-
-					for (int i = 0; i < pAgent->m_NodeSize; i++)
-					{
-						m_PathNodeVectorSP[i] = activity_node_sequence[i];
-						pAgent->m_NodeIDSum += m_PathNodeVectorSP[i];
-						if (i >= 1)
-						{
-								pAgent->m_NodeAry[i].LinkNo = -1;
-
-						}
-
-						// random error beyond 6 seconds for better ainimation
-
-						float random_value = g_RNNOF() * 0.01; // 0.1 min = 6 seconds
-
-
-						if (time_sequence.size() > 0)
-						{
-							pAgent->m_NodeAry[i].ArrivalTimeOnDSN = time_sequence[i] + random_value;
-						}
-					}
-
-
-					if (time_sequence.size() > 0)
-					{
-						pAgent->m_DepartureTime = time_sequence[0];
-						pAgent->m_ArrivalTime = time_sequence[time_sequence.size()-1];
-					}
-
-
-
-
-
-				}
-
-			
-			
-			}else
-			{  //physcial node sequence
+			  //physcial node sequence
 
 			std::string path_node_sequence, path_time_sequence, path_state_sequence;
 			parser.GetValueByFieldName("node_sequence",path_node_sequence );
-			parser.GetValueByFieldName("time_decimal_sequence",path_time_sequence );
+			string time_sequence_str;
+			parser.GetValueByFieldName("time_sequence", time_sequence_str);
 
 			std::vector<int> node_sequence;
 			std::vector<float> time_sequence;
 			std::vector<string> state_sequence;
-
 			g_ParserIntSequence(path_node_sequence, node_sequence);
 
+
 			pAgent->m_NodeSize = node_sequence.size();
-			g_ParserFloatSequence(path_time_sequence, time_sequence);
-			
+			time_sequence = g_time_parser(time_sequence_str);
 
 			std::string node_sequence_node_timestamp;
 			std::vector<float> node_time_sequence;
@@ -3405,6 +3364,7 @@ void CTLiteDoc::ReadAgentCSVFile_Parser(LPCTSTR lpszFileName)
 				pAgent->m_NodeIDSum = 0;
 				for (int i = 0; i < pAgent->m_NodeSize; i++)
 				{
+
 					m_PathNodeVectorSP[i] = node_sequence[i];
 					pAgent->m_NodeIDSum += m_PathNodeVectorSP[i];
 					if (i >= 1)
@@ -3437,9 +3397,9 @@ void CTLiteDoc::ReadAgentCSVFile_Parser(LPCTSTR lpszFileName)
 
 					float random_value = g_RNNOF() * 0.01; // 0.1 min = 6 seconds
 
-					if (time_sequence.size() > 0)
+					if (time_sequence.size() >= pAgent->m_NodeSize)
 					{
-						pAgent->m_NodeAry[i].ArrivalTimeOnDSN = time_sequence[i] + random_value;
+						pAgent->m_NodeAry[i].ArrivalTimeOnDSN = max(0,time_sequence[i] + random_value);
 					}
 				}
 
@@ -3447,20 +3407,42 @@ void CTLiteDoc::ReadAgentCSVFile_Parser(LPCTSTR lpszFileName)
 
 				pAgent->m_ArrivalTime = pAgent->m_NodeAry[pAgent->m_NodeSize - 1].ArrivalTimeOnDSN;
 
+			}else
+			{
+
+				string geo_string;
+				std::vector<CCoordinate> CoordinateVector;
+				if (parser.GetValueByFieldName("geometry", geo_string))
+				{
+					// overwrite when the field "geometry" exists
+					CGeometry geometry(geo_string);
+					CoordinateVector = geometry.GetCoordinateList();
+					if (CoordinateVector.size() >=2 && CoordinateVector.size() == time_sequence.size() )
+					{
+						for(int j = 0 ; j < CoordinateVector.size(); j++)
+						{
+						GDPoint	pt;
+						pt.x = CoordinateVector[j].X;
+						pt.y = CoordinateVector[j].Y;
+
+						AgentLocationRecord element;
+						element.time_stamp_in_second = time_sequence[j] * 60;  // min to second
+
+						element.x = pt.x;
+						element.y = pt.y;
+						AddLocationRecord(element);
+						m_NetworkRect.Expand(pt);
+						}
+					}
+				}
 			}
-
-			}
-				m_AgentSet.push_back (pAgent);
-				m_AgentIDMap[pAgent->m_AgentID]  = pAgent;
-
-
-				count++;
-			 
+		
+			m_AgentSet.push_back(pAgent);
 		}
 
 		UpdateMovementDataFromAgentTrajector();
 
-		m_SimulationAgentDataLoadingStatus.Format ("%d agents are loaded from file %s.",count,lpszFileName);
+		m_SimulationAgentDataLoadingStatus.Format ("%d agents are loaded from file %s.", m_AgentSet.size(),lpszFileName);
 
 	}
 }
@@ -4488,7 +4470,7 @@ void CTLiteDoc::LoadSimulationOutput()
 	ReadAgentCSVFile_Parser(m_ProjectDirectory+ "agent.csv");
 	//RecalculateLinkMOEFromAgentTrajectoryFile();
 
-	ReadAgentTrajectory(m_ProjectDirectory + "trajectory.csv");
+//	ReadAgentTrajectory(m_ProjectDirectory + "trajectory.csv");
 
 	int speed_data_aggregation_interval = 15;
 
@@ -6336,7 +6318,11 @@ void CTLiteDoc::OnLinkIncreaseoffsetfortwo()
 		}
 	}
 
-	double min_offset_value = max(minimum_link_length*0.01, 0.001);
+	double min_offset_value = 0.001;
+	
+	if(minimum_link_length < 9999)  // with data
+		min_offset_value = max(minimum_link_length * 0.01, 0.001);
+
 	m_OffsetInDistance += min_offset_value;
 	m_bLinkToBeShifted  = true;
 	OffsetLink();  // offset shape points
@@ -6381,7 +6367,7 @@ void CTLiteDoc::OnLinkNooffsetandnobandwidth()
 		(*iLink)->m_ShapePoints .push_back ((*iLink)->m_ToPoint);
 	}
 
-	m_OffsetInDistance=0.001;
+	m_OffsetInDistance=0.1;
 	m_bLinkToBeShifted  = true;
 	m_LaneWidthInKM = 0.004;
 	OffsetLink();
@@ -8859,4 +8845,40 @@ void CTLiteDoc::OnHelpVisitdevelopmentwebsiteDtalite()
 void CTLiteDoc::OnToolsSimulationsettings()
 {
 	OpenCSVFileInExcel(m_ProjectDirectory + "settings.csv");
+}
+
+
+void CTLiteDoc::OnToolsImportgtfsdata()
+{
+	CMainFrame* pMainFrame = (CMainFrame*)AfxGetMainWnd();
+
+	CFileDialog fdlg(TRUE, "routes.txt", "routes.txt", OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_ENABLESIZING,
+		"GTFS (routes.txt)|*.txt|", pMainFrame, 0, true);
+
+
+	if (fdlg.DoModal() == IDOK)
+	{
+		CString path = fdlg.GetPathName();
+		CWaitCursor wait;
+
+		CString directory;
+		directory = path.Left(path.ReverseFind('\\') + 1);
+
+		ReadTransitFiles(directory);
+
+
+			CString msg;
+			if (m_NodeSet.size() > 0)
+			{
+				msg.Format("Files node.csv and link.csv  have been successfully created with %d nodes and %d links.",
+					m_NodeSet.size(),
+					m_LinkSet.size());
+				AfxMessageBox(msg, MB_OK | MB_ICONINFORMATION);
+			}
+
+
+	}
+	
+
+
 }

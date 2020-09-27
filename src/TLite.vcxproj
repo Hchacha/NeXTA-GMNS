@@ -264,7 +264,9 @@
     <ClCompile Include="TLite.cpp" />
     <ClCompile Include="TLiteDoc.cpp" />
     <ClCompile Include="TLiteView.cpp" />
+    <ClCompile Include="Transit.cpp" />
     <ClCompile Include="TravelTimeEst.cpp" />
+    <ClCompile Include="TSView.cpp" />
     <ClCompile Include="Utility.cpp" />
     <ClCompile Include="GridCtrl_src\GridCell.cpp" />
     <ClCompile Include="GridCtrl_src\GridCellBase.cpp" />
@@ -343,6 +345,8 @@
     <ClInclude Include="TLite.h" />
     <ClInclude Include="TLiteDoc.h" />
     <ClInclude Include="TLiteView.h" />
+    <ClInclude Include="Transit.h" />
+    <ClInclude Include="TSView.h" />
     <ClInclude Include="Utility.h" />
     <ClInclude Include="GridCtrl_src\CellRange.h" />
     <ClInclude Include="GridCtrl_src\GridCell.h" />

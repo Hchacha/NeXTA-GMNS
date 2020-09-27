@@ -93,4 +93,5 @@ public:
 	afx_msg void OnDataCocontourplot();
 	afx_msg void OnBnClickedPathDataExportCsv();
 	afx_msg void OnChangeattributesforlinksalongpathFreespeed();
+	afx_msg void OnBnClickedDynamicSpacetimediagram();
 };
